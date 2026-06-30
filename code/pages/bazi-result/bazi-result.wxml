@@ -22,6 +22,35 @@
       </view>
     </view>
 
+    <view class="destiny-brief">
+      <view class="brief-head">
+        <view>
+          <view class="brief-kicker">命盘摘要</view>
+          <view class="brief-title">先看格局，再看细盘</view>
+        </view>
+        <view class="brief-seal">{{result.dayMaster.text}}</view>
+      </view>
+      <view class="brief-grid">
+        <view class="brief-item">
+          <text>日主</text>
+          <text>{{result.dayMaster.text}}</text>
+        </view>
+        <view class="brief-item">
+          <text>格局</text>
+          <text>{{result.professional.pattern.name}}</text>
+        </view>
+        <view class="brief-item">
+          <text>旺衰</text>
+          <text>{{result.professional.strength.status}}</text>
+        </view>
+        <view class="brief-item">
+          <text>喜用</text>
+          <text>{{result.professional.usefulGod.usefulText}}</text>
+        </view>
+      </view>
+      <view class="brief-summary">{{result.professional.chartSummary.oneLine}}</view>
+    </view>
+
     <view class="result-tabs">
       <view
         class="result-tab {{activeResultTab === item ? 'active' : ''}}"

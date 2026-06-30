@@ -1,16 +1,24 @@
-<view class="page bazi-page">
+﻿<view class="page bazi-page">
   <view class="bazi-hero">
     <view class="hero-cloud hero-cloud-left"></view>
     <view class="hero-cloud hero-cloud-right"></view>
-    <view class="hero-title">八字排盘</view>
-    <view class="hero-subtitle">道家命理 · 专业排盘</view>
-    <view class="hero-stamp">玄问</view>
+    <view class="hero-title">鍏瓧鎺掔洏</view>
+    <view class="hero-subtitle">閬撳鍛界悊 路 涓撲笟鎺掔洏</view>
+    <view class="hero-stamp">鐜勯棶</view>
   </view>
 
   <view class="entry-card">
+    <view class="entry-card-head">
+      <view>
+        <view class="form-kicker">鍑虹敓妗ｆ</view>
+        <view class="form-title">鐢熸垚鍏瓧鍛界洏</view>
+      </view>
+      <view class="form-badge">鐪熷お闃虫椂鏍℃</view>
+    </view>
+
     <view class="entry-row name-row">
-      <text class="entry-label">姓名</text>
-      <input class="entry-input" placeholder="请输入姓名（必填）" value="{{form.name}}" bindinput="onNameInput" />
+      <text class="entry-label">濮撳悕</text>
+      <input class="entry-input" placeholder="璇疯緭鍏ュ鍚嶏紙蹇呭～锛? value="{{form.name}}" bindinput="onNameInput" />
     </view>
 
     <view class="entry-row segmented-row">
@@ -37,8 +45,8 @@
 
     <view class="entry-row picker-row">
       <view>
-        <text class="entry-label">出生时间</text>
-        <text class="entry-hint">必填</text>
+        <text class="entry-label">鍑虹敓鏃堕棿</text>
+        <text class="entry-hint">蹇呭～</text>
       </view>
       <view class="picker-value dual-picker">
         <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
@@ -51,36 +59,37 @@
     </view>
 
     <view class="entry-row picker-row">
-      <text class="entry-label">出生地点</text>
+      <text class="entry-label">鍑虹敓鍦扮偣</text>
       <picker mode="region" value="{{form.region}}" bindchange="onRegionChange">
         <view class="picker-value">{{form.regionText}}</view>
       </picker>
-      <text class="row-symbol">⌖</text>
+      <text class="row-symbol">鈱?/text>
     </view>
 
     <view class="entry-row picker-row">
-      <text class="entry-label">分组</text>
-      <view class="picker-value">全部</view>
+      <text class="entry-label">鍒嗙粍</text>
+      <view class="picker-value">鍏ㄩ儴</view>
     </view>
 
     <view class="solar-row">
       <view>
-        <view>北京时间：{{form.birthDate}} {{form.birthTime}}</view>
-        <view>真太阳时：{{form.useTrueSolarTime ? '开启' : '关闭'}}</view>
-        <view>地址经纬：北纬39.9288 东经{{form.longitude}}</view>
+        <view>鍖椾含鏃堕棿锛歿{form.birthDate}} {{form.birthTime}}</view>
+        <view>鐪熷お闃虫椂锛歿{form.useTrueSolarTime ? '寮€鍚? : '鍏抽棴'}}</view>
+        <view>鍦板潃缁忕含锛氬寳绾?9.9288 涓滅粡{{form.longitude}}</view>
       </view>
       <view class="switch-column">
         <view class="option-switch">
-          <text>真太阳时</text>
+          <text>鐪熷お闃虫椂</text>
           <switch checked="{{form.useTrueSolarTime}}" bindchange="onTrueSolarSwitch" color="#e8c98a" />
         </view>
         <view class="option-switch">
-          <text>保存</text>
+          <text>淇濆瓨</text>
           <switch checked="{{saveCase}}" bindchange="onSaveSwitch" color="#e8c98a" />
         </view>
       </view>
     </view>
 
-    <button class="start-button" bindtap="generateReading">立即排盘</button>
+    <button class="start-button" loading="{{isGenerating}}" disabled="{{isGenerating}}" bindtap="generateReading">立即排盘</button>
+    <view class="start-helper">请尽量使用准确出生时间与出生地，后续命例复盘会以此为准。</view>
   </view>
 </view>

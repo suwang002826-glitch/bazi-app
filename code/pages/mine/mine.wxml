@@ -1,7 +1,7 @@
 <view class="page mine-page">
   <view class="section profile-card">
     <view class="profile-row">
-      <view class="avatar">道</view>
+      <view class="avatar">命</view>
       <view class="profile-main">
         <view class="section-kicker">本机档案</view>
         <view class="nickname">{{profile.nickname}}</view>
@@ -29,14 +29,14 @@
     <view class="archive-copy">
       <view class="section-kicker">命例复盘</view>
       <view class="section-title">命例档案</view>
-      <view class="muted">保存八字、六爻、奇门测试记录，用于复盘准确度、整理反馈和后续校验。</view>
+      <view class="muted">保存八字排盘记录，用于复盘准确度、整理反馈和后续校验。</view>
     </view>
     <view class="entry-arrow">›</view>
   </view>
 
   <view class="section">
     <view class="section-kicker">历史记录</view>
-    <view class="section-title">历史记录</view>
+    <view class="section-title">最近排盘</view>
     <block wx:if="{{history.length}}">
       <view
         class="history-row tappable-row"
@@ -55,13 +55,13 @@
       </view>
       <button class="secondary clear-btn" bindtap="clearHistory">清空本机记录</button>
     </block>
-    <view wx:else class="empty-text">暂无历史记录。完成排盘或起卦后，这里会形成本机时间线。</view>
+    <view wx:else class="empty-text">暂无八字排盘记录。完成一次排盘后，这里会形成本机时间线。</view>
   </view>
 
   <view class="section">
     <view class="section-kicker">边界声明</view>
     <view class="section-title">免责声明</view>
     <view class="muted">{{disclaimer}}</view>
-    <view class="muted extra">本内测版采用本地规则引擎，不提供确定性命运判断。八字、六爻与奇门结果用于排盘复核、传统文化学习和命例反馈。</view>
+    <view class="muted extra">本测试版采用本地规则引擎，不提供确定性命运裁断。八字结果用于排盘复核、传统文化学习和命例反馈。</view>
   </view>
 </view>

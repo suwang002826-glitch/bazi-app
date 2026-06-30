@@ -7,6 +7,7 @@ Page({
     history: [],
     filterOptions: ['全部', '八字'],
     filterIndex: 0,
+    expandedCaseId: 0,
     statusOptions: ['待验证', '已应验', '未应验', '需复盘'],
     emptyText: '暂无八字命例。完成一次八字排盘后，可从最近记录中存入命例档案。'
   },
@@ -20,9 +21,16 @@ Page({
     const history = (wx.getStorageSync('readingHistory') || []).filter((item) => this.isBaziRecord(item)).slice(0, 10);
     this.setData({
       cases,
-      filteredCases: this.filterCases(cases, this.data.filterIndex),
+      filteredCases: this.decorateCases(this.filterCases(cases, this.data.filterIndex)),
       history
     });
+  },
+
+  decorateCases(cases) {
+    return cases.map((item) => ({
+      ...item,
+      feedbackOpen: Number(item.id) === Number(this.data.expandedCaseId)
+    }));
   },
 
   filterCases(cases, filterIndex) {
@@ -40,7 +48,16 @@ Page({
     const filterIndex = Number(event.currentTarget.dataset.index);
     this.setData({
       filterIndex,
-      filteredCases: this.filterCases(this.data.cases, filterIndex)
+      filteredCases: this.decorateCases(this.filterCases(this.data.cases, filterIndex))
+    });
+  },
+
+  toggleFeedback(event) {
+    const id = Number(event.currentTarget.dataset.id);
+    const expandedCaseId = Number(this.data.expandedCaseId) === id ? 0 : id;
+    this.setData({
+      expandedCaseId,
+      filteredCases: this.decorateCases(this.filterCases(this.data.cases, this.data.filterIndex))
     });
   },
 
@@ -65,7 +82,7 @@ Page({
     });
     this.setData({
       cases,
-      filteredCases: this.filterCases(cases, this.data.filterIndex)
+      filteredCases: this.decorateCases(this.filterCases(cases, this.data.filterIndex))
     });
     wx.showToast({ title: '已存入命例', icon: 'success' });
   },
@@ -81,7 +98,7 @@ Page({
     wx.setStorageSync('caseArchive', cases);
     this.setData({
       cases,
-      filteredCases: this.filterCases(cases, this.data.filterIndex)
+      filteredCases: this.decorateCases(this.filterCases(cases, this.data.filterIndex))
     });
   },
 
@@ -94,7 +111,7 @@ Page({
     wx.setStorageSync('caseArchive', cases);
     this.setData({
       cases,
-      filteredCases: this.filterCases(cases, this.data.filterIndex)
+      filteredCases: this.decorateCases(this.filterCases(cases, this.data.filterIndex))
     });
   },
 
@@ -108,7 +125,7 @@ Page({
     wx.setStorageSync('caseArchive', cases);
     this.setData({
       cases,
-      filteredCases: this.filterCases(cases, this.data.filterIndex)
+      filteredCases: this.decorateCases(this.filterCases(cases, this.data.filterIndex))
     });
   },
 
@@ -120,7 +137,7 @@ Page({
     wx.setStorageSync('caseArchive', cases);
     this.setData({
       cases,
-      filteredCases: this.filterCases(cases, this.data.filterIndex)
+      filteredCases: this.decorateCases(this.filterCases(cases, this.data.filterIndex))
     });
   },
 
@@ -135,7 +152,7 @@ Page({
         wx.setStorageSync('caseArchive', cases);
         this.setData({
           cases,
-          filteredCases: this.filterCases(cases, this.data.filterIndex)
+          filteredCases: this.decorateCases(this.filterCases(cases, this.data.filterIndex))
         });
       }
     });

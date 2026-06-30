@@ -9,6 +9,7 @@ Page({
     calendarModes: ['公历', '农历', '四柱'],
     activeCalendarMode: '公历',
     saveCase: true,
+    isGenerating: false,
     form: {
       name: '',
       gender: '男',
@@ -85,6 +86,7 @@ Page({
   },
 
   generateReading() {
+    if (this.data.isGenerating) return;
     if (!this.data.form.name.trim()) {
       wx.showToast({ title: '请先填写姓名', icon: 'none' });
       return;
@@ -95,6 +97,7 @@ Page({
       return;
     }
 
+    this.setData({ isGenerating: true });
     const result = buildBaziProfile(this.data.form);
     const baziPlate = createBaziPlate(result);
     const reading = { result, baziPlate };
@@ -111,6 +114,9 @@ Page({
         payload: reading
       });
     }
-    wx.navigateTo({ url: '/pages/bazi-result/bazi-result' });
+    wx.navigateTo({
+      url: '/pages/bazi-result/bazi-result',
+      complete: () => this.setData({ isGenerating: false })
+    });
   }
 });

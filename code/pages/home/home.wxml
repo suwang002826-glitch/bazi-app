@@ -89,5 +89,19 @@
 
       <view class="analysis-advice">{{analysis.advice}}</view>
     </view>
+
+    <view class="bazi-entry-card" bindtap="goBazi" hover-class="entry-card-active">
+      <view class="entry-kicker">八字排盘</view>
+      <view class="entry-title">排一生命盘</view>
+      <view class="entry-copy">录入出生时间与地点，生成四柱、大运、流年细盘。</view>
+      <view class="entry-footer">
+        <view class="entry-tags">
+          <text>四柱</text>
+          <text>大运</text>
+          <text>流年</text>
+        </view>
+        <view class="entry-action">开始排盘</view>
+      </view>
+    </view>
   </view>
 </view>

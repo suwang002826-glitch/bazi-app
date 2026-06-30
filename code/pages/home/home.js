@@ -229,5 +229,9 @@ Page({
 
   onNextMonth() {
     this.changeMonth(1);
+  },
+
+  goBazi() {
+    wx.switchTab({ url: '/pages/bazi/bazi' });
   }
 });

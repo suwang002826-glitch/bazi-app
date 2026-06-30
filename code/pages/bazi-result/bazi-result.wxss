@@ -1106,6 +1106,103 @@
   background: rgba(7, 8, 14, .72);
 }
 
+.destiny-brief {
+  margin: 20rpx 24rpx;
+  padding: 22rpx;
+  border: 1rpx solid rgba(217, 191, 113, .18);
+  border-radius: 18rpx;
+  background:
+    linear-gradient(135deg, rgba(70, 59, 140, .20), rgba(242, 240, 228, .035)),
+    rgba(18, 21, 50, .88);
+  box-shadow:
+    inset 0 1rpx 0 rgba(242, 240, 228, .08),
+    0 10rpx 22rpx rgba(0, 0, 0, .22);
+}
+
+.brief-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.brief-kicker {
+  display: inline-flex;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(217, 191, 113, .10);
+  color: #d9bf71;
+  font-size: 22rpx;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.brief-title {
+  margin-top: 10rpx;
+  color: #f2f0e4;
+  font-size: 34rpx;
+  font-weight: 900;
+  line-height: 1.28;
+}
+
+.brief-seal {
+  flex: 0 0 auto;
+  max-width: 180rpx;
+  padding: 12rpx 16rpx;
+  border: 1rpx solid rgba(217, 191, 113, .24);
+  border-radius: 12rpx;
+  background: rgba(217, 191, 113, .08);
+  color: #d9bf71;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.brief-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.brief-item {
+  min-width: 0;
+  padding: 14rpx 16rpx;
+  border: 1rpx solid rgba(242, 240, 228, .06);
+  border-radius: 12rpx;
+  background: rgba(7, 8, 14, .26);
+}
+
+.brief-item text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brief-item text:first-child {
+  color: rgba(242, 240, 228, .46);
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.brief-item text:last-child {
+  margin-top: 8rpx;
+  color: #f2f0e4;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.brief-summary {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid rgba(242, 240, 228, .08);
+  color: rgba(242, 240, 228, .68);
+  font-size: 25rpx;
+  line-height: 1.62;
+}
+
 .bazi-result-page .result-tab {
   color: rgba(242, 240, 228, .42);
 }

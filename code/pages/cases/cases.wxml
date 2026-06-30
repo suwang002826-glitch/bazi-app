@@ -30,7 +30,14 @@
         <view class="case-summary">{{item.summary}}</view>
         <view class="case-note">{{item.note}}</view>
         <view class="case-version">规则版本 {{item.engineVersion || 'local-rules'}}</view>
-        <view class="feedback-panel">
+        <view class="feedback-toggle" bindtap="toggleFeedback" data-id="{{item.id}}" hover-class="tap-active">
+          <view>
+            <view class="feedback-toggle-title">复盘反馈</view>
+            <view class="feedback-toggle-copy">{{item.feedbackOpen ? '收起应验时间、准确点和现实反馈' : '记录应验时间、准确点和现实反馈'}}</view>
+          </view>
+          <view class="feedback-toggle-arrow">{{item.feedbackOpen ? '收起' : '展开'}}</view>
+        </view>
+        <view class="feedback-panel" wx:if="{{item.feedbackOpen}}">
           <view class="feedback-head">
             <view class="feedback-title">复盘反馈</view>
             <button class="secondary verify-btn" bindtap="setVerifiedNow" data-id="{{item.id}}">记为现在应验</button>
