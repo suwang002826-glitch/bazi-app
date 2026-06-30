@@ -53,6 +53,24 @@ function formatYears(years) {
   return `[${normalizeYears(years).join(', ')}]`;
 }
 
+function yearsAreIntegers(years) {
+  return Array.isArray(years) && years.every((year) => Number.isInteger(year));
+}
+
+function validateYearsArray(label, years, errors) {
+  if (!Array.isArray(years)) {
+    errors.push(`${label}: years must be an array`);
+    return false;
+  }
+
+  if (!yearsAreIntegers(years)) {
+    errors.push(`${label}: years must contain only integers`);
+    return false;
+  }
+
+  return true;
+}
+
 function sameYears(left, right) {
   const normalizedLeft = normalizeYears(left);
   const normalizedRight = normalizeYears(right);
@@ -142,11 +160,14 @@ function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
     errors.push(`${pack.dataPackId}: calendarDataVersion does not match manifest`);
   }
 
-  if (!pack.coverage || !Array.isArray(pack.coverage.years)) {
-    errors.push(`${pack.dataPackId}: coverage.years must be an array`);
+  const coverageYearsValid = Boolean(pack.coverage)
+    && validateYearsArray(`${pack.dataPackId}: coverage.years`, pack.coverage.years, errors);
+
+  if (pack.coverage && typeof pack.coverage.completeLunarCalendar !== 'boolean') {
+    errors.push(`${pack.dataPackId}: coverage.completeLunarCalendar must be boolean`);
   }
 
-  if (pack.coverage && Array.isArray(pack.coverage.years) && Array.isArray(manifestEntry.years)
+  if (coverageYearsValid && yearsAreIntegers(manifestEntry.years)
     && !sameYears(pack.coverage.years, manifestEntry.years)) {
     errors.push(`${pack.dataPackId}: coverage.years ${formatYears(pack.coverage.years)} does not match manifest years ${formatYears(manifestEntry.years)}`);
   }
@@ -188,7 +209,7 @@ function validateLunarDataPackRepository(options = {}) {
     manifest.packs.forEach((entry, index) => {
       if (!entry.dataPackId) errors.push(`manifest.packs[${index}]: missing dataPackId`);
       if (!entry.path) errors.push(`manifest.packs[${index}]: missing path`);
-      if (!Array.isArray(entry.years)) errors.push(`manifest.packs[${index}]: years must be an array`);
+      validateYearsArray(`manifest.packs[${index}]`, entry.years, errors);
       if (typeof entry.completeLunarCalendar !== 'boolean') {
         errors.push(`manifest.packs[${index}]: completeLunarCalendar must be boolean`);
       }
