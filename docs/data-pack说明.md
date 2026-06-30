@@ -66,7 +66,9 @@ node scripts/validate-lunar-data-pack.js
 - 全部包之间是否存在重复农历日期。
 - 全部包之间是否存在重复 `caseId`。
 - `manifest.packs[].years` 是否与数据包 `coverage.years` 一致。
+- `manifest.packs[].years` 和数据包 `coverage.years` 是否只包含整数年份。
 - `manifest.packs[].completeLunarCalendar` 是否与数据包 `coverage.completeLunarCalendar` 一致。
+- 数据包 `coverage.completeLunarCalendar` 是否明确写成布尔值。
 - 每条记录的 `lunarYear` 是否落在该包声明的 `coverage.years` 内。
 - `manifest.packs[].dataPackId` 是否重复。
 
