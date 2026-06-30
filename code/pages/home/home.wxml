@@ -15,12 +15,12 @@
 
     <view class="month-card">
       <view class="month-head">
-        <view class="nav-arrow">‹</view>
+        <view class="nav-arrow" bindtap="onPrevMonth" hover-class="tap-active">‹</view>
         <view class="month-center">
           <view class="month-title">{{monthTitle}}</view>
           <view class="month-sub">{{selected.ganzhi}}</view>
         </view>
-        <view class="nav-arrow">›</view>
+        <view class="nav-arrow" bindtap="onNextMonth" hover-class="tap-active">›</view>
       </view>
 
       <view class="weekday-row">
@@ -32,6 +32,9 @@
           class="day-cell {{item.muted ? 'muted-day' : ''}} {{item.selected ? 'selected-day' : ''}} {{item.today ? 'today-day' : ''}}"
           wx:for="{{calendarCells}}"
           wx:key="id"
+          bindtap="onSelectDate"
+          data-timestamp="{{item.timestamp}}"
+          hover-class="day-active"
         >
           <view class="solar-day">{{item.day}}</view>
           <view class="lunar-day {{item.festival ? 'festival' : ''}}">{{item.lunar}}</view>
