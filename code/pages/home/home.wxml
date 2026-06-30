@@ -1,0 +1,33 @@
+<view class="page home-page">
+  <x-pattern />
+
+  <view class="home-shell">
+    <view class="brand-row">
+      <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFill" />
+      <view class="brand-copy">
+        <view class="brand-title">玄门命理</view>
+        <view class="brand-subtitle">八字 · 六爻 · 奇门</view>
+      </view>
+      <view class="version-badge">内测</view>
+    </view>
+
+    <view class="product-list">
+      <view class="product-card {{item.className}}" wx:for="{{primaryTools}}" wx:key="title" bindtap="goTo" data-url="{{item.url}}" data-tab="{{item.tab}}">
+        <image class="product-bg" src="{{item.image}}" mode="aspectFill" />
+        <view class="product-shade"></view>
+        <view class="product-content">
+          <view class="product-symbol">{{item.icon}}</view>
+          <view class="product-title">{{item.title}}</view>
+          <view class="product-desc">{{item.desc}}</view>
+          <view class="product-tags">
+            <text wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+        <view class="product-action">
+          <text>{{item.action}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

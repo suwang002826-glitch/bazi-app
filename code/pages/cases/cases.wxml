@@ -1,0 +1,80 @@
+<view class="page cases-page">
+  <x-pattern />
+
+  <view class="section hero-case">
+    <view class="section-kicker">命例库</view>
+    <view class="section-title">命例档案</view>
+    <view class="muted">把测试过程中的八字、六爻、奇门记录沉淀为本机命例，用于复盘准确度、记录反馈和后续精修。</view>
+  </view>
+
+  <view class="section">
+    <view class="section-kicker">已归档</view>
+    <view class="section-title">已存命例</view>
+    <view class="case-filter">
+      <view
+        class="filter-chip {{filterIndex === index ? 'active' : ''}}"
+        wx:for="{{filterOptions}}"
+        wx:key="*this"
+        bindtap="onFilterChange"
+        data-index="{{index}}"
+      >{{item}}</view>
+    </view>
+    <block wx:if="{{filteredCases.length}}">
+      <view class="case-card" wx:for="{{filteredCases}}" wx:key="id">
+        <view class="case-head">
+          <view class="case-main">
+            <view class="case-title">{{item.title}}</view>
+            <view class="muted">{{item.type}} · {{item.archivedAt}}</view>
+          </view>
+          <view class="case-tag">{{item.tag}}</view>
+        </view>
+        <view class="case-status" bindtap="cycleStatus" data-id="{{item.id}}">{{item.status || '待验证'}}</view>
+        <view class="case-summary">{{item.summary}}</view>
+        <view class="case-note">{{item.note}}</view>
+        <view class="case-version">规则版本 {{item.engineVersion || 'local-rules'}}</view>
+        <view class="feedback-panel">
+          <view class="feedback-head">
+            <view class="feedback-title">复盘反馈</view>
+            <button class="secondary verify-btn" bindtap="setVerifiedNow" data-id="{{item.id}}">记为现在应验</button>
+          </view>
+          <view class="feedback-field">
+            <text>应验时间</text>
+            <input placeholder="例如：2026-07-12 15:30" value="{{item.verifiedAt}}" data-id="{{item.id}}" data-field="verifiedAt" bindblur="updateCaseField" />
+          </view>
+          <view class="feedback-field">
+            <text>准确点</text>
+            <textarea placeholder="哪条判断准确？" value="{{item.accurate}}" data-id="{{item.id}}" data-field="accurate" bindblur="updateCaseField" />
+          </view>
+          <view class="feedback-field">
+            <text>偏差点</text>
+            <textarea placeholder="哪条判断不准或需要修正？" value="{{item.inaccurate}}" data-id="{{item.id}}" data-field="inaccurate" bindblur="updateCaseField" />
+          </view>
+          <view class="feedback-field">
+            <text>现实反馈</text>
+            <textarea placeholder="补充实际发生经过，便于后续校验规则。" value="{{item.userFeedback}}" data-id="{{item.id}}" data-field="userFeedback" bindblur="updateCaseField" />
+          </view>
+        </view>
+        <view class="case-actions">
+          <button class="secondary small-btn ghost-btn" bindtap="markReview" data-id="{{item.id}}">标为需复盘</button>
+          <button class="secondary small-btn danger-btn" bindtap="deleteCase" data-id="{{item.id}}">删除</button>
+        </view>
+      </view>
+    </block>
+    <view wx:else class="empty-text">{{emptyText}}</view>
+  </view>
+
+  <view class="section">
+    <view class="section-kicker">最近记录</view>
+    <view class="section-title">最近记录</view>
+    <block wx:if="{{history.length}}">
+      <view class="history-save-row" wx:for="{{history}}" wx:key="id">
+        <view class="history-info">
+          <view class="history-title">{{item.title}}</view>
+          <view class="muted">{{item.type}} · {{item.createdAt}}</view>
+        </view>
+        <button class="secondary save-btn" bindtap="saveCase" data-id="{{item.id}}">存档</button>
+      </view>
+    </block>
+    <view wx:else class="empty-text">暂无可保存记录。</view>
+  </view>
+</view>

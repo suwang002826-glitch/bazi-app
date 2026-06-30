@@ -1,0 +1,15 @@
+<view class="pattern-layer" aria-hidden="true">
+  <view class="pattern-mark pattern-taiji">☯</view>
+  <view class="pattern-mark pattern-bagua">☰☷☵☲</view>
+  <view class="pattern-mark pattern-sunmoon">日月</view>
+  <view class="pattern-mark pattern-ruyi">如意</view>
+  <view class="star-map">
+    <view class="star-dot s1"></view>
+    <view class="star-dot s2"></view>
+    <view class="star-dot s3"></view>
+    <view class="star-dot s4"></view>
+    <view class="star-dot s5"></view>
+    <view class="star-dot s6"></view>
+    <view class="star-dot s7"></view>
+  </view>
+</view>

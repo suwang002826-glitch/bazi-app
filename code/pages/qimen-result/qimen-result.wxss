@@ -1,0 +1,317 @@
+@import "../qimen/qimen.wxss";
+
+.qimen-result-page {
+  padding: 0 0 calc(32rpx + env(safe-area-inset-bottom));
+}
+
+.result-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 96rpx 1fr 96rpx;
+  align-items: center;
+  height: calc(122rpx + env(safe-area-inset-top));
+  padding: calc(24rpx + env(safe-area-inset-top)) 18rpx 0;
+  border-bottom: 1rpx solid rgba(232, 201, 138, .10);
+  background: rgba(6, 16, 22, .96);
+  backdrop-filter: blur(18rpx);
+}
+
+.result-title {
+  color: #dfe8e5;
+  font-size: 34rpx;
+  font-weight: 800;
+  text-align: center;
+}
+
+.back-button,
+.more-button {
+  color: #d8e1de;
+  font-size: 46rpx;
+  font-weight: 600;
+  text-align: center;
+}
+
+.more-button {
+  font-size: 28rpx;
+  letter-spacing: 4rpx;
+}
+
+.qimen-result-shell {
+  margin-top: 24rpx;
+}
+
+.empty-state {
+  margin: 42rpx 24rpx;
+  padding: 34rpx;
+  border: 1rpx solid rgba(232, 201, 138, .14);
+  border-radius: 18rpx;
+  background: rgba(10, 24, 29, .82);
+  text-align: center;
+}
+
+.empty-title {
+  margin-bottom: 10rpx;
+  color: #f0f4f2;
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+.empty-copy {
+  margin-bottom: 24rpx;
+  color: #9fb3b4;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.empty-state button {
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #e9cc8b, #f3dca7);
+  color: #1b160e;
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.qimen-result-page .qimen-pro-table {
+  overflow: hidden;
+  margin: 22rpx 0 20rpx;
+  border: 1rpx solid rgba(232, 201, 138, .22);
+  border-radius: 14rpx;
+  background: rgba(5, 14, 18, .58);
+}
+
+.qimen-result-page .pro-row {
+  display: grid;
+  grid-template-columns: 116rpx minmax(0, 1fr);
+  min-height: 78rpx;
+  border-bottom: 1rpx solid rgba(232, 201, 138, .16);
+}
+
+.qimen-result-page .pro-row:last-child {
+  border-bottom: 0;
+}
+
+.qimen-result-page .pro-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1rpx solid rgba(232, 201, 138, .16);
+  color: #e8c98a;
+  font-size: 28rpx;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.qimen-result-page .pro-value {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 16rpx 18rpx;
+  color: #edf6f3;
+  font-size: 27rpx;
+  font-weight: 760;
+  line-height: 1.45;
+}
+
+.qimen-result-page .pro-value.strong {
+  color: #f5f8f5;
+  font-size: 32rpx;
+  font-weight: 950;
+}
+
+.qimen-result-page .void-value {
+  color: #e05a50;
+}
+
+.qimen-result-page .pro-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  min-width: 0;
+}
+
+.qimen-result-page .pro-pillars view {
+  display: grid;
+  place-items: center;
+  min-height: 112rpx;
+  border-right: 1rpx solid rgba(232, 201, 138, .13);
+}
+
+.qimen-result-page .pro-pillars view:last-child {
+  border-right: 0;
+}
+
+.qimen-result-page .pro-pillars text:first-child {
+  color: #f2f7f4;
+  font-size: 34rpx;
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.qimen-result-page .pro-pillars text:last-child {
+  margin-top: 8rpx;
+  color: #8fa6a6;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
+.qimen-result-page .pro-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  min-width: 0;
+}
+
+.qimen-result-page .pro-grid view {
+  min-width: 0;
+  min-height: 86rpx;
+  padding: 12rpx 6rpx;
+  border-right: 1rpx solid rgba(232, 201, 138, .13);
+  text-align: center;
+}
+
+.qimen-result-page .pro-grid view:last-child {
+  border-right: 0;
+}
+
+.qimen-result-page .pro-grid text {
+  display: block;
+}
+
+.qimen-result-page .pro-grid text:first-child {
+  color: #8fa6a6;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
+.qimen-result-page .pro-grid text:last-child {
+  margin-top: 8rpx;
+  color: #e8c98a;
+  font-size: 22rpx;
+  font-weight: 950;
+  line-height: 1.25;
+}
+
+.qimen-result-page .qimen-board {
+  padding: 0;
+  border-radius: 10rpx;
+  border-color: rgba(232, 201, 138, .20);
+  background: rgba(4, 10, 13, .68);
+}
+
+.qimen-result-page .qimen-row {
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.qimen-result-page .qimen-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 248rpx;
+  padding: 12rpx;
+  border-width: 0 1rpx 1rpx 0;
+  border-color: rgba(232, 201, 138, .14);
+  border-radius: 0;
+  background: rgba(9, 24, 31, .84);
+}
+
+.qimen-result-page .qimen-row .qimen-cell:last-child {
+  border-right: 0;
+}
+
+.qimen-result-page .qimen-row:last-child .qimen-cell {
+  border-bottom: 0;
+}
+
+.qimen-result-page .qimen-cell.active {
+  position: relative;
+  z-index: 1;
+  border-color: rgba(232, 201, 138, .46);
+  background:
+    linear-gradient(180deg, rgba(232, 201, 138, .10), rgba(9, 24, 31, .92)),
+    rgba(9, 24, 31, .92);
+}
+
+.qimen-result-page .cell-head {
+  font-size: 19rpx;
+  color: #8fa6a6;
+}
+
+.qimen-result-page .horse-badge {
+  position: absolute;
+  right: 10rpx;
+  bottom: 10rpx;
+  display: grid;
+  place-items: center;
+  width: 34rpx;
+  height: 34rpx;
+  border: 1rpx solid rgba(232, 201, 138, .36);
+  border-radius: 999rpx;
+  background: rgba(232, 201, 138, .14);
+  color: #e8c98a;
+  font-size: 20rpx;
+  font-weight: 950;
+}
+
+.qimen-result-page .cell-heaven {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8rpx;
+  margin-top: 10rpx;
+  color: #e8c98a;
+  font-size: 25rpx;
+  font-weight: 950;
+  line-height: 1.25;
+}
+
+.qimen-result-page .cell-heaven text:last-child {
+  overflow: hidden;
+  color: #e8c98a;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qimen-result-page .cell-main {
+  margin-top: 12rpx;
+  color: #56c29e;
+  font-size: 30rpx;
+  font-weight: 950;
+  text-align: center;
+}
+
+.qimen-result-page .cell-door {
+  margin-top: 6rpx;
+  color: #d7a05a;
+  font-size: 28rpx;
+  font-weight: 950;
+  text-align: center;
+}
+
+.qimen-result-page .cell-earth {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8rpx;
+  margin-top: auto;
+  color: #8fa6a6;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
+.qimen-result-page .cell-earth text:last-child {
+  font-size: 25rpx;
+  font-weight: 950;
+}
+
+.qimen-result-page .cell-tags {
+  justify-content: flex-start;
+  min-height: 34rpx;
+  padding-right: 42rpx;
+  margin-top: 8rpx;
+}
+
+.qimen-result-page .cell-tags text {
+  padding: 4rpx 7rpx;
+  font-size: 17rpx;
+}

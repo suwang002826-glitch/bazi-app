@@ -1,0 +1,46 @@
+<view class="page liuyao-page">
+  <x-pattern />
+
+  <view class="section cast-panel">
+    <view class="section-kicker">一事一问</view>
+    <view class="section-title">问事与起卦</view>
+    <view class="field">
+      <text class="label">所问事项</text>
+      <textarea placeholder="例如：这件事下一步适合如何推进？" value="{{question}}" bindinput="onQuestionInput" />
+    </view>
+    <view class="ritual-panel">
+      <view class="ritual-title">起卦前</view>
+      <view class="ritual-row" wx:for="{{ritualItems}}" wx:key="*this">
+        <text class="ritual-dot"></text>
+        <text>{{item}}</text>
+      </view>
+    </view>
+    <view class="mode-tabs">
+      <view
+        class="mode-tab {{modeIndex === index ? 'active' : ''}}"
+        wx:for="{{modeOptions}}"
+        wx:key="*this"
+        bindtap="onModeChange"
+        data-index="{{index}}"
+      >{{item}}</view>
+    </view>
+    <view class="field">
+      <text class="label">问题分类</text>
+      <picker mode="selector" range="{{categoryOptions}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+        <view>{{categoryOptions[categoryIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="manual-actions">
+      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="6">点老阴</button>
+      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="7">点少阳</button>
+      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="8">点少阴</button>
+      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="9">点老阳</button>
+    </view>
+    <view class="cast-actions">
+      <button class="primary cast-primary" bindtap="autoCast">{{modeIndex === 0 ? '一键起卦' : '按当前方式起卦'}}</button>
+      <button class="secondary reset-btn" bindtap="resetCast">重新起卦</button>
+    </view>
+  </view>
+
+</view>

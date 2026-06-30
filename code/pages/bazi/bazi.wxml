@@ -1,0 +1,78 @@
+<view class="page bazi-page">
+  <x-pattern />
+
+  <view class="bazi-topbar">
+    <view class="top-icon">☰</view>
+    <view class="top-title">生成八字</view>
+    <view class="top-icon">□</view>
+  </view>
+
+  <view class="entry-card">
+    <view class="entry-row name-row">
+      <text class="entry-label">姓名</text>
+      <input class="entry-input" placeholder="请输入姓名" value="{{form.name}}" bindinput="onNameInput" />
+    </view>
+
+    <view class="entry-row segmented-row">
+      <view class="segmented-control">
+        <view
+          class="segment {{form.gender === item ? 'active' : ''}}"
+          wx:for="{{genderOptions}}"
+          wx:key="*this"
+          bindtap="onGenderTap"
+          data-gender="{{item}}"
+        >{{item}}</view>
+      </view>
+
+      <view class="segmented-control calendar-control">
+        <view
+          class="segment {{activeCalendarMode === item ? 'active' : ''}}"
+          wx:for="{{calendarModes}}"
+          wx:key="*this"
+          bindtap="onCalendarModeTap"
+          data-mode="{{item}}"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <view class="entry-row picker-row">
+      <view>
+        <text class="entry-label">出生时间</text>
+        <text class="entry-hint">必填</text>
+      </view>
+      <view class="picker-value dual-picker">
+        <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
+          <view>{{form.birthDate}}</view>
+        </picker>
+        <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
+          <view>{{form.birthTime}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="entry-row picker-row">
+      <text class="entry-label">出生地点</text>
+      <picker mode="region" value="{{form.region}}" bindchange="onRegionChange">
+        <view class="picker-value">{{form.regionText}}</view>
+      </picker>
+    </view>
+
+    <view class="entry-row picker-row">
+      <text class="entry-label">分组</text>
+      <view class="picker-value">全部</view>
+    </view>
+
+    <view class="solar-row">
+      <view>
+        <view>真太阳时：{{form.birthDate}} {{form.birthTime}}</view>
+        <view>地址经纬：北纬39.9288 东经{{form.longitude}}</view>
+      </view>
+      <view class="save-switch">
+        <text>保存</text>
+        <switch checked="{{saveCase}}" bindchange="onSaveSwitch" color="#e8c98a" />
+      </view>
+    </view>
+
+    <button class="start-button" bindtap="generateReading">开始排盘</button>
+  </view>
+</view>

@@ -1,0 +1,45 @@
+<view class="page qimen-page">
+  <x-pattern />
+
+  <view class="section input-panel">
+    <view class="section-kicker">一事一局</view>
+    <view class="section-title">问事与起局</view>
+    <view class="field full">
+      <text class="label">所问事项</text>
+      <textarea placeholder="例如：这个项目下一步适合如何推进？" value="{{form.question}}" bindinput="onQuestionInput" />
+    </view>
+    <view class="form-grid">
+      <view class="field">
+        <text class="label">起局日期</text>
+        <picker mode="date" value="{{form.date}}" bindchange="onDateChange">
+          <view>{{form.date}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text class="label">起局时间</text>
+        <picker mode="time" value="{{form.time}}" bindchange="onTimeChange">
+          <view>{{form.time}}</view>
+        </picker>
+      </view>
+      <view class="field full">
+        <text class="label">问题分类</text>
+        <picker mode="selector" range="{{categoryOptions}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+          <view>{{categoryOptions[categoryIndex]}}</view>
+        </picker>
+      </view>
+    </view>
+    <view class="ritual-panel">
+      <view class="ritual-title">起局前</view>
+      <view class="ritual-row">
+        <text class="ritual-dot"></text>
+        <text>一事一局，先把问题写具体，不混问多个方向。</text>
+      </view>
+      <view class="ritual-row">
+        <text class="ritual-dot"></text>
+        <text>奇门重时空，测试版会保留起局时间方便后续复盘。</text>
+      </view>
+    </view>
+    <button class="secondary time-btn" bindtap="useCurrentTime">取当前时间</button>
+    <button class="primary" bindtap="generateChart">生成奇门局</button>
+  </view>
+</view>

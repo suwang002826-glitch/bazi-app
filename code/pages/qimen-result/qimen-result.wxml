@@ -1,0 +1,148 @@
+<view class="page qimen-page qimen-result-page">
+  <x-pattern />
+
+  <view class="result-topbar">
+    <view class="back-button" bindtap="goBack">‹</view>
+    <view class="result-title">奇门排盘</view>
+    <view class="more-button">•••</view>
+  </view>
+
+  <view wx:if="{{!result}}" class="empty-state">
+    <view class="empty-title">暂无奇门结果</view>
+    <view class="empty-copy">请先完成一次起局，再查看九宫盘与结果分析。</view>
+    <button bindtap="goBack">返回起局</button>
+  </view>
+
+  <view wx:else class="section result-shell qimen-result-shell">
+    <view class="result-head">
+      <view>
+        <view class="section-kicker">九宫盘</view>
+        <view class="section-title">{{result.title}}</view>
+      </view>
+      <view class="qimen-seal">{{result.calendar.ju}}</view>
+    </view>
+    <view class="qimen-pro-table">
+      <view class="pro-row">
+        <view class="pro-label">事项</view>
+        <view class="pro-value">{{result.question}}</view>
+      </view>
+      <view class="pro-row">
+        <view class="pro-label">盘式</view>
+        <view class="pro-value strong">{{result.calendar.plateStyle}}</view>
+      </view>
+      <view class="pro-row">
+        <view class="pro-label">公历</view>
+        <view class="pro-value">{{result.castTime}} · 问事时间</view>
+      </view>
+      <view class="pro-row pillar-row">
+        <view class="pro-label">干支</view>
+        <view class="pro-pillars">
+          <view><text>{{result.pillars.year}}</text><text>年</text></view>
+          <view><text>{{result.pillars.month}}</text><text>月</text></view>
+          <view><text>{{result.pillars.day}}</text><text>日</text></view>
+          <view><text>{{result.pillars.hour}}</text><text>时</text></view>
+        </view>
+      </view>
+      <view class="pro-row">
+        <view class="pro-label">空亡</view>
+        <view class="pro-value void-value">日旬空 {{result.calendar.voidText}}</view>
+      </view>
+      <view class="pro-row">
+        <view class="pro-label">节气</view>
+        <view class="pro-value">{{result.calendar.termRangeText}}</view>
+      </view>
+      <view class="pro-row pro-grid-row">
+        <view class="pro-label">值符</view>
+        <view class="pro-grid">
+          <view><text>值符</text><text>{{result.chief.star}}</text></view>
+          <view><text>值使</text><text>{{result.chief.door}}</text></view>
+          <view><text>旬首</text><text>{{result.calendar.xunShou}}</text></view>
+          <view><text>马星</text><text>{{result.calendar.horseBranch}} · {{result.calendar.horsePalaceText}}</text></view>
+          <view><text>局数</text><text>{{result.calendar.ju}}</text></view>
+        </view>
+      </view>
+      <view class="pro-row">
+        <view class="pro-label">用宫</view>
+        <view class="pro-value">用门 {{result.focus.door}} · 用宫 {{result.focus.palaceText}}</view>
+      </view>
+    </view>
+
+    <view class="qimen-board">
+      <view class="qimen-row" wx:for="{{result.layout}}" wx:for-item="row" wx:key="index">
+        <view
+          class="qimen-cell {{item.tone}} {{selectedPalace && selectedPalace.number === item.number ? 'active' : ''}}"
+          wx:for="{{row}}"
+          wx:for-item="item"
+          wx:key="number"
+          bindtap="selectPalace"
+          data-number="{{item.number}}"
+        >
+          <view class="cell-head">
+            <text>{{item.number}}宫 {{item.trigram}}</text>
+            <text>{{item.direction}}</text>
+          </view>
+          <view wx:if="{{item.number === result.calendar.horsePalace}}" class="horse-badge">马</view>
+          <view class="cell-heaven">
+            <text style="{{item.heavenStemStyle}}">{{item.heavenStem}}</text>
+            <text>{{item.god}}</text>
+          </view>
+          <view class="cell-main">{{item.star}}</view>
+          <view class="cell-door">{{item.door}}</view>
+          <view class="cell-earth">
+            <text>地盘</text>
+            <text style="{{item.earthStemStyle}}">{{item.earthStem}}</text>
+          </view>
+          <view class="cell-tags">
+            <text wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="palace-detail" wx:if="{{selectedPalace}}">
+      <view class="detail-head">
+        <view>
+          <view class="analysis-title">{{selectedPalace.number}}宫 {{selectedPalace.trigram}} · {{selectedPalace.direction}}</view>
+          <view class="muted">点击九宫任一宫位查看天地盘、八门、九星、八神与标记。</view>
+        </view>
+        <view class="detail-tone {{selectedPalace.tone}}">{{selectedPalace.door}}</view>
+      </view>
+      <view class="detail-grid">
+        <view><text>九星</text><text>{{selectedPalace.star}}</text></view>
+        <view><text>八神</text><text>{{selectedPalace.god}}</text></view>
+        <view><text>天盘</text><text>{{selectedPalace.heavenStem}}</text></view>
+        <view><text>地盘</text><text>{{selectedPalace.earthStem}}</text></view>
+        <view><text>五行</text><text>{{selectedPalace.element}}</text></view>
+        <view><text>标记</text><text>{{selectedPalace.tagText}}</text></view>
+      </view>
+    </view>
+
+    <view class="analysis-card featured">
+      <view class="analysis-title">{{result.advice.title}}</view>
+      <view class="analysis-text">{{result.advice.original}}</view>
+      <view class="analysis-text">{{result.advice.plain}}</view>
+      <view class="analysis-action">{{result.advice.action}}</view>
+    </view>
+
+    <view class="layer-card" wx:for="{{result.layers}}" wx:key="title">
+      <view class="layer-title">{{item.title}}</view>
+      <view class="layer-row">
+        <text class="layer-label">术数原文</text>
+        <text>{{item.original}}</text>
+      </view>
+      <view class="layer-row">
+        <text class="layer-label">白话解释</text>
+        <text>{{item.plain}}</text>
+      </view>
+      <view class="layer-row">
+        <text class="layer-label">行动建议</text>
+        <text>{{item.action}}</text>
+      </view>
+    </view>
+
+    <view class="result-card final-reading">
+      <view class="result-line">{{result.aiText}}</view>
+      <view class="engine-item" wx:for="{{result.engineInfo}}" wx:key="*this">{{item}}</view>
+    </view>
+  </view>
+</view>
