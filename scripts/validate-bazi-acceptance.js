@@ -6,6 +6,9 @@ const {
   lunarManifest,
   getLunarDataPackCoverage
 } = require('../code/utils/bazi/lunarDataPack');
+const {
+  validateLunarDataPackRepository
+} = require('./validate-lunar-data-pack');
 
 const acceptanceCases = [
   {
@@ -157,6 +160,12 @@ function extractPillars(result) {
 }
 
 function assertDataPackRegistry() {
+  const schemaResult = validateLunarDataPackRepository({
+    rootDir: path.join(__dirname, '..')
+  });
+  assert.deepStrictEqual(schemaResult.errors, []);
+  console.log(`PASS DATA-PACK schema ${schemaResult.summary.calendarDataVersion}`);
+
   assert.strictEqual(
     typeof getLunarDataPackCoverage,
     'function',
