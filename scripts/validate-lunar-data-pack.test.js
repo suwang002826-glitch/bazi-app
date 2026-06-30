@@ -1,4 +1,5 @@
 const assert = require('assert');
+const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -28,6 +29,24 @@ function assertHasError(errors, expected) {
     errors.some((error) => error.includes(expected)),
     `Expected schema error containing "${expected}", got:\n${errors.join('\n')}`
   );
+}
+
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === 'object') {
+    return Object.keys(value).sort().reduce((acc, key) => {
+      acc[key] = canonicalize(value[key]);
+      return acc;
+    }, {});
+  }
+  return value;
+}
+
+function checksumRecords(records) {
+  return crypto
+    .createHash('sha256')
+    .update(JSON.stringify(canonicalize(records)))
+    .digest('hex');
 }
 
 const result = validateLunarDataPackRepository({
@@ -168,5 +187,117 @@ const invalidTypeResult = validateLunarDataPackRepository({ rootDir: invalidType
 assertHasError(invalidTypeResult.errors, 'manifest.packs[0]: years must contain only integers');
 assertHasError(invalidTypeResult.errors, 'pack-c: coverage.years: years must contain only integers');
 assertHasError(invalidTypeResult.errors, 'pack-c: coverage.completeLunarCalendar must be boolean');
+
+const provenanceRecords = [
+  {
+    caseId: 'BZI-PROV',
+    lunarYear: 2023,
+    lunarMonth: 1,
+    lunarDay: 1,
+    isLeapMonth: false,
+    solarDate: '2023-01-22',
+    sourceNote: 'provenance fixture'
+  }
+];
+
+const invalidProvenanceRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-provenance',
+        path: 'pack-provenance.json',
+        years: [2023],
+        completeLunarCalendar: false
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-provenance.json': {
+      dataPackId: 'pack-provenance',
+      calendarDataVersion: 'lunar-data-pack@test',
+      source: 'test:pack-provenance',
+      status: 'test-fixture',
+      coverage: {
+        years: [2023],
+        scope: 'test',
+        completeLunarCalendar: false
+      },
+      authoritySource: '',
+      sourceLedger: [
+        {
+          sourceName: 'fixture',
+          sourceVersion: 'v1',
+          retrievedAt: 'not-a-date',
+          note: ''
+        }
+      ],
+      generatedAt: 'not-a-date',
+      generatedBy: '',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: '0000000000000000000000000000000000000000000000000000000000000000'
+      },
+      records: provenanceRecords
+    }
+  }
+);
+
+const invalidProvenanceResult = validateLunarDataPackRepository({ rootDir: invalidProvenanceRoot });
+assertHasError(invalidProvenanceResult.errors, 'pack-provenance: missing authoritySource');
+assertHasError(invalidProvenanceResult.errors, 'pack-provenance: generatedAt must be ISO datetime');
+assertHasError(invalidProvenanceResult.errors, 'pack-provenance: missing generatedBy');
+assertHasError(invalidProvenanceResult.errors, 'pack-provenance.sourceLedger[0]: retrievedAt must be ISO datetime');
+assertHasError(invalidProvenanceResult.errors, 'pack-provenance.sourceLedger[0]: missing note');
+assertHasError(invalidProvenanceResult.errors, 'pack-provenance: recordsChecksum does not match records');
+
+const validProvenanceRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-provenance',
+        path: 'pack-provenance.json',
+        years: [2023],
+        completeLunarCalendar: false
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-provenance.json': {
+      dataPackId: 'pack-provenance',
+      calendarDataVersion: 'lunar-data-pack@test',
+      source: 'test:pack-provenance',
+      status: 'test-fixture',
+      coverage: {
+        years: [2023],
+        scope: 'test',
+        completeLunarCalendar: false
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-01T00:00:00+08:00',
+          note: 'provenance validation fixture'
+        }
+      ],
+      generatedAt: '2026-07-01T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(provenanceRecords)
+      },
+      records: provenanceRecords
+    }
+  }
+);
+
+assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: validProvenanceRoot }).errors, []);
 
 console.log('PASS lunar data-pack schema validation');
