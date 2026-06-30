@@ -52,10 +52,6 @@ Page({
     this.setData({ 'form.birthTime': event.detail.value });
   },
 
-  onBirthPlaceInput(event) {
-    this.setData({ 'form.birthPlace': event.detail.value });
-  },
-
   composeBirthPlace(region) {
     return region.filter(Boolean).join(' ');
   },
@@ -103,6 +99,7 @@ Page({
     const reading = { result, baziPlate };
     app.globalData.currentBaziReading = reading;
     wx.setStorageSync('currentBaziReading', reading);
+
     const triggerText = result.flowTriggerSummary && result.flowTriggerSummary.summary
       ? `流运触发：${result.flowTriggerSummary.summary}`
       : '';
