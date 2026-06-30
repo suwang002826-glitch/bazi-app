@@ -11,7 +11,6 @@
     <view class="entry-row name-row">
       <text class="entry-label">姓名</text>
       <input class="entry-input" placeholder="请输入姓名（必填）" value="{{form.name}}" bindinput="onNameInput" />
-      <text class="row-symbol">人</text>
     </view>
 
     <view class="entry-row segmented-row">
