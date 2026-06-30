@@ -1,6 +1,4 @@
 <view class="page home-page">
-  <x-pattern />
-
   <view class="home-shell">
     <view class="brand-row">
       <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFill" />

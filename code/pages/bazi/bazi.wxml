@@ -1,6 +1,4 @@
 <view class="page bazi-page">
-  <x-pattern />
-
   <view class="bazi-hero">
     <view class="hero-cloud hero-cloud-left"></view>
     <view class="hero-cloud hero-cloud-right"></view>

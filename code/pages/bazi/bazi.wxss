@@ -1,10 +1,7 @@
 .bazi-page {
   min-height: 100vh;
   padding: 0 32rpx calc(40rpx + env(safe-area-inset-bottom));
-  background:
-    radial-gradient(circle at 92% 14%, rgba(217, 191, 113, .13), transparent 28%),
-    radial-gradient(circle at 10% 0%, rgba(159, 136, 191, .20), transparent 30%),
-    linear-gradient(180deg, #07080e 0%, #121532 56%, #07080e 100%);
+  background: linear-gradient(180deg, #07080e 0%, #101127 54%, #07080e 100%);
   color: #f2f0e4;
 }
 
@@ -15,22 +12,11 @@
   text-align: center;
 }
 
-.bazi-hero::after {
-  position: absolute;
-  right: -38rpx;
-  bottom: 10rpx;
-  width: 206rpx;
-  height: 206rpx;
-  border: 18rpx solid rgba(217, 191, 113, .055);
-  border-radius: 50%;
-  content: "";
-}
-
 .hero-title {
   position: relative;
   z-index: 1;
   color: #f2f0e4;
-  font-family: "Songti SC", "SimSun", "Kaiti SC", serif;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
   font-size: 64rpx;
   font-weight: 900;
   letter-spacing: 8rpx;
@@ -63,12 +49,7 @@
 }
 
 .hero-cloud {
-  position: absolute;
-  width: 124rpx;
-  height: 30rpx;
-  border-top: 3rpx solid rgba(217, 191, 113, .24);
-  border-bottom: 3rpx solid rgba(217, 191, 113, .10);
-  border-radius: 999rpx;
+  display: none;
 }
 
 .hero-cloud-left {
@@ -256,7 +237,7 @@
   background:
     linear-gradient(90deg, rgba(217, 191, 113, .95), rgba(242, 240, 228, .88));
   color: #222559;
-  font-family: "Songti SC", "SimSun", "Kaiti SC", serif;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
   font-size: 38rpx;
   font-weight: 900;
   letter-spacing: 4rpx;

@@ -75,9 +75,7 @@
   align-items: center;
   padding: 30rpx 24rpx;
   border-bottom: 1rpx solid rgba(255, 255, 255, .06);
-  background:
-    radial-gradient(circle at 88% 18%, rgba(33, 91, 103, .30), transparent 38%),
-    linear-gradient(135deg, #101617, #0b0f10);
+  background: linear-gradient(135deg, #101617, #0b0f10);
 }
 
 .profile-seal {
@@ -847,9 +845,7 @@
 
 .bazi-result-page .bazi-profile {
   border-bottom: 1rpx solid rgba(34, 37, 89, .08);
-  background:
-    radial-gradient(circle at 90% 18%, rgba(159, 136, 191, .20), transparent 38%),
-    linear-gradient(135deg, #f2f0e4, #e6e1d4);
+  background: linear-gradient(135deg, #f2f0e4, #e6e1d4);
 }
 
 .bazi-result-page .profile-seal {
@@ -894,7 +890,7 @@
 
 .overview-title {
   color: #222559;
-  font-family: "Songti SC", "SimSun", "Kaiti SC", serif;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
   font-size: 38rpx;
   font-weight: 900;
   line-height: 1.2;
@@ -1066,9 +1062,7 @@
 
 /* Dark premium direction after narrowing the product to bazi only. */
 .bazi-result-page {
-  background:
-    radial-gradient(circle at 88% 2%, rgba(159, 136, 191, .18), transparent 30%),
-    linear-gradient(180deg, #07080e 0%, #121532 46%, #07080e 100%);
+  background: linear-gradient(180deg, #07080e 0%, #101127 50%, #07080e 100%);
   color: #f2f0e4;
 }
 
@@ -1085,7 +1079,6 @@
   border-bottom: 1rpx solid rgba(217, 191, 113, .14);
   background:
     linear-gradient(145deg, rgba(242, 240, 228, .10), rgba(242, 240, 228, .03)),
-    radial-gradient(circle at 88% 18%, rgba(217, 191, 113, .12), transparent 34%),
     rgba(18, 21, 50, .94);
 }
 

@@ -2,7 +2,7 @@ page {
   min-height: 100%;
   background: #07080e;
   color: #f2f0e4;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif;
 }
 
 view,
@@ -12,7 +12,7 @@ picker,
 textarea,
 button {
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif;
 }
 
 .hero-title,
@@ -22,7 +22,7 @@ button {
 .qimen-seal,
 .focus-seal,
 .section-title {
-  font-family: "Songti SC", "SimSun", "Kaiti SC", "STKaiti", "KaiTi", serif;
+  font-family: "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif;
 }
 
 .page {
@@ -30,10 +30,7 @@ button {
   z-index: 1;
   min-height: 100vh;
   padding: 24rpx 22rpx calc(42rpx + env(safe-area-inset-bottom));
-  background:
-    radial-gradient(circle at 88% 2%, rgba(159, 136, 191, .18), transparent 30%),
-    radial-gradient(circle at 6% 14%, rgba(217, 191, 113, .10), transparent 34%),
-    linear-gradient(180deg, #07080e 0%, #121532 52%, #07080e 100%);
+  background: linear-gradient(180deg, #07080e 0%, #101127 54%, #07080e 100%);
 }
 
 .section {

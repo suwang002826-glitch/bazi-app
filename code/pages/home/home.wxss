@@ -1,10 +1,7 @@
 .home-page {
   min-height: 100vh;
   padding: 0 0 calc(44rpx + env(safe-area-inset-bottom));
-  background:
-    radial-gradient(circle at 16% 0%, rgba(159, 136, 191, .22), transparent 30%),
-    radial-gradient(circle at 88% 10%, rgba(217, 191, 113, .12), transparent 26%),
-    linear-gradient(180deg, #07080e 0%, #121532 48%, #07080e 100%);
+  background: linear-gradient(180deg, #07080e 0%, #101127 50%, #07080e 100%);
   color: #f2f0e4;
 }
 
@@ -36,7 +33,7 @@
 
 .brand-title {
   color: #f2f0e4;
-  font-family: "Songti SC", "SimSun", "Kaiti SC", serif;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
   font-size: 44rpx;
   font-weight: 900;
   letter-spacing: 1rpx;
@@ -69,27 +66,15 @@
   border-radius: 20rpx;
   background:
     linear-gradient(145deg, rgba(242, 240, 228, .08), rgba(242, 240, 228, .025)),
-    radial-gradient(circle at 86% 10%, rgba(217, 191, 113, .14), transparent 28%),
     rgba(18, 21, 50, .92);
   box-shadow:
     inset 0 1rpx 0 rgba(242, 240, 228, .10),
     0 24rpx 54rpx rgba(0, 0, 0, .30);
 }
 
-.calendar-card::after {
-  position: absolute;
-  right: -82rpx;
-  bottom: -92rpx;
-  width: 300rpx;
-  height: 300rpx;
-  border: 2rpx solid rgba(217, 191, 113, .06);
-  border-radius: 50%;
-  content: "";
-}
-
 .calendar-date {
   color: #f2f0e4;
-  font-family: "Songti SC", "SimSun", "Kaiti SC", serif;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
   font-size: 58rpx;
   font-weight: 900;
   line-height: 1.08;
