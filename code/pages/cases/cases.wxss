@@ -340,3 +340,77 @@
   background: rgba(7, 8, 14, .34);
   color: rgba(242, 240, 228, .62);
 }
+
+/* Kaishu clipping guard: avoid fixed line-height cropping on WeChat mobile. */
+.cases-page button,
+.cases-page .filter-chip,
+.cases-page .case-tag,
+.cases-page .case-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.25;
+}
+
+.filter-chip {
+  min-height: 64rpx;
+  height: auto;
+  padding: 0 18rpx;
+}
+
+.case-tag {
+  min-height: 52rpx;
+  height: auto;
+  line-height: 1.25;
+}
+
+.case-status {
+  min-height: 48rpx;
+  padding: 8rpx 18rpx 10rpx;
+}
+
+.verify-btn {
+  min-height: 64rpx;
+  height: auto;
+  padding: 0 18rpx;
+  line-height: 1.25;
+}
+
+.small-btn,
+.save-btn {
+  min-height: 66rpx;
+  height: auto;
+  padding: 0 18rpx;
+  line-height: 1.25;
+}
+
+.feedback-field {
+  margin-top: 18rpx;
+}
+
+.feedback-field text {
+  margin-bottom: 10rpx;
+  line-height: 1.35;
+}
+
+.feedback-field input {
+  min-height: 82rpx;
+  height: 82rpx;
+  padding: 0 22rpx;
+  line-height: 82rpx;
+}
+
+.feedback-field textarea {
+  min-height: 176rpx;
+  padding: 20rpx 22rpx;
+  line-height: 1.6;
+}
+
+.case-actions {
+  align-items: stretch;
+}
+
+.history-save-row {
+  align-items: center;
+  min-height: 88rpx;
+}
