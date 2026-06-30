@@ -1,23 +1,5 @@
 const { baziRuleConfig } = require('./ruleConfig');
-
-const verifiedLunarConversions = [
-  {
-    lunarYear: 2023,
-    lunarMonth: 8,
-    lunarDay: 15,
-    isLeapMonth: false,
-    solarDate: '2023-09-29',
-    source: 'BZI-005 acceptance sample'
-  },
-  {
-    lunarYear: 2023,
-    lunarMonth: 2,
-    lunarDay: 10,
-    isLeapMonth: true,
-    solarDate: '2023-03-31',
-    source: 'BZI-006 acceptance sample'
-  }
-];
+const { findLunarConversion } = require('./lunarDataPack');
 
 function normalizeCalendarType(value) {
   const raw = String(value || 'solar').trim().toLowerCase();
@@ -37,15 +19,6 @@ function toPositiveInteger(value, fieldName) {
 
 function isExplicitLeapMonth(value) {
   return value === true || value === 'true' || value === 1 || value === '1';
-}
-
-function findLunarConversion(lunarInput) {
-  return verifiedLunarConversions.find((item) => (
-    item.lunarYear === lunarInput.lunarYear
-    && item.lunarMonth === lunarInput.lunarMonth
-    && item.lunarDay === lunarInput.lunarDay
-    && item.isLeapMonth === lunarInput.isLeapMonth
-  ));
 }
 
 function resolveCalendar(input = {}) {
@@ -81,14 +54,18 @@ function resolveCalendar(input = {}) {
       ...lunarInput,
       solarDate: match.solarDate,
       source: match.source,
-      calendarDataVersion: baziRuleConfig.calendarDataVersion,
+      calendarDataVersion: match.calendarDataVersion,
+      dataPackId: match.dataPackId,
+      dataPackStatus: match.dataPackStatus,
+      completeLunarCalendar: match.completeLunarCalendar,
+      sourceNote: match.sourceNote,
       scope: baziRuleConfig.policies.lunarConversionScope
     },
     warnings: [
       {
-        code: 'LUNAR_SAMPLE_SCOPE_ONLY',
+        code: 'LUNAR_DATA_PACK_SEED_ONLY',
         level: 'warning',
-        message: 'Lunar conversion currently covers verified acceptance samples only.'
+        message: 'Lunar data-pack currently contains acceptance seed records only.'
       }
     ]
   };

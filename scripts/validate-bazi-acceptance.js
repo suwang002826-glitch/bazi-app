@@ -77,8 +77,10 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-09-29',
+    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.01',
+    expectedConversionSource: 'data-pack:lunar-conversions-2023',
     expected: ['癸卯', '辛酉', '庚寅', '丙戌'],
-    note: '第二轮要求真实农历输入先转换为公历，再校验四柱。'
+    note: '第三轮要求农历输入从 data-pack 转换，不再读取代码内置白名单。'
   },
   {
     id: 'BZI-006',
@@ -97,8 +99,10 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-03-31',
+    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.01',
+    expectedConversionSource: 'data-pack:lunar-conversions-2023',
     expected: ['癸卯', '乙卯', '戊子', '丁巳'],
-    note: '第二轮要求真实农历闰月输入先转换为公历，再校验四柱。'
+    note: '第三轮要求农历闰月输入从 data-pack 转换，不再读取代码内置白名单。'
   }
 ];
 
@@ -110,10 +114,19 @@ function run() {
   const results = acceptanceCases.map((item) => {
     const result = buildBaziProfile(item.input);
     const actual = extractPillars(result);
-    const actualSolarDate = result.calendarConversion && result.calendarConversion.solarDate;
+    const conversion = result.calendarConversion || {};
+    const actualSolarDate = conversion.solarDate;
+    const actualCalendarDataVersion = conversion.calendarDataVersion;
+    const actualConversionSource = conversion.source;
     const pillarsPassed = actual.join('|') === item.expected.join('|');
     const conversionPassed = item.expectedSolarDate ? actualSolarDate === item.expectedSolarDate : true;
-    const passed = pillarsPassed && conversionPassed;
+    const dataVersionPassed = item.expectedCalendarDataVersion
+      ? actualCalendarDataVersion === item.expectedCalendarDataVersion
+      : true;
+    const conversionSourcePassed = item.expectedConversionSource
+      ? actualConversionSource === item.expectedConversionSource
+      : true;
+    const passed = pillarsPassed && conversionPassed && dataVersionPassed && conversionSourcePassed;
     return {
       id: item.id,
       title: item.title,
@@ -121,6 +134,10 @@ function run() {
       actual,
       expectedSolarDate: item.expectedSolarDate || '',
       actualSolarDate: actualSolarDate || '',
+      expectedCalendarDataVersion: item.expectedCalendarDataVersion || '',
+      actualCalendarDataVersion: actualCalendarDataVersion || '',
+      expectedConversionSource: item.expectedConversionSource || '',
+      actualConversionSource: actualConversionSource || '',
       passed,
       note: item.note || ''
     };
@@ -134,6 +151,14 @@ function run() {
     if (item.expectedSolarDate) {
       console.log(`  expected solar date: ${item.expectedSolarDate}`);
       console.log(`  actual solar date:   ${item.actualSolarDate || '(missing)'}`);
+    }
+    if (item.expectedCalendarDataVersion) {
+      console.log(`  expected data pack:   ${item.expectedCalendarDataVersion}`);
+      console.log(`  actual data pack:     ${item.actualCalendarDataVersion || '(missing)'}`);
+    }
+    if (item.expectedConversionSource) {
+      console.log(`  expected source:      ${item.expectedConversionSource}`);
+      console.log(`  actual source:        ${item.actualConversionSource || '(missing)'}`);
     }
     if (item.note) console.log(`  note:     ${item.note}`);
   });

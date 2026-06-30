@@ -1,0 +1,15 @@
+{
+  "calendarDataVersion": "lunar-data-pack@2026.07.01",
+  "status": "acceptance-seed",
+  "packs": [
+    {
+      "dataPackId": "lunar-conversions-2023",
+      "path": "lunar-conversions-2023.json",
+      "years": [2023],
+      "completeLunarCalendar": false
+    }
+  ],
+  "warnings": [
+    "This is a data-pack foundation. It only contains verified acceptance seed records and is not a complete lunar calendar."
+  ]
+}
