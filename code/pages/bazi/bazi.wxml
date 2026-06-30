@@ -1,16 +1,19 @@
 <view class="page bazi-page">
   <x-pattern />
 
-  <view class="bazi-topbar">
-    <view class="top-icon">☰</view>
-    <view class="top-title">生成八字</view>
-    <view class="top-icon">□</view>
+  <view class="bazi-hero">
+    <view class="hero-cloud hero-cloud-left"></view>
+    <view class="hero-cloud hero-cloud-right"></view>
+    <view class="hero-title">八字排盘</view>
+    <view class="hero-subtitle">道家命理 · 专业排盘</view>
+    <view class="hero-stamp">玄问</view>
   </view>
 
   <view class="entry-card">
     <view class="entry-row name-row">
       <text class="entry-label">姓名</text>
-      <input class="entry-input" placeholder="请输入姓名" value="{{form.name}}" bindinput="onNameInput" />
+      <input class="entry-input" placeholder="请输入姓名（必填）" value="{{form.name}}" bindinput="onNameInput" />
+      <text class="row-symbol">人</text>
     </view>
 
     <view class="entry-row segmented-row">
@@ -55,6 +58,7 @@
       <picker mode="region" value="{{form.region}}" bindchange="onRegionChange">
         <view class="picker-value">{{form.regionText}}</view>
       </picker>
+      <text class="row-symbol">⌖</text>
     </view>
 
     <view class="entry-row picker-row">
@@ -73,6 +77,6 @@
       </view>
     </view>
 
-    <button class="start-button" bindtap="generateReading">开始排盘</button>
+    <button class="start-button" bindtap="generateReading">立即排盘</button>
   </view>
 </view>
