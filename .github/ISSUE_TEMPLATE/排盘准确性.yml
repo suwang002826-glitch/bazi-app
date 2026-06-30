@@ -1,0 +1,38 @@
+name: 排盘准确性
+description: 记录八字、六爻、奇门等结果不一致的问题
+title: "准确性："
+labels: ["准确性"]
+body:
+  - type: textarea
+    id: input
+    attributes:
+      label: 输入信息
+      description: 出生信息、起卦信息或起局信息
+      placeholder: |
+        性别：
+        出生地：
+        出生时间：
+        是否真太阳时：
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: 当前结果
+      description: 小程序现在显示什么？
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+      description: 你认为正确结果是什么？
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: 对照来源
+      description: 书籍、网站、老师、截图或其他来源
+    validations:
+      required: false
