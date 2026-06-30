@@ -85,6 +85,7 @@ Page({
     activeResultTab: '基本命盘',
     selectedLuckIndex: 0,
     selectedYearIndex: 0,
+    selectedYearOffset: 0,
     selectedMonthIndex: 0
   },
 
@@ -100,6 +101,7 @@ Page({
         professionalDetail,
         selectedLuckIndex: professionalDetail.selectedLuckIndex,
         selectedYearIndex: professionalDetail.selectedYearIndex,
+        selectedYearOffset: professionalDetail.selectedYearOffset || 0,
         selectedMonthIndex: professionalDetail.selectedMonthIndex
       });
     }
@@ -114,6 +116,7 @@ Page({
     const next = {
       luckIndex: this.data.selectedLuckIndex,
       yearIndex: this.data.selectedYearIndex,
+      yearOffset: this.data.selectedYearOffset,
       monthIndex: this.data.selectedMonthIndex,
       ...patch
     };
@@ -122,6 +125,7 @@ Page({
       professionalDetail,
       selectedLuckIndex: professionalDetail.selectedLuckIndex,
       selectedYearIndex: professionalDetail.selectedYearIndex,
+      selectedYearOffset: professionalDetail.selectedYearOffset || 0,
       selectedMonthIndex: professionalDetail.selectedMonthIndex
     });
   },
@@ -131,11 +135,59 @@ Page({
   },
 
   onFlowYearTap(event) {
-    this.refreshProfessionalDetail({ yearIndex: Number(event.currentTarget.dataset.index) });
+    this.refreshProfessionalDetail({
+      yearIndex: Number(event.currentTarget.dataset.index),
+      yearOffset: 0,
+      monthIndex: 0
+    });
+  },
+
+  onFlowYearItemTap(event) {
+    this.refreshProfessionalDetail({
+      yearIndex: Number(event.currentTarget.dataset.index),
+      yearOffset: Number(event.currentTarget.dataset.offset),
+      monthIndex: 0
+    });
   },
 
   onFlowMonthTap(event) {
     this.refreshProfessionalDetail({ monthIndex: Number(event.currentTarget.dataset.index) });
+  },
+
+  openGanzhiDiagram() {
+    const detail = this.data.professionalDetail;
+    if (!detail) return;
+    wx.showModal({
+      title: '智能干支图示',
+      content: [
+        `当前流年：${detail.selectedFlowYear ? `${detail.selectedFlowYear.year} ${detail.selectedFlowYear.value}` : '未选'}`,
+        `当前大运：${detail.activeLuck ? `${detail.activeLuck.yearRange} ${detail.activeLuck.value}` : '未选'}`,
+        `当前流月：${detail.selectedMonth ? `${detail.selectedMonth.monthTitle} ${detail.selectedMonth.value}` : '未选'}`,
+        '后续可扩展为干支生克、合冲刑害与五行气势图。'
+      ].join('\n'),
+      showCancel: false,
+      confirmText: '知道了'
+    });
+  },
+
+  openAiCommand() {
+    const result = this.data.result;
+    const detail = this.data.professionalDetail;
+    if (!result || !detail) return;
+    wx.showModal({
+      title: 'AI 指令',
+      content: [
+        '请基于以下命盘上下文做白话解读：',
+        `日主：${result.dayMaster.text}`,
+        `格局：${result.professional.pattern.name}`,
+        `旺衰：${result.professional.strength.status}`,
+        `喜用：${result.professional.usefulGod.usefulText}`,
+        `当前流年：${detail.selectedFlowYear ? `${detail.selectedFlowYear.year} ${detail.selectedFlowYear.value}` : '未选'}`,
+        `当前流月：${detail.selectedMonth ? `${detail.selectedMonth.monthTitle} ${detail.selectedMonth.value}` : '未选'}`
+      ].join('\n'),
+      showCancel: false,
+      confirmText: '知道了'
+    });
   },
 
   goBack() {

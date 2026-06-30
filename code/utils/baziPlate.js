@@ -82,6 +82,21 @@ const nayinMap = nayinPairs.reduce((map, [left, right, name]) => ({
   [right]: name
 }), {});
 
+const flowMonthTerms = [
+  { key: '立春', date: '02-04', branchIndex: 2 },
+  { key: '惊蛰', date: '03-05', branchIndex: 3 },
+  { key: '清明', date: '04-05', branchIndex: 4 },
+  { key: '立夏', date: '05-05', branchIndex: 5 },
+  { key: '芒种', date: '06-05', branchIndex: 6 },
+  { key: '小暑', date: '07-07', branchIndex: 7 },
+  { key: '立秋', date: '08-07', branchIndex: 8 },
+  { key: '白露', date: '09-07', branchIndex: 9 },
+  { key: '寒露', date: '10-08', branchIndex: 10 },
+  { key: '立冬', date: '11-07', branchIndex: 11 },
+  { key: '大雪', date: '12-07', branchIndex: 0 },
+  { key: '小寒', date: '01-05', branchIndex: 1 }
+];
+
 function getElementClass(element) {
   return elementClassMap[element] || 'earth';
 }
@@ -271,6 +286,38 @@ function getGanZhiOffset(value, offset) {
   return `${heavenlyStems[(stemIndex + offset + 10) % 10]}${earthlyBranches[(branchIndex + offset + 12) % 12]}`;
 }
 
+function findFlowYearSource(flowYears, year, fallbackIndex) {
+  const direct = flowYears.find((item) => Number(item.year) === Number(year));
+  if (direct) return direct;
+  const fallback = flowYears[fallbackIndex] || flowYears[0] || {};
+  return {
+    ...fallback,
+    year,
+    value: getGanZhiOffset(fallback.value, Number(year) - Number(fallback.year || year))
+  };
+}
+
+function createFlowMonthsForYear(result, flowYear) {
+  const yearStemIndex = heavenlyStems.indexOf(splitPillar(flowYear.value).stem);
+  const dayStem = result.dayMaster.stem;
+  return flowMonthTerms.map((term, index) => {
+    const stemIndex = ((yearStemIndex % 5) * 2 + 2 + index + 10) % 10;
+    const stem = heavenlyStems[stemIndex];
+    const branch = earthlyBranches[term.branchIndex];
+    const value = `${stem}${branch}`;
+    return {
+      label: `${term.key}月`,
+      monthTitle: term.key,
+      termTime: `${flowYear.year}-${term.date}`,
+      dateShort: term.date,
+      value,
+      tenGod: getTenGod(dayStem, stem),
+      influenceSummary: `${flowYear.year}年${term.key}后，以${value}月气观察事项推进。`,
+      interactionSummary: `${branch}支入月，与原局四支同参。`
+    };
+  });
+}
+
 function clampIndex(index, length, fallback) {
   const value = Number(index);
   if (Number.isInteger(value) && value >= 0 && value < length) return value;
@@ -355,9 +402,14 @@ function createProfessionalDetail(result, options = {}) {
   const flowMonthsSource = result.flowMonths || [];
   const selectedLuckIndex = clampIndex(options.luckIndex, luckCyclesSource.length, getActiveLuckIndex(result));
   const selectedYearIndex = clampIndex(options.yearIndex, flowYearsSource.length, 0);
-  const selectedMonthIndex = clampIndex(options.monthIndex, flowMonthsSource.length, 0);
+  const selectedYearOffset = clampIndex(options.yearOffset, 10, 0);
   const activeLuck = luckCyclesSource[selectedLuckIndex] || null;
-  const flowYear = flowYearsSource[selectedYearIndex] || null;
+  const baseFlowYear = flowYearsSource[selectedYearIndex] || null;
+  const exactFlowYear = baseFlowYear ? Number(baseFlowYear.year) + selectedYearOffset : 0;
+  const flowYear = baseFlowYear ? findFlowYearSource(flowYearsSource, exactFlowYear, selectedYearIndex) : null;
+  const selectedFlowYearValue = flowYear ? flowYear.value : '';
+  const flowMonthsSourceForYear = flowYear ? createFlowMonthsForYear(result, flowYear) : flowMonthsSource;
+  const selectedMonthIndex = clampIndex(options.monthIndex, flowMonthsSourceForYear.length, 0);
   const extrasByLabel = (result.detailProfile.pillarExtras || []).reduce((map, item) => {
     map[item.label] = item;
     return map;
@@ -401,10 +453,18 @@ function createProfessionalDetail(result, options = {}) {
   const flowYears = flowYearsSource.map((year, index) => ({
     ...year,
     endYear: year.year + 10,
-    miniPillars: Array.from({ length: 10 }, (_, offset) => getGanZhiOffset(year.value, offset)),
+    miniPillars: Array.from({ length: 10 }, (_, offset) => {
+      const itemYear = year.year + offset;
+      const value = getGanZhiOffset(year.value, offset);
+      return {
+        year: itemYear,
+        value,
+        active: index === selectedYearIndex && offset === selectedYearOffset
+      };
+    }),
     active: index === selectedYearIndex
   }));
-  const flowMonths = flowMonthsSource.map((month, index) => ({
+  const flowMonths = flowMonthsSourceForYear.map((month, index) => ({
     ...month,
     monthTitle: String(month.label || '').replace('月', ''),
     dateShort: String(month.termTime || '').slice(5, 10),
@@ -434,6 +494,9 @@ function createProfessionalDetail(result, options = {}) {
     tableWidth: columns.length * 122 + 112,
     selectedLuckIndex,
     selectedYearIndex,
+    selectedYearOffset,
+    selectedFlowYear: flowYear,
+    selectedFlowYearValue,
     selectedMonthIndex,
     activeLuck,
     luckCycles,

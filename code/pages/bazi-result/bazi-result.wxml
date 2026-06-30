@@ -206,7 +206,19 @@
               data-index="{{index}}"
             >
               <view class="flow-year">{{item.year}}</view>
-              <view class="flow-year-line" wx:for="{{item.miniPillars}}" wx:for-item="line" wx:key="*this">{{line}}</view>
+              <view
+                class="flow-year-line {{line.active ? 'active' : ''}}"
+                wx:for="{{item.miniPillars}}"
+                wx:for-item="line"
+                wx:for-index="lineIndex"
+                wx:key="year"
+                catchtap="onFlowYearItemTap"
+                data-index="{{index}}"
+                data-offset="{{lineIndex}}"
+              >
+                <text class="flow-year-line-year">{{line.year}}</text>
+                <text class="flow-year-line-value">{{line.value}}</text>
+              </view>
               <view class="flow-year-end">{{item.endYear}}</view>
             </view>
           </view>
@@ -247,8 +259,8 @@
       </view>
 
       <view class="action-row">
-        <button class="ghost-action">智能干支图示 ›</button>
-        <button class="ghost-action small">AI指令 ›</button>
+        <button class="ghost-action" bindtap="openGanzhiDiagram">智能干支图示 ›</button>
+        <button class="ghost-action small" bindtap="openAiCommand">AI指令 ›</button>
       </view>
 
       <view class="relation-panel">
