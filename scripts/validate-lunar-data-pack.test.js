@@ -125,4 +125,48 @@ assertHasError(invalidResult.errors, 'pack-b.records[0]: duplicate lunar date ac
 assertHasError(invalidResult.errors, 'pack-b.records[0]: duplicate caseId across packs BZI-DUP');
 assertHasError(invalidResult.errors, 'pack-b.records[0]: lunarYear 2023 outside coverage years 2025');
 
+const invalidTypeRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-c',
+        path: 'pack-c.json',
+        years: ['2023'],
+        completeLunarCalendar: false
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-c.json': {
+      dataPackId: 'pack-c',
+      calendarDataVersion: 'lunar-data-pack@test',
+      source: 'test:pack-c',
+      status: 'test-fixture',
+      coverage: {
+        years: ['2023'],
+        scope: 'test'
+      },
+      records: [
+        {
+          caseId: 'BZI-TYPE',
+          lunarYear: 2023,
+          lunarMonth: 1,
+          lunarDay: 1,
+          isLeapMonth: false,
+          solarDate: '2023-01-22',
+          sourceNote: 'invalid year type fixture'
+        }
+      ]
+    }
+  }
+);
+
+const invalidTypeResult = validateLunarDataPackRepository({ rootDir: invalidTypeRoot });
+assertHasError(invalidTypeResult.errors, 'manifest.packs[0]: years must contain only integers');
+assertHasError(invalidTypeResult.errors, 'pack-c: coverage.years: years must contain only integers');
+assertHasError(invalidTypeResult.errors, 'pack-c: coverage.completeLunarCalendar must be boolean');
+
 console.log('PASS lunar data-pack schema validation');
