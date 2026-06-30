@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const REQUIRED_PACK_FIELDS = [
   'dataPackId',
@@ -7,6 +8,11 @@ const REQUIRED_PACK_FIELDS = [
   'source',
   'status',
   'coverage',
+  'authoritySource',
+  'sourceLedger',
+  'generatedAt',
+  'generatedBy',
+  'recordsChecksum',
   'records'
 ];
 
@@ -33,6 +39,32 @@ function isIsoDate(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return false;
   const date = new Date(`${value}T00:00:00Z`);
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function isIsoDateTime(value) {
+  const text = String(value || '');
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$/.test(text)) {
+    return false;
+  }
+  return !Number.isNaN(new Date(text).getTime());
+}
+
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === 'object') {
+    return Object.keys(value).sort().reduce((acc, key) => {
+      acc[key] = canonicalize(value[key]);
+      return acc;
+    }, {});
+  }
+  return value;
+}
+
+function checksumRecords(records) {
+  return crypto
+    .createHash('sha256')
+    .update(JSON.stringify(canonicalize(records)))
+    .digest('hex');
 }
 
 function recordKey(record) {
@@ -145,6 +177,56 @@ function validateRecord(record, pack, index, seen, repositoryState, errors) {
   }
 }
 
+function validateSourceLedger(pack, errors) {
+  if (!pack.authoritySource) {
+    errors.push(`${pack.dataPackId}: missing authoritySource`);
+  }
+
+  if (!Array.isArray(pack.sourceLedger) || pack.sourceLedger.length === 0) {
+    errors.push(`${pack.dataPackId}: sourceLedger must be a non-empty array`);
+  } else {
+    pack.sourceLedger.forEach((source, index) => {
+      ['sourceName', 'sourceVersion', 'retrievedAt', 'note'].forEach((field) => {
+        if (!source[field]) {
+          errors.push(`${pack.dataPackId}.sourceLedger[${index}]: missing ${field}`);
+        }
+      });
+
+      if (source.retrievedAt && !isIsoDateTime(source.retrievedAt)) {
+        errors.push(`${pack.dataPackId}.sourceLedger[${index}]: retrievedAt must be ISO datetime`);
+      }
+    });
+  }
+
+  if (!pack.generatedAt || !isIsoDateTime(pack.generatedAt)) {
+    errors.push(`${pack.dataPackId}: generatedAt must be ISO datetime`);
+  }
+
+  if (!pack.generatedBy) {
+    errors.push(`${pack.dataPackId}: missing generatedBy`);
+  }
+}
+
+function validateRecordsChecksum(pack, errors) {
+  if (!pack.recordsChecksum || typeof pack.recordsChecksum !== 'object') {
+    errors.push(`${pack.dataPackId}: recordsChecksum must be an object`);
+    return;
+  }
+
+  if (pack.recordsChecksum.algorithm !== 'sha256') {
+    errors.push(`${pack.dataPackId}: recordsChecksum.algorithm must be sha256`);
+  }
+
+  if (!/^[0-9a-f]{64}$/.test(String(pack.recordsChecksum.value || ''))) {
+    errors.push(`${pack.dataPackId}: recordsChecksum.value must be a sha256 hex digest`);
+    return;
+  }
+
+  if (Array.isArray(pack.records) && pack.recordsChecksum.value !== checksumRecords(pack.records)) {
+    errors.push(`${pack.dataPackId}: recordsChecksum does not match records`);
+  }
+}
+
 function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
   REQUIRED_PACK_FIELDS.forEach((field) => {
     if (pack[field] === undefined || pack[field] === null || pack[field] === '') {
@@ -182,6 +264,9 @@ function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
     errors.push(`${pack.dataPackId}: records must be an array`);
     return 0;
   }
+
+  validateSourceLedger(pack, errors);
+  validateRecordsChecksum(pack, errors);
 
   const seen = new Set();
   pack.records.forEach((record, index) => validateRecord(record, pack, index, seen, repositoryState, errors));
