@@ -131,6 +131,27 @@ const unsupportedLunarCases = [
   }
 ];
 
+const implicitLunarCases = [
+  {
+    id: 'BZI-IMPLICIT-001',
+    title: '带农历字段但未声明 calendarType 时仍走 data-pack',
+    input: {
+      name: 'BZI-IMPLICIT-001',
+      gender: '女',
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 15,
+      isLeapMonth: false,
+      birthTime: '20:00',
+      birthPlace: '北京',
+      longitude: '116.40',
+      useTrueSolarTime: false
+    },
+    expectedSolarDate: '2023-09-29',
+    expectedConversionSource: 'data-pack:lunar-conversions-2023'
+  }
+];
+
 function extractPillars(result) {
   return result.pillars.map((pillar) => pillar.value);
 }
@@ -175,9 +196,21 @@ function assertUnsupportedLunarInputs() {
   });
 }
 
+function assertImplicitLunarInputs() {
+  implicitLunarCases.forEach((item) => {
+    const result = buildBaziProfile(item.input);
+    const conversion = result.calendarConversion || {};
+    assert.strictEqual(conversion.calendarType, 'lunar');
+    assert.strictEqual(conversion.solarDate, item.expectedSolarDate);
+    assert.strictEqual(conversion.source, item.expectedConversionSource);
+    console.log(`PASS ${item.id} ${item.title}`);
+  });
+}
+
 function run() {
   assertDataPackRegistry();
   assertUnsupportedLunarInputs();
+  assertImplicitLunarInputs();
 
   const results = acceptanceCases.map((item) => {
     const result = buildBaziProfile(item.input);
