@@ -1,253 +1,342 @@
 .home-page {
   min-height: 100vh;
   padding: 0 0 calc(44rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, #07080e 0%, #101127 50%, #07080e 100%);
+  background: linear-gradient(180deg, #07080e 0%, #101127 46%, #07080e 100%);
   color: #f2f0e4;
 }
 
 .home-shell {
-  position: relative;
-  z-index: 1;
-  padding: 30rpx 24rpx 0;
+  padding: 28rpx 22rpx 0;
 }
 
-.brand-row {
-  display: grid;
-  grid-template-columns: 84rpx 1fr 82rpx;
+.calendar-top {
+  display: flex;
   align-items: center;
-  gap: 16rpx;
-  margin-bottom: 24rpx;
-  padding: 18rpx;
-  border: 1rpx solid rgba(217, 191, 113, .16);
-  border-radius: 16rpx;
-  background:
-    linear-gradient(145deg, rgba(242, 240, 228, .08), rgba(242, 240, 228, .025)),
-    rgba(7, 8, 14, .48);
-  box-shadow:
-    inset 0 1rpx 0 rgba(242, 240, 228, .08),
-    0 8rpx 16rpx rgba(0, 0, 0, .20);
+  justify-content: space-between;
+  gap: 18rpx;
+  margin-bottom: 22rpx;
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 14rpx;
 }
 
 .brand-logo-shell {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 78rpx;
-  height: 78rpx;
-  border: 1rpx solid rgba(217, 191, 113, .30);
+  width: 70rpx;
+  height: 70rpx;
+  border: 1rpx solid rgba(217, 191, 113, .32);
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 42%, rgba(217, 191, 113, .18), rgba(18, 21, 50, .70));
-  box-shadow:
-    inset 0 0 0 4rpx rgba(7, 8, 14, .58),
-    0 4rpx 10rpx rgba(0, 0, 0, .22);
+  background: rgba(18, 21, 50, .78);
+  box-shadow: inset 0 0 0 4rpx rgba(7, 8, 14, .60);
 }
 
 .brand-logo {
-  width: 70rpx;
-  height: 70rpx;
+  width: 62rpx;
+  height: 62rpx;
   border-radius: 50%;
-}
-
-.brand-copy {
-  min-width: 0;
 }
 
 .brand-title {
   color: #f2f0e4;
-  font-family: "KaiTi", "STKaiti", "Kaiti SC", "楷体", "SimKai", serif;
-  font-size: 44rpx;
+  font-size: 40rpx;
   font-weight: 900;
-  letter-spacing: 1rpx;
-  line-height: 1.12;
+  line-height: 1.1;
 }
 
 .brand-subtitle {
   margin-top: 6rpx;
-  color: rgba(242, 240, 228, .58);
+  color: rgba(217, 191, 113, .72);
   font-size: 22rpx;
 }
 
-.version-badge {
-  height: 46rpx;
-  border: 1rpx solid rgba(217, 191, 113, .26);
-  border-radius: 999rpx;
-  background: rgba(217, 191, 113, .10);
-  color: #d9bf71;
-  font-size: 22rpx;
-  font-weight: 800;
-  line-height: 44rpx;
-  text-align: center;
-}
-
-.calendar-card {
-  position: relative;
+.date-selector {
+  flex: 0 0 auto;
+  max-width: 320rpx;
   overflow: hidden;
-  padding: 40rpx 34rpx 32rpx;
-  border: 1rpx solid rgba(217, 191, 113, .18);
-  border-radius: 16rpx;
+  padding: 12rpx 18rpx;
+  border: 1rpx solid rgba(217, 191, 113, .16);
+  border-radius: 999rpx;
+  background: rgba(7, 8, 14, .40);
+  color: rgba(242, 240, 228, .78);
+  font-size: 24rpx;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.month-card,
+.analysis-card {
+  overflow: hidden;
+  border: 1rpx solid rgba(217, 191, 113, .16);
+  border-radius: 18rpx;
   background:
-    linear-gradient(145deg, rgba(242, 240, 228, .08), rgba(242, 240, 228, .025)),
+    linear-gradient(145deg, rgba(242, 240, 228, .085), rgba(242, 240, 228, .025)),
     rgba(18, 21, 50, .92);
   box-shadow:
-    inset 0 1rpx 0 rgba(242, 240, 228, .10),
+    inset 0 1rpx 0 rgba(242, 240, 228, .08),
     0 8rpx 18rpx rgba(0, 0, 0, .24);
 }
 
-.calendar-date {
-  color: #f2f0e4;
-  font-family: "KaiTi", "STKaiti", "Kaiti SC", "楷体", "SimKai", serif;
+.month-head {
+  display: grid;
+  grid-template-columns: 72rpx 1fr 72rpx;
+  align-items: center;
+  padding: 30rpx 18rpx 24rpx;
+  border-bottom: 1rpx solid rgba(242, 240, 228, .08);
+}
+
+.nav-arrow {
+  color: rgba(242, 240, 228, .64);
   font-size: 58rpx;
   font-weight: 900;
-  line-height: 1.08;
+  line-height: 1;
+  text-align: center;
 }
 
-.calendar-sub {
+.month-center {
+  min-width: 0;
+  text-align: center;
+}
+
+.month-title {
+  color: #d9bf71;
+  font-size: 48rpx;
+  font-weight: 900;
+  line-height: 1.16;
+}
+
+.month-sub {
   margin-top: 10rpx;
-  color: rgba(242, 240, 228, .62);
-  font-size: 27rpx;
-  font-weight: 700;
+  overflow: hidden;
+  color: rgba(242, 240, 228, .72);
+  font-size: 24rpx;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.ganzhi-panel {
-  margin-top: 34rpx;
-  padding: 22rpx;
-  border: 1rpx solid rgba(242, 240, 228, .08);
-  border-radius: 12rpx;
-  background: rgba(7, 8, 14, .38);
+.weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1rpx solid rgba(242, 240, 228, .08);
 }
 
-.ganzhi-title,
-.daily-label,
-.note-label {
-  color: rgba(242, 240, 228, .50);
-  font-size: 23rpx;
+.weekday-row view {
+  height: 58rpx;
+  color: rgba(242, 240, 228, .60);
+  font-size: 25rpx;
+  font-weight: 900;
+  line-height: 58rpx;
+  text-align: center;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.day-cell {
+  position: relative;
+  min-height: 116rpx;
+  padding: 12rpx 4rpx 10rpx;
+  border-right: 1rpx solid rgba(242, 240, 228, .055);
+  border-bottom: 1rpx solid rgba(242, 240, 228, .055);
+  text-align: center;
+}
+
+.day-cell:nth-child(7n) {
+  border-right: 0;
+}
+
+.solar-day {
+  color: #f2f0e4;
+  font-size: 34rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.lunar-day,
+.day-ganzhi {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lunar-day {
+  margin-top: 8rpx;
+  color: rgba(242, 240, 228, .56);
+  font-size: 22rpx;
   font-weight: 800;
 }
 
-.ganzhi-value {
-  margin-top: 10rpx;
-  color: #d9bf71;
-  font-size: 34rpx;
-  font-weight: 900;
-  line-height: 1.35;
+.day-ganzhi {
+  margin-top: 5rpx;
+  color: rgba(242, 240, 228, .38);
+  font-size: 20rpx;
+  font-weight: 800;
 }
 
-.daily-grid {
+.festival {
+  color: #d9bf71;
+}
+
+.muted-day .solar-day,
+.muted-day .lunar-day,
+.muted-day .day-ganzhi {
+  color: rgba(242, 240, 228, .22);
+}
+
+.selected-day {
+  background: rgba(217, 191, 113, .18);
+  box-shadow: inset 0 0 0 2rpx rgba(217, 191, 113, .52);
+}
+
+.selected-day .solar-day,
+.selected-day .lunar-day,
+.selected-day .day-ganzhi {
+  color: #d9bf71;
+}
+
+.today-day::after {
+  position: absolute;
+  right: 8rpx;
+  top: 8rpx;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #d9bf71;
+  content: "";
+}
+
+.analysis-card {
+  margin-top: 22rpx;
+  padding: 24rpx;
+}
+
+.analysis-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+  margin-bottom: 18rpx;
+}
+
+.analysis-title {
+  color: #d9bf71;
+  font-size: 38rpx;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.analysis-date,
+.analysis-lunar,
+.analysis-advice {
+  color: rgba(242, 240, 228, .66);
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.analysis-pill {
+  flex: 0 0 auto;
+  padding: 9rpx 18rpx;
+  border: 1rpx solid rgba(217, 191, 113, .24);
+  border-radius: 999rpx;
+  background: rgba(217, 191, 113, .10);
+  color: #d9bf71;
+  font-size: 23rpx;
+  font-weight: 900;
+}
+
+.analysis-lunar {
+  padding: 18rpx 0;
+  border-top: 1rpx solid rgba(242, 240, 228, .08);
+  border-bottom: 1rpx solid rgba(242, 240, 228, .08);
+}
+
+.analysis-meta {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 12rpx;
   margin-top: 18rpx;
 }
 
-.daily-grid view {
-  padding: 18rpx 12rpx;
-  border: 1rpx solid rgba(242, 240, 228, .07);
-  border-radius: 10rpx;
-  background: rgba(242, 240, 228, .06);
-  text-align: center;
+.analysis-meta view {
+  min-height: 82rpx;
+  padding: 14rpx;
+  border: 1rpx solid rgba(217, 191, 113, .10);
+  border-radius: 12rpx;
+  background: rgba(7, 8, 14, .30);
 }
 
-.daily-value {
+.analysis-meta text {
   display: block;
+}
+
+.analysis-meta text:first-child {
+  color: rgba(242, 240, 228, .44);
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.analysis-meta text:last-child {
   margin-top: 8rpx;
   color: #f2f0e4;
-  font-size: 26rpx;
+  font-size: 27rpx;
   font-weight: 900;
 }
 
-.almanac-row {
+.almanac-block {
+  display: grid;
+  grid-template-columns: 58rpx 1fr;
+  gap: 16rpx;
+  align-items: flex-start;
+  margin-top: 18rpx;
+}
+
+.almanac-badge {
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 50%;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 54rpx;
+  text-align: center;
+}
+
+.good-block .almanac-badge {
+  background: rgba(217, 191, 113, .20);
+  color: #d9bf71;
+}
+
+.avoid-block .almanac-badge {
+  background: rgba(203, 91, 79, .18);
+  color: #e9a096;
+}
+
+.almanac-tags {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 10rpx;
-  margin-top: 20rpx;
-  color: rgba(242, 240, 228, .82);
+}
+
+.almanac-tags text {
+  padding: 9rpx 16rpx;
+  border: 1rpx solid rgba(242, 240, 228, .08);
+  border-radius: 999rpx;
+  background: rgba(242, 240, 228, .055);
+  color: rgba(242, 240, 228, .78);
   font-size: 24rpx;
   font-weight: 800;
 }
 
-.almanac-row text:not(.almanac-label) {
-  padding: 7rpx 14rpx;
-  border: 1rpx solid rgba(242, 240, 228, .07);
-  border-radius: 999rpx;
-  background: rgba(70, 59, 140, .18);
-}
-
-.almanac-row.avoid text:not(.almanac-label) {
-  background: rgba(159, 136, 191, .12);
-}
-
-.almanac-label {
-  color: #d9bf71;
-  font-weight: 900;
-}
-
-.note-list {
-  display: grid;
-  gap: 14rpx;
-  margin-top: 22rpx;
-}
-
-.note-item {
-  padding: 22rpx 24rpx;
-  border: 1rpx solid rgba(217, 191, 113, .12);
-  border-radius: 12rpx;
-  background: rgba(242, 240, 228, .06);
-}
-
-.note-value {
-  margin-top: 8rpx;
-  color: #f2f0e4;
-  font-size: 27rpx;
-  font-weight: 800;
-  line-height: 1.48;
-}
-
-/* Premium header/material pass. */
-.brand-title,
-.calendar-date {
-  font-family: "KaiTi", "STKaiti", "Kaiti SC", "SimKai", serif;
-}
-
-.brand-title {
-  font-size: 42rpx;
-  letter-spacing: 2rpx;
-}
-
-.brand-subtitle {
-  margin-top: 8rpx;
-  color: rgba(217, 191, 113, .70);
-  letter-spacing: 1rpx;
-}
-
-.version-badge {
-  height: 44rpx;
-  border-color: rgba(217, 191, 113, .30);
-  background: rgba(217, 191, 113, .12);
-  line-height: 42rpx;
-}
-
-.calendar-card {
-  padding: 38rpx 32rpx 30rpx;
-  border-color: rgba(217, 191, 113, .20);
-  background:
-    linear-gradient(145deg, rgba(242, 240, 228, .095), rgba(242, 240, 228, .026)),
-    rgba(18, 21, 50, .92);
-}
-
-.ganzhi-panel {
-  border-color: rgba(217, 191, 113, .12);
-  background: rgba(7, 8, 14, .46);
-}
-
-.daily-grid view {
-  border-color: rgba(217, 191, 113, .10);
-  background: rgba(7, 8, 14, .28);
-}
-
-.note-item {
-  border-color: rgba(217, 191, 113, .14);
-  background:
-    linear-gradient(145deg, rgba(242, 240, 228, .07), rgba(242, 240, 228, .025)),
-    rgba(18, 21, 50, .66);
+.analysis-advice {
+  margin-top: 20rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid rgba(242, 240, 228, .08);
 }

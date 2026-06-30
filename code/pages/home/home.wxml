@@ -1,56 +1,90 @@
 <view class="page home-page">
   <view class="home-shell">
-    <view class="brand-row">
-      <view class="brand-logo-shell">
-        <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFit" />
+    <view class="calendar-top">
+      <view class="brand-mark">
+        <view class="brand-logo-shell">
+          <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFit" />
+        </view>
+        <view>
+          <view class="brand-title">万年历</view>
+          <view class="brand-subtitle">玄门命理 · 日课参考</view>
+        </view>
       </view>
-      <view class="brand-copy">
-        <view class="brand-title">玄门命理</view>
-        <view class="brand-subtitle">万年历 · 道历 · 八字排盘</view>
-      </view>
-      <view class="version-badge">内测</view>
+      <view class="date-selector">{{nowText}}⌄</view>
     </view>
 
-    <view class="calendar-card">
-      <view class="calendar-date">{{today.solar}}</view>
-      <view class="calendar-sub">{{today.weekday}} · {{today.lunar}}</view>
-
-      <view class="ganzhi-panel">
-        <view class="ganzhi-title">今日干支</view>
-        <view class="ganzhi-value">{{today.ganzhi}}</view>
+    <view class="month-card">
+      <view class="month-head">
+        <view class="nav-arrow">‹</view>
+        <view class="month-center">
+          <view class="month-title">{{monthTitle}}</view>
+          <view class="month-sub">{{selected.ganzhi}}</view>
+        </view>
+        <view class="nav-arrow">›</view>
       </view>
 
-      <view class="daily-grid">
-        <view>
-          <text class="daily-label">道历</text>
-          <text class="daily-value">{{today.daoDate}}</text>
-        </view>
-        <view>
-          <text class="daily-label">值日</text>
-          <text class="daily-value">{{today.duty}}</text>
-        </view>
-        <view>
-          <text class="daily-label">冲煞</text>
-          <text class="daily-value">{{today.clash}}</text>
-        </view>
+      <view class="weekday-row">
+        <view wx:for="{{weekLabels}}" wx:key="*this">{{item}}</view>
       </view>
 
-      <view class="almanac-row">
-        <text class="almanac-label">宜</text>
-        <text wx:for="{{today.suit}}" wx:key="*this">{{item}}</text>
-      </view>
-      <view class="almanac-row avoid">
-        <text class="almanac-label">忌</text>
-        <text wx:for="{{today.avoid}}" wx:key="*this">{{item}}</text>
+      <view class="calendar-grid">
+        <view
+          class="day-cell {{item.muted ? 'muted-day' : ''}} {{item.selected ? 'selected-day' : ''}} {{item.today ? 'today-day' : ''}}"
+          wx:for="{{calendarCells}}"
+          wx:key="id"
+        >
+          <view class="solar-day">{{item.day}}</view>
+          <view class="lunar-day {{item.festival ? 'festival' : ''}}">{{item.lunar}}</view>
+          <view class="day-ganzhi">{{item.ganzhi}}</view>
+        </view>
       </view>
     </view>
 
-    <view class="note-list">
-      <view class="note-item" wx:for="{{calendarNotes}}" wx:key="label">
-        <view class="note-label">{{item.label}}</view>
-        <view class="note-value">{{item.value}}</view>
+    <view class="analysis-card">
+      <view class="analysis-head">
+        <view>
+          <view class="analysis-title">智能分析</view>
+          <view class="analysis-date">{{analysis.dateLine}}</view>
+        </view>
+        <view class="analysis-pill">日课</view>
       </view>
-    </view>
 
+      <view class="analysis-lunar">{{analysis.lunarLine}}</view>
+
+      <view class="analysis-meta">
+        <view>
+          <text>建除</text>
+          <text>{{analysis.duty}}</text>
+        </view>
+        <view>
+          <text>值神</text>
+          <text>{{analysis.god}}</text>
+        </view>
+        <view>
+          <text>冲煞</text>
+          <text>{{analysis.clash}}</text>
+        </view>
+        <view>
+          <text>时辰</text>
+          <text>{{analysis.hourText}}</text>
+        </view>
+      </view>
+
+      <view class="almanac-block good-block">
+        <view class="almanac-badge">宜</view>
+        <view class="almanac-tags">
+          <text wx:for="{{analysis.good}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="almanac-block avoid-block">
+        <view class="almanac-badge">忌</view>
+        <view class="almanac-tags">
+          <text wx:for="{{analysis.avoid}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="analysis-advice">{{analysis.advice}}</view>
+    </view>
   </view>
 </view>
