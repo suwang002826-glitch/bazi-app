@@ -6,28 +6,59 @@
       <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFill" />
       <view class="brand-copy">
         <view class="brand-title">玄门命理</view>
-        <view class="brand-subtitle">八字 · 六爻 · 奇门</view>
+        <view class="brand-subtitle">万年历 · 道历 · 八字排盘</view>
       </view>
       <view class="version-badge">内测</view>
     </view>
 
-    <view class="product-list">
-      <view class="product-card {{item.className}}" wx:for="{{primaryTools}}" wx:key="title" bindtap="goTo" data-url="{{item.url}}" data-tab="{{item.tab}}">
-        <image class="product-bg" src="{{item.image}}" mode="aspectFill" />
-        <view class="product-shade"></view>
-        <view class="product-content">
-          <view class="product-symbol">{{item.icon}}</view>
-          <view class="product-title">{{item.title}}</view>
-          <view class="product-desc">{{item.desc}}</view>
-          <view class="product-tags">
-            <text wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
-          </view>
+    <view class="calendar-card">
+      <view class="calendar-mark">道历</view>
+      <view class="calendar-date">{{today.solar}}</view>
+      <view class="calendar-sub">{{today.weekday}} · {{today.lunar}}</view>
+
+      <view class="ganzhi-panel">
+        <view class="ganzhi-title">今日干支</view>
+        <view class="ganzhi-value">{{today.ganzhi}}</view>
+      </view>
+
+      <view class="daily-grid">
+        <view>
+          <text class="daily-label">道历</text>
+          <text class="daily-value">{{today.daoDate}}</text>
         </view>
-        <view class="product-action">
-          <text>{{item.action}}</text>
-          <text class="arrow">›</text>
+        <view>
+          <text class="daily-label">值日</text>
+          <text class="daily-value">{{today.duty}}</text>
+        </view>
+        <view>
+          <text class="daily-label">冲煞</text>
+          <text class="daily-value">{{today.clash}}</text>
         </view>
       </view>
+
+      <view class="almanac-row">
+        <text class="almanac-label">宜</text>
+        <text wx:for="{{today.suit}}" wx:key="*this">{{item}}</text>
+      </view>
+      <view class="almanac-row avoid">
+        <text class="almanac-label">忌</text>
+        <text wx:for="{{today.avoid}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="note-list">
+      <view class="note-item" wx:for="{{calendarNotes}}" wx:key="label">
+        <view class="note-label">{{item.label}}</view>
+        <view class="note-value">{{item.value}}</view>
+      </view>
+    </view>
+
+    <view class="bazi-entry" bindtap="goToBazi">
+      <view>
+        <view class="entry-title">开始八字排盘</view>
+        <view class="entry-copy">录入出生时间地点，查看四柱、喜用与运势层级。</view>
+      </view>
+      <view class="entry-arrow">›</view>
     </view>
   </view>
 </view>

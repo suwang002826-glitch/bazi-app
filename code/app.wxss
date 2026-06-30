@@ -1,7 +1,7 @@
 page {
   min-height: 100%;
-  background: #071016;
-  color: #061d1f;
+  background: #f2f0e4;
+  color: #222559;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
@@ -22,7 +22,7 @@ button {
 .qimen-seal,
 .focus-seal,
 .section-title {
-  font-family: "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", "SimSun", serif;
+  font-family: "Songti SC", "SimSun", "Kaiti SC", "STKaiti", "KaiTi", serif;
 }
 
 .page {
@@ -31,9 +31,9 @@ button {
   min-height: 100vh;
   padding: 24rpx 22rpx calc(42rpx + env(safe-area-inset-bottom));
   background:
-    radial-gradient(circle at 88% 2%, rgba(30, 105, 132, .16), transparent 30%),
-    radial-gradient(circle at 6% 14%, rgba(232, 201, 138, .08), transparent 34%),
-    linear-gradient(180deg, #071016 0%, #0a1d28 42%, #edf3f4 42%, #e9eff1 100%);
+    radial-gradient(circle at 88% 2%, rgba(159, 136, 191, .18), transparent 30%),
+    radial-gradient(circle at 6% 14%, rgba(217, 191, 113, .14), transparent 34%),
+    linear-gradient(180deg, #222559 0%, #463b8c 42%, #f2f0e4 42%, #ece8dc 100%);
 }
 
 .section {
@@ -41,15 +41,15 @@ button {
   z-index: 1;
   margin-bottom: 22rpx;
   padding: 24rpx;
-  border: 1rpx solid rgba(27, 107, 133, .16);
+  border: 1rpx solid rgba(70, 59, 140, .14);
   border-radius: 12rpx;
-  background: rgba(249, 252, 252, .94);
-  box-shadow: 0 8rpx 18rpx rgba(0, 0, 0, .05);
+  background: rgba(242, 240, 228, .94);
+  box-shadow: 0 10rpx 24rpx rgba(34, 37, 89, .08);
 }
 
 .section-title {
   margin-bottom: 14rpx;
-  color: #071823;
+  color: #222559;
   font-size: 32rpx;
   font-weight: 800;
   letter-spacing: 0;
@@ -60,10 +60,10 @@ button {
   display: inline-flex;
   margin-bottom: 12rpx;
   padding: 5rpx 12rpx;
-  border: 1rpx solid rgba(27, 107, 133, .14);
+  border: 1rpx solid rgba(70, 59, 140, .14);
   border-radius: 999rpx;
-  background: rgba(27, 107, 133, .08);
-  color: #28515f;
+  background: rgba(70, 59, 140, .08);
+  color: #463b8c;
   font-size: 22rpx;
   font-weight: 800;
   letter-spacing: 0;
@@ -71,7 +71,7 @@ button {
 }
 
 .muted {
-  color: #405b64;
+  color: rgba(34, 37, 89, .72);
   font-size: 26rpx;
   line-height: 1.65;
 }
@@ -83,7 +83,7 @@ button {
 .label {
   display: block;
   margin-bottom: 10rpx;
-  color: #183742;
+  color: #222559;
   font-size: 25rpx;
   font-weight: 800;
 }
@@ -92,10 +92,10 @@ input,
 picker,
 textarea {
   width: 100%;
-  border: 1rpx solid rgba(27, 107, 133, .22);
+  border: 1rpx solid rgba(70, 59, 140, .18);
   border-radius: 10rpx;
   background: rgba(255, 255, 255, .90);
-  color: #071823;
+  color: #222559;
   font-size: 29rpx;
   box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, .78);
 }
@@ -127,27 +127,27 @@ button::after {
 
 button.primary {
   margin-top: 16rpx;
-  border: 1rpx solid rgba(5, 43, 42, .34);
-  background: #1b6b85;
-  color: #f8fffc;
+  border: 1rpx solid rgba(34, 37, 89, .28);
+  background: #222559;
+  color: #f2f0e4;
   line-height: 86rpx;
-  box-shadow: 0 6rpx 12rpx rgba(8, 82, 76, .14);
+  box-shadow: 0 8rpx 18rpx rgba(34, 37, 89, .16);
 }
 
 button.primary:active {
-  background: #14566d;
+  background: #463b8c;
   transform: translateY(1rpx);
 }
 
 button.secondary {
-  border: 1rpx solid rgba(27, 107, 133, .24);
-  background: rgba(235, 243, 245, .88);
-  color: #163947;
+  border: 1rpx solid rgba(70, 59, 140, .20);
+  background: rgba(242, 240, 228, .88);
+  color: #222559;
   line-height: 76rpx;
 }
 
 button.secondary:active {
-  background: rgba(220, 237, 233, .88);
+  background: rgba(217, 191, 113, .18);
 }
 
 button[disabled] {
@@ -163,10 +163,10 @@ button[disabled] {
 .tag {
   max-width: 100%;
   padding: 8rpx 16rpx;
-  border: 1rpx solid rgba(27, 107, 133, .16);
+  border: 1rpx solid rgba(70, 59, 140, .16);
   border-radius: 999rpx;
-  background: rgba(27, 107, 133, .08);
-  color: #1f5b70;
+  background: rgba(70, 59, 140, .08);
+  color: #463b8c;
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -174,14 +174,14 @@ button[disabled] {
 .result-card {
   margin-top: 22rpx;
   padding: 22rpx;
-  border: 1rpx solid rgba(27, 107, 133, .16);
+  border: 1rpx solid rgba(70, 59, 140, .16);
   border-radius: 12rpx;
-  background: rgba(239, 247, 249, .88);
+  background: rgba(242, 240, 228, .88);
 }
 
 .result-line {
   margin-bottom: 12rpx;
-  color: #163947;
+  color: #222559;
   font-size: 27rpx;
   line-height: 1.68;
 }

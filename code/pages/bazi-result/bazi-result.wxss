@@ -823,3 +823,243 @@
   font-size: 28rpx;
   line-height: 1.6;
 }
+
+/* Song-style redesign for the bazi-only test version. */
+.bazi-result-page {
+  background: #f2f0e4;
+  color: #222559;
+}
+
+.bazi-result-page .result-topbar {
+  border-bottom: 1rpx solid rgba(34, 37, 89, .10);
+  background: #222559;
+}
+
+.bazi-result-page .result-title,
+.bazi-result-page .back-button,
+.bazi-result-page .more-button {
+  color: #f2f0e4;
+}
+
+.bazi-result-page .result-shell {
+  background: #f2f0e4;
+}
+
+.bazi-result-page .bazi-profile {
+  border-bottom: 1rpx solid rgba(34, 37, 89, .08);
+  background:
+    radial-gradient(circle at 90% 18%, rgba(159, 136, 191, .20), transparent 38%),
+    linear-gradient(135deg, #f2f0e4, #e6e1d4);
+}
+
+.bazi-result-page .profile-seal {
+  border-color: rgba(70, 59, 140, .72);
+  color: #463b8c;
+  box-shadow: inset 0 0 0 8rpx rgba(70, 59, 140, .05);
+}
+
+.bazi-result-page .profile-name {
+  color: #222559;
+}
+
+.bazi-result-page .profile-time,
+.bazi-result-page .profile-place {
+  color: rgba(34, 37, 89, .66);
+}
+
+.bazi-result-page .profile-time:first-of-type {
+  color: #463b8c;
+}
+
+.bazi-result-page .result-tabs {
+  border-bottom: 1rpx solid rgba(34, 37, 89, .08);
+  background: rgba(255, 255, 255, .42);
+}
+
+.bazi-result-page .result-tab {
+  color: rgba(34, 37, 89, .48);
+}
+
+.bazi-result-page .result-tab.active {
+  color: #463b8c;
+}
+
+.bazi-result-page .result-tab.active::after {
+  background: #d9bf71;
+}
+
+.song-overview {
+  padding: 24rpx 24rpx 28rpx;
+}
+
+.overview-title {
+  color: #222559;
+  font-family: "Songti SC", "SimSun", "Kaiti SC", serif;
+  font-size: 38rpx;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.overview-copy {
+  margin-top: 8rpx;
+  color: rgba(34, 37, 89, .62);
+  font-size: 25rpx;
+  line-height: 1.55;
+}
+
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+  margin-top: 22rpx;
+}
+
+.pillar-card {
+  min-width: 0;
+  padding: 18rpx 10rpx;
+  border: 1rpx solid rgba(70, 59, 140, .16);
+  border-radius: 16rpx;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .70), rgba(255, 255, 255, .34)),
+    #f2f0e4;
+  text-align: center;
+  box-shadow: 0 10rpx 24rpx rgba(34, 37, 89, .08);
+}
+
+.pillar-label {
+  color: rgba(34, 37, 89, .50);
+  font-size: 23rpx;
+  font-weight: 900;
+}
+
+.pillar-star {
+  margin-top: 10rpx;
+  color: #463b8c;
+  font-size: 24rpx;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.pillar-core {
+  display: grid;
+  place-items: center;
+  gap: 8rpx;
+  margin: 16rpx auto 14rpx;
+}
+
+.pillar-stem,
+.pillar-branch {
+  display: grid;
+  place-items: center;
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  font-size: 38rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pillar-stem {
+  background: #222559;
+  color: #f2f0e4;
+}
+
+.pillar-branch {
+  background: rgba(217, 191, 113, .34);
+  color: #222559;
+}
+
+.pillar-meta {
+  display: grid;
+  gap: 8rpx;
+  color: rgba(34, 37, 89, .72);
+  font-size: 22rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.detail-ribbon,
+.spirit-ribbon {
+  margin-top: 18rpx;
+  overflow: hidden;
+  border: 1rpx solid rgba(70, 59, 140, .13);
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, .38);
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 86rpx 1fr;
+  min-height: 74rpx;
+  border-top: 1rpx solid rgba(70, 59, 140, .10);
+}
+
+.detail-row:first-child {
+  border-top: 0;
+}
+
+.detail-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #463b8c;
+  font-size: 24rpx;
+  font-weight: 900;
+}
+
+.detail-values {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+}
+
+.detail-values text {
+  min-width: 0;
+  padding: 14rpx 8rpx;
+  color: #222559;
+  font-size: 23rpx;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.spirit-ribbon {
+  display: grid;
+  grid-template-columns: 86rpx 1fr;
+}
+
+.spirit-values {
+  display: grid;
+  gap: 8rpx;
+  padding: 16rpx 12rpx;
+}
+
+.spirit-values text {
+  color: #463b8c;
+  font-size: 23rpx;
+  font-weight: 800;
+  line-height: 1.38;
+}
+
+.bazi-result-page .element-panel {
+  border-top: 12rpx solid rgba(34, 37, 89, .06);
+  background: #f2f0e4;
+}
+
+.bazi-result-page .element-panel .sub-heading,
+.bazi-result-page .sub-heading {
+  color: #222559;
+}
+
+.bazi-result-page .element-name,
+.bazi-result-page .element-value {
+  color: #222559;
+}
+
+.bazi-result-page .element-track {
+  background: rgba(70, 59, 140, .10);
+}
+
+.bazi-result-page .element-bar {
+  background: linear-gradient(90deg, #463b8c, #d9bf71);
+}

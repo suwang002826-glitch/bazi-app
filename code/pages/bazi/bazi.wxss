@@ -2,9 +2,9 @@
   min-height: 100vh;
   padding: 0 24rpx calc(36rpx + env(safe-area-inset-bottom));
   background:
-    radial-gradient(circle at 86% 4%, rgba(30, 105, 132, .16), transparent 34%),
-    linear-gradient(180deg, #060a0c 0%, #0b1012 48%, #071016 100%);
-  color: #e8eeee;
+    radial-gradient(circle at 86% 4%, rgba(159, 136, 191, .26), transparent 34%),
+    linear-gradient(180deg, #222559 0%, #463b8c 44%, #f2f0e4 44%, #ece8dc 100%);
+  color: #222559;
 }
 
 .bazi-topbar {
@@ -13,18 +13,18 @@
   align-items: center;
   height: calc(132rpx + env(safe-area-inset-top));
   padding-top: calc(24rpx + env(safe-area-inset-top));
-  border-bottom: 1rpx solid rgba(255, 255, 255, .06);
+  border-bottom: 1rpx solid rgba(242, 240, 228, .12);
 }
 
 .top-title {
-  color: #d9dddd;
+  color: #f2f0e4;
   font-size: 36rpx;
   font-weight: 500;
   text-align: center;
 }
 
 .top-icon {
-  color: #bfc6c5;
+  color: #f2f0e4;
   font-size: 34rpx;
   text-align: center;
 }
@@ -32,14 +32,15 @@
 .entry-card {
   margin-top: 38rpx;
   padding: 28rpx 32rpx;
-  border: 1rpx solid rgba(255, 255, 255, .07);
+  border: 1rpx solid rgba(70, 59, 140, .14);
   border-radius: 14rpx;
-  background: #121617;
+  background: rgba(242, 240, 228, .96);
+  box-shadow: 0 18rpx 42rpx rgba(34, 37, 89, .16);
 }
 
 .entry-row {
   min-height: 104rpx;
-  border-bottom: 1rpx solid rgba(255, 255, 255, .07);
+  border-bottom: 1rpx solid rgba(70, 59, 140, .12);
 }
 
 .entry-row:last-of-type {
@@ -57,14 +58,14 @@
 
 .entry-label {
   flex: 0 0 auto;
-  color: #d9dddd;
+  color: #222559;
   font-size: 31rpx;
   font-weight: 500;
 }
 
 .entry-hint {
   margin-left: 6rpx;
-  color: #777f82;
+  color: rgba(34, 37, 89, .50);
   font-size: 22rpx;
 }
 
@@ -73,7 +74,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #f1f5f3;
+  color: #222559;
   font-size: 31rpx;
   line-height: 98rpx;
   text-align: right;
@@ -81,7 +82,7 @@
 }
 
 .entry-input input-placeholder {
-  color: #777f82;
+  color: rgba(34, 37, 89, .42);
 }
 
 .segmented-row {
@@ -93,9 +94,9 @@
   min-width: 210rpx;
   height: 62rpx;
   padding: 6rpx;
-  border: 1rpx solid rgba(255, 255, 255, .08);
+  border: 1rpx solid rgba(70, 59, 140, .14);
   border-radius: 999rpx;
-  background: #171b1d;
+  background: rgba(70, 59, 140, .08);
 }
 
 .calendar-control {
@@ -106,15 +107,15 @@
   flex: 1;
   min-width: 0;
   border-radius: 999rpx;
-  color: #8b9294;
+  color: rgba(34, 37, 89, .56);
   font-size: 28rpx;
   line-height: 50rpx;
   text-align: center;
 }
 
 .segment.active {
-  background: #e8c98a;
-  color: #281b09;
+  background: #d9bf71;
+  color: #222559;
   font-weight: 800;
 }
 
@@ -134,7 +135,7 @@
 .picker-value {
   max-width: 420rpx;
   overflow: hidden;
-  color: #d7dbda;
+  color: #222559;
   font-size: 30rpx;
   line-height: 1.45;
   text-align: right;
@@ -149,7 +150,7 @@
 }
 
 .dual-picker picker {
-  color: #d7dbda;
+  color: #222559;
   font-size: 30rpx;
 }
 
@@ -159,7 +160,7 @@
   justify-content: space-between;
   gap: 18rpx;
   padding: 28rpx 0 24rpx;
-  color: #c7cdcb;
+  color: rgba(34, 37, 89, .72);
   font-size: 25rpx;
   line-height: 1.65;
 }
@@ -169,7 +170,7 @@
   flex: 0 0 auto;
   align-items: center;
   gap: 10rpx;
-  color: #e3e5e4;
+  color: #222559;
   font-size: 30rpx;
 }
 
@@ -182,8 +183,8 @@
   margin-top: 22rpx;
   padding: 0;
   border-radius: 999rpx;
-  background: #e8c98a;
-  color: #2b1b08;
+  background: #222559;
+  color: #f2f0e4;
   font-size: 34rpx;
   font-weight: 900;
   line-height: normal;

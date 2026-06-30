@@ -33,41 +33,37 @@
     </view>
 
     <view wx:if="{{activeResultTab === '基本命盘'}}">
-      <view class="bazi-plate-card">
-        <view class="bazi-table">
-          <view class="bazi-row bazi-head-row">
-            <view class="bazi-label">日期</view>
-            <view class="bazi-head-cell" wx:for="{{baziPlate.columns}}" wx:key="label">{{item.label}}</view>
-          </view>
-          <view
-            class="bazi-row {{row.strong ? 'strong-row' : ''}} {{row.highlight ? 'spirit-row' : ''}}"
-            wx:for="{{baziPlate.rows}}"
-            wx:for-item="row"
-            wx:for-index="rowIndex"
-            wx:key="label"
-          >
-            <view class="bazi-label">{{row.label}}</view>
-            <view
-              class="bazi-cell {{cell.large ? 'large-cell' : ''}} {{cell.className}}"
-              wx:for="{{row.cells}}"
-              wx:for-item="cell"
-              wx:for-index="cellIndex"
-              wx:key="cellIndex"
-            >
-              <block wx:if="{{cell.hasRichLines}}">
-                <view class="hidden-stem-line" wx:for="{{cell.richLines}}" wx:for-item="hidden" wx:key="stem">
-                  <text class="hidden-stem {{hidden.className}}">{{hidden.stem}}</text>
-                  <text class="hidden-god">{{hidden.tenGod}}</text>
-                </view>
-              </block>
-              <block wx:elif="{{cell.lines.length}}">
-                <text class="cell-line" wx:for="{{cell.lines}}" wx:for-item="line" wx:key="*this">{{line}}</text>
-              </block>
-              <block wx:else>
-                <text class="cell-main">{{cell.text}}</text>
-                <text wx:if="{{cell.elementIcon}}" class="element-icon">{{cell.elementIcon}}</text>
-              </block>
+      <view class="song-overview">
+        <view class="overview-title">四柱命盘</view>
+        <view class="overview-copy">以年、月、日、时分列呈现，先看结构，再看细项。</view>
+        <view class="pillar-grid">
+          <view class="pillar-card" wx:for="{{songPlate.pillars}}" wx:key="label">
+            <view class="pillar-label">{{item.label}}</view>
+            <view class="pillar-star">{{item.star}}</view>
+            <view class="pillar-core">
+              <text class="pillar-stem">{{item.stem}}</text>
+              <text class="pillar-branch">{{item.branch}}</text>
             </view>
+            <view class="pillar-meta">
+              <text>藏干 {{item.hidden}}</text>
+              <text>副星 {{item.subStar}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="detail-ribbon">
+          <view class="detail-row" wx:for="{{songPlate.metaRows}}" wx:key="label">
+            <view class="detail-label">{{item.label}}</view>
+            <view class="detail-values">
+              <text wx:for="{{item.values}}" wx:for-item="value" wx:key="*this">{{value}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="spirit-ribbon">
+          <view class="detail-label">神煞</view>
+          <view class="spirit-values">
+            <text wx:for="{{songPlate.pillars}}" wx:key="label">{{item.label}}：{{item.spirits}}</text>
           </view>
         </view>
       </view>
