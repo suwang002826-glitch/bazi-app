@@ -18,7 +18,7 @@ Page({
       regionText: '北京市 北京市 东城区',
       birthPlace: '北京市 北京市 东城区',
       longitude: '116.40',
-      useTrueSolarTime: false
+      useTrueSolarTime: true
     },
     disclaimer: app.globalData.disclaimer
   },

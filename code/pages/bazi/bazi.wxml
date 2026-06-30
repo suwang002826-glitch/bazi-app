@@ -66,19 +66,12 @@
 
     <view class="solar-row">
       <view>
-        <view>北京时间：{{form.birthDate}} {{form.birthTime}}</view>
-        <view>真太阳时：{{form.useTrueSolarTime ? '开启' : '关闭'}}</view>
+        <view>真太阳时：{{form.birthDate}} {{form.birthTime}}</view>
         <view>地址经纬：北纬39.9288 东经{{form.longitude}}</view>
       </view>
-      <view class="switch-column">
-        <view class="option-switch">
-          <text>真太阳时</text>
-          <switch checked="{{form.useTrueSolarTime}}" bindchange="onTrueSolarSwitch" color="#e8c98a" />
-        </view>
-        <view class="option-switch">
-          <text>保存</text>
-          <switch checked="{{saveCase}}" bindchange="onSaveSwitch" color="#e8c98a" />
-        </view>
+      <view class="save-switch">
+        <text>保存</text>
+        <switch checked="{{saveCase}}" bindchange="onSaveSwitch" color="#e8c98a" />
       </view>
     </view>
 
