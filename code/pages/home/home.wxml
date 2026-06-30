@@ -11,17 +11,7 @@
       <view class="version-badge">内测</view>
     </view>
 
-    <view class="bazi-hero-card" bindtap="goToBazi">
-      <view class="hero-cloud cloud-left"></view>
-      <view class="hero-cloud cloud-right"></view>
-      <view class="hero-seal">命</view>
-      <view class="hero-title-main">八字排盘</view>
-      <view class="hero-title-sub">道家命理 · 专业排盘</view>
-      <view class="hero-cta">进入排盘</view>
-    </view>
-
     <view class="calendar-card">
-      <view class="calendar-mark">道历</view>
       <view class="calendar-date">{{today.solar}}</view>
       <view class="calendar-sub">{{today.weekday}} · {{today.lunar}}</view>
 
@@ -62,12 +52,5 @@
       </view>
     </view>
 
-    <view class="bazi-entry" bindtap="goToBazi">
-      <view>
-        <view class="entry-title">开始八字排盘</view>
-        <view class="entry-copy">录入出生时间地点，查看四柱、喜用与运势层级。</view>
-      </view>
-      <view class="entry-arrow">›</view>
-    </view>
   </view>
 </view>

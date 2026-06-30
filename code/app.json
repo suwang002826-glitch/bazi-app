@@ -12,18 +12,18 @@
   ],
   "window": {
     "navigationBarTitleText": "玄门命理",
-    "navigationBarBackgroundColor": "#222559",
+    "navigationBarBackgroundColor": "#07080e",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#f2f0e4"
+    "backgroundColor": "#07080e"
   },
   "usingComponents": {
     "x-pattern": "/components/x-pattern/x-pattern"
   },
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {
-    "color": "#807a8d",
-    "selectedColor": "#463b8c",
-    "backgroundColor": "#f2f0e4",
+    "color": "#817b92",
+    "selectedColor": "#d9bf71",
+    "backgroundColor": "#07080e",
     "borderStyle": "black",
     "list": [
       {
