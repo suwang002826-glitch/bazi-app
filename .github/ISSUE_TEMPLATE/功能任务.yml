@@ -1,0 +1,41 @@
+name: 功能任务
+description: 新增或优化小程序功能
+title: "功能："
+labels: ["功能"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: 目标
+      description: 这次要完成什么？
+      placeholder: 例如：优化八字排盘结果页
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 范围
+      description: 这次只做哪些内容？
+      placeholder: |
+        - 修改页面文案
+        - 增加结果区块
+        - 调整手机端布局
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收标准
+      description: 另一位协作者如何判断完成？
+      placeholder: |
+        1. 微信开发者工具可预览
+        2. 页面无明显错位
+        3. 文案全部为简体中文
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 备注
+    validations:
+      required: false
