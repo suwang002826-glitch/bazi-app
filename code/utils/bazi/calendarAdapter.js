@@ -24,6 +24,13 @@ function isExplicitLeapMonth(value) {
   return value === true || value === 'true' || value === 1 || value === '1';
 }
 
+function hasLunarDateFields(input = {}) {
+  return input.lunarYear !== undefined
+    || input.lunarMonth !== undefined
+    || input.lunarDay !== undefined
+    || input.isLeapMonth !== undefined;
+}
+
 function createOutsideCoverageError(lunarInput) {
   const coverage = getLunarDataPackCoverage();
   const error = new Error('Lunar date is outside verified data-pack coverage.');
@@ -41,7 +48,9 @@ function createOutsideCoverageError(lunarInput) {
 }
 
 function resolveCalendar(input = {}) {
-  const calendarType = normalizeCalendarType(input.calendarType || input.calendarMode);
+  const calendarType = hasLunarDateFields(input)
+    ? 'lunar'
+    : normalizeCalendarType(input.calendarType || input.calendarMode);
   if (calendarType !== 'lunar') {
     return {
       birthDate: input.birthDate,
