@@ -62,33 +62,43 @@ const acceptanceCases = [
   },
   {
     id: 'BZI-005',
-    title: '农历生日转换后公历',
+    title: '农历生日真实输入转换',
     input: {
       name: 'BZI-005',
       gender: '女',
-      birthDate: '2023-09-29',
+      calendarType: 'lunar',
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 15,
+      isLeapMonth: false,
       birthTime: '20:00',
       birthPlace: '北京',
       longitude: '116.40',
       useTrueSolarTime: false
     },
+    expectedSolarDate: '2023-09-29',
     expected: ['癸卯', '辛酉', '庚寅', '丙戌'],
-    note: '当前脚本先用已确认的对应公历校验四柱，农历输入转换另行补测。'
+    note: '第二轮要求真实农历输入先转换为公历，再校验四柱。'
   },
   {
     id: 'BZI-006',
-    title: '农历闰月转换后公历',
+    title: '农历闰月真实输入转换',
     input: {
       name: 'BZI-006',
       gender: '男',
-      birthDate: '2023-03-31',
+      calendarType: 'lunar',
+      lunarYear: 2023,
+      lunarMonth: 2,
+      lunarDay: 10,
+      isLeapMonth: true,
       birthTime: '09:00',
       birthPlace: '北京',
       longitude: '116.40',
       useTrueSolarTime: false
     },
+    expectedSolarDate: '2023-03-31',
     expected: ['癸卯', '乙卯', '戊子', '丁巳'],
-    note: '当前脚本先用已确认的对应公历校验四柱，农历闰月输入转换另行补测。'
+    note: '第二轮要求真实农历闰月输入先转换为公历，再校验四柱。'
   }
 ];
 
@@ -100,12 +110,17 @@ function run() {
   const results = acceptanceCases.map((item) => {
     const result = buildBaziProfile(item.input);
     const actual = extractPillars(result);
-    const passed = actual.join('|') === item.expected.join('|');
+    const actualSolarDate = result.calendarConversion && result.calendarConversion.solarDate;
+    const pillarsPassed = actual.join('|') === item.expected.join('|');
+    const conversionPassed = item.expectedSolarDate ? actualSolarDate === item.expectedSolarDate : true;
+    const passed = pillarsPassed && conversionPassed;
     return {
       id: item.id,
       title: item.title,
       expected: item.expected,
       actual,
+      expectedSolarDate: item.expectedSolarDate || '',
+      actualSolarDate: actualSolarDate || '',
       passed,
       note: item.note || ''
     };
@@ -116,6 +131,10 @@ function run() {
     console.log(`${mark} ${item.id} ${item.title}`);
     console.log(`  expected: ${item.expected.join(' ')}`);
     console.log(`  actual:   ${item.actual.join(' ')}`);
+    if (item.expectedSolarDate) {
+      console.log(`  expected solar date: ${item.expectedSolarDate}`);
+      console.log(`  actual solar date:   ${item.actualSolarDate || '(missing)'}`);
+    }
     if (item.note) console.log(`  note:     ${item.note}`);
   });
 

@@ -3,6 +3,7 @@ const earthlyBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未',
 const elements = ['木', '火', '土', '金', '水'];
 const relations = ['父母', '兄弟', '子孙', '妻财', '官鬼'];
 const spirits = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'];
+const { normalizeBaziInput } = require('./bazi/inputNormalizer');
 
 const stemMeta = {
   甲: { element: '木', yinYang: '阳' },
@@ -1195,10 +1196,12 @@ function buildFlowHours(date, dayStem, natalPillars) {
 }
 
 function buildBaziProfile(form) {
-  const birthParts = parseBirthDateTime(form.birthDate, form.birthTime);
+  const normalizedInput = normalizeBaziInput(form);
+  const normalizedForm = normalizedInput.form;
+  const birthParts = parseBirthDateTime(normalizedForm.birthDate, normalizedForm.birthTime);
   const baseDate = makeDate(birthParts);
-  const longitude = normalizeLongitude(form.longitude);
-  const trueSolar = applyTrueSolarTime(baseDate, longitude, Boolean(form.useTrueSolarTime));
+  const longitude = normalizeLongitude(normalizedForm.longitude);
+  const trueSolar = applyTrueSolarTime(baseDate, longitude, Boolean(normalizedForm.useTrueSolarTime));
   const readingDate = trueSolar.date;
 
   const yearPillar = getYearPillar(readingDate);
@@ -1216,7 +1219,7 @@ function buildBaziProfile(form) {
   const distribution = buildElementDistribution(rawPillars, dayPillar.stem);
   const strongest = findStrongestElement(distribution);
   const weakest = findWeakestElement(distribution);
-  const locationText = form.birthPlace || '未填写出生地';
+  const locationText = normalizedForm.birthPlace || '未填写出生地';
   const hourChanged = baseDate.getHours() !== readingDate.getHours() || baseDate.getDate() !== readingDate.getDate();
 
   const pillars = [
@@ -1226,7 +1229,7 @@ function buildBaziProfile(form) {
     enrichPillar('时柱', hourPillar, dayPillar.stem)
   ];
   const now = new Date();
-  const luck = buildLuckCycles(readingDate, monthPillar, yearPillar, form.gender);
+  const luck = buildLuckCycles(readingDate, monthPillar, yearPillar, normalizedForm.gender);
   const professional = buildProfessionalProfile(dayMaster, rawPillars, pillars, monthPillar, distribution);
   professional.chartSummary = buildChartSummary(
     dayMaster,
@@ -1241,7 +1244,7 @@ function buildBaziProfile(form) {
   const flowMonths = buildFlowMonths(now.getFullYear(), dayPillar.stem, pillars);
   const flowDays = buildFlowDays(now, dayPillar.stem, pillars);
   const flowHours = buildFlowHours(now, dayPillar.stem, pillars);
-  const validationHints = buildCalibrationHints(baseDate, readingDate, trueSolar, monthPillar, hourChanged, form);
+  const validationHints = buildCalibrationHints(baseDate, readingDate, trueSolar, monthPillar, hourChanged, normalizedForm);
   const flowTriggerSummary = buildFlowTriggerSummary(flowYears, flowMonths, flowDays, flowHours);
   const detailProfile = buildDetailProfile(pillars, dayPillar, monthPillar, hourPillar, dayMaster, professional);
   const cultivationAdvice = buildCultivationAdvice(dayMaster, professional, flowTriggerSummary);
@@ -1272,13 +1275,15 @@ function buildBaziProfile(form) {
   ];
 
   return {
-    displayName: form.name || '未命名',
-    title: `${form.name || '未命名'}的八字排盘`,
+    displayName: normalizedForm.name || '未命名',
+    title: `${normalizedForm.name || '未命名'}的八字排盘`,
     betaLabel: '内测排盘口径',
     solarTime: formatDateTime(baseDate),
     adjustedSolarTime: formatDateTime(readingDate),
     birthPlace: locationText,
     longitude: longitude.toFixed(2),
+    calendarConversion: normalizedInput.calendarConversion,
+    normalizationWarnings: normalizedInput.warnings,
     dayMaster,
     pillars,
     distribution,
