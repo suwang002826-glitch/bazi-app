@@ -45,6 +45,27 @@
 - `coverage`
 - `records`
 
+## data-pack 体检脚本
+
+新增或修改农历 data-pack 后，必须运行：
+
+```bash
+node scripts/validate-lunar-data-pack.js
+```
+
+该脚本会检查：
+
+- `manifest.json` 是否包含版本、状态、包列表和 warnings。
+- manifest 登记的每个包文件是否存在。
+- 包内 `dataPackId` 和 `calendarDataVersion` 是否与 manifest 对齐。
+- 每条记录是否包含必填字段。
+- 农历年月日是否为正整数。
+- `isLeapMonth` 是否为布尔值。
+- `solarDate` 是否为 `YYYY-MM-DD` 且是真实日期。
+- 同一个包内是否存在重复农历日期。
+
+当前脚本只负责结构体检，不负责证明数据来源权威。完整年份包上线前，还需要补来源记录、交叉复核和验收样例。
+
 ## manifest 注册规则
 
 `manifest.json` 是农历 data-pack 的总入口。新增年份包或样例包时，必须先把包加入 `manifest.packs`，再由 `lunarDataPack` 读取。
