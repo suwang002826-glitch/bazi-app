@@ -215,13 +215,21 @@
   line-height: 1.65;
 }
 
-.save-switch {
+.switch-column {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.option-switch {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
+  justify-content: flex-end;
   gap: 8rpx;
   color: #f2f0e4;
-  font-size: 28rpx;
+  font-size: 26rpx;
   font-weight: 800;
 }
 
