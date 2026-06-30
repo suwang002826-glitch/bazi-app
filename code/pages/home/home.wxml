@@ -1,7 +1,9 @@
 <view class="page home-page">
   <view class="home-shell">
     <view class="brand-row">
-      <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFill" />
+      <view class="brand-logo-shell">
+        <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFit" />
+      </view>
       <view class="brand-copy">
         <view class="brand-title">玄门命理</view>
         <view class="brand-subtitle">万年历 · 道历 · 八字排盘</view>

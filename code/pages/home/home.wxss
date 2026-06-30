@@ -8,23 +8,44 @@
 .home-shell {
   position: relative;
   z-index: 1;
-  padding: 36rpx 24rpx 0;
+  padding: 30rpx 24rpx 0;
 }
 
 .brand-row {
   display: grid;
-  grid-template-columns: 76rpx 1fr 86rpx;
+  grid-template-columns: 84rpx 1fr 82rpx;
   align-items: center;
-  gap: 18rpx;
-  margin-bottom: 28rpx;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+  padding: 18rpx;
+  border: 1rpx solid rgba(217, 191, 113, .16);
+  border-radius: 16rpx;
+  background:
+    linear-gradient(145deg, rgba(242, 240, 228, .08), rgba(242, 240, 228, .025)),
+    rgba(7, 8, 14, .48);
+  box-shadow:
+    inset 0 1rpx 0 rgba(242, 240, 228, .08),
+    0 8rpx 16rpx rgba(0, 0, 0, .20);
+}
+
+.brand-logo-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78rpx;
+  height: 78rpx;
+  border: 1rpx solid rgba(217, 191, 113, .30);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, rgba(217, 191, 113, .18), rgba(18, 21, 50, .70));
+  box-shadow:
+    inset 0 0 0 4rpx rgba(7, 8, 14, .58),
+    0 4rpx 10rpx rgba(0, 0, 0, .22);
 }
 
 .brand-logo {
-  width: 72rpx;
-  height: 72rpx;
-  border: 1rpx solid rgba(217, 191, 113, .30);
+  width: 70rpx;
+  height: 70rpx;
   border-radius: 50%;
-  background: #222559;
 }
 
 .brand-copy {
@@ -180,4 +201,53 @@
   font-size: 27rpx;
   font-weight: 800;
   line-height: 1.48;
+}
+
+/* Premium header/material pass. */
+.brand-title,
+.calendar-date {
+  font-family: "KaiTi", "STKaiti", "Kaiti SC", "SimKai", serif;
+}
+
+.brand-title {
+  font-size: 42rpx;
+  letter-spacing: 2rpx;
+}
+
+.brand-subtitle {
+  margin-top: 8rpx;
+  color: rgba(217, 191, 113, .70);
+  letter-spacing: 1rpx;
+}
+
+.version-badge {
+  height: 44rpx;
+  border-color: rgba(217, 191, 113, .30);
+  background: rgba(217, 191, 113, .12);
+  line-height: 42rpx;
+}
+
+.calendar-card {
+  padding: 38rpx 32rpx 30rpx;
+  border-color: rgba(217, 191, 113, .20);
+  background:
+    linear-gradient(145deg, rgba(242, 240, 228, .095), rgba(242, 240, 228, .026)),
+    rgba(18, 21, 50, .92);
+}
+
+.ganzhi-panel {
+  border-color: rgba(217, 191, 113, .12);
+  background: rgba(7, 8, 14, .46);
+}
+
+.daily-grid view {
+  border-color: rgba(217, 191, 113, .10);
+  background: rgba(7, 8, 14, .28);
+}
+
+.note-item {
+  border-color: rgba(217, 191, 113, .14);
+  background:
+    linear-gradient(145deg, rgba(242, 240, 228, .07), rgba(242, 240, 228, .025)),
+    rgba(18, 21, 50, .66);
 }
