@@ -1,5 +1,8 @@
 const { baziRuleConfig } = require('./ruleConfig');
-const { findLunarConversion } = require('./lunarDataPack');
+const {
+  findLunarConversion,
+  getLunarDataPackCoverage
+} = require('./lunarDataPack');
 
 function normalizeCalendarType(value) {
   const raw = String(value || 'solar').trim().toLowerCase();
@@ -21,8 +24,33 @@ function isExplicitLeapMonth(value) {
   return value === true || value === 'true' || value === 1 || value === '1';
 }
 
+function hasLunarDateFields(input = {}) {
+  return input.lunarYear !== undefined
+    || input.lunarMonth !== undefined
+    || input.lunarDay !== undefined
+    || input.isLeapMonth !== undefined;
+}
+
+function createOutsideCoverageError(lunarInput) {
+  const coverage = getLunarDataPackCoverage();
+  const error = new Error('Lunar date is outside verified data-pack coverage.');
+  error.code = 'LUNAR_DATE_OUTSIDE_DATA_PACK_COVERAGE';
+  error.details = {
+    ...lunarInput,
+    calendarDataVersion: coverage.calendarDataVersion,
+    status: coverage.status,
+    completeLunarCalendar: coverage.completeLunarCalendar,
+    availablePackIds: coverage.packIds,
+    availableYears: coverage.years,
+    scope: baziRuleConfig.policies.lunarConversionScope
+  };
+  return error;
+}
+
 function resolveCalendar(input = {}) {
-  const calendarType = normalizeCalendarType(input.calendarType || input.calendarMode);
+  const calendarType = hasLunarDateFields(input)
+    ? 'lunar'
+    : normalizeCalendarType(input.calendarType || input.calendarMode);
   if (calendarType !== 'lunar') {
     return {
       birthDate: input.birthDate,
@@ -45,7 +73,7 @@ function resolveCalendar(input = {}) {
   };
   const match = findLunarConversion(lunarInput);
   if (!match) {
-    throw new Error('Lunar date is outside the verified acceptance sample set.');
+    throw createOutsideCoverageError(lunarInput);
   }
 
   return {

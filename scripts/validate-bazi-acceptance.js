@@ -2,6 +2,10 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { buildBaziProfile } = require('../code/utils/mock');
+const {
+  lunarManifest,
+  getLunarDataPackCoverage
+} = require('../code/utils/bazi/lunarDataPack');
 
 const acceptanceCases = [
   {
@@ -106,11 +110,108 @@ const acceptanceCases = [
   }
 ];
 
+const unsupportedLunarCases = [
+  {
+    id: 'BZI-NEG-001',
+    title: 'data-pack 外农历日期必须明确报错',
+    input: {
+      name: 'BZI-NEG-001',
+      gender: '女',
+      calendarType: 'lunar',
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 16,
+      isLeapMonth: false,
+      birthTime: '20:00',
+      birthPlace: '北京',
+      longitude: '116.40',
+      useTrueSolarTime: false
+    },
+    expectedErrorCode: 'LUNAR_DATE_OUTSIDE_DATA_PACK_COVERAGE'
+  }
+];
+
+const implicitLunarCases = [
+  {
+    id: 'BZI-IMPLICIT-001',
+    title: '带农历字段但未声明 calendarType 时仍走 data-pack',
+    input: {
+      name: 'BZI-IMPLICIT-001',
+      gender: '女',
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 15,
+      isLeapMonth: false,
+      birthTime: '20:00',
+      birthPlace: '北京',
+      longitude: '116.40',
+      useTrueSolarTime: false
+    },
+    expectedSolarDate: '2023-09-29',
+    expectedConversionSource: 'data-pack:lunar-conversions-2023'
+  }
+];
+
 function extractPillars(result) {
   return result.pillars.map((pillar) => pillar.value);
 }
 
+function assertDataPackRegistry() {
+  assert.strictEqual(
+    typeof getLunarDataPackCoverage,
+    'function',
+    'lunarDataPack must expose manifest-driven coverage summary'
+  );
+
+  const coverage = getLunarDataPackCoverage();
+  assert.strictEqual(coverage.calendarDataVersion, lunarManifest.calendarDataVersion);
+  assert.strictEqual(coverage.status, lunarManifest.status);
+  assert.strictEqual(coverage.completeLunarCalendar, false);
+  assert.deepStrictEqual(
+    coverage.packIds.slice().sort(),
+    lunarManifest.packs.map((pack) => pack.dataPackId).sort()
+  );
+  console.log(`PASS DATA-PACK manifest registry ${coverage.calendarDataVersion}`);
+}
+
+function assertUnsupportedLunarInputs() {
+  unsupportedLunarCases.forEach((item) => {
+    assert.throws(
+      () => buildBaziProfile(item.input),
+      (error) => {
+        assert.strictEqual(error.code, item.expectedErrorCode);
+        assert.strictEqual(error.details.calendarDataVersion, lunarManifest.calendarDataVersion);
+        assert.strictEqual(error.details.status, lunarManifest.status);
+        assert.strictEqual(error.details.completeLunarCalendar, false);
+        assert.ok(
+          Array.isArray(error.details.availablePackIds)
+            && error.details.availablePackIds.includes('lunar-conversions-2023'),
+          'outside coverage errors must include available pack ids'
+        );
+        return true;
+      },
+      `${item.id} ${item.title}`
+    );
+    console.log(`PASS ${item.id} ${item.title}`);
+  });
+}
+
+function assertImplicitLunarInputs() {
+  implicitLunarCases.forEach((item) => {
+    const result = buildBaziProfile(item.input);
+    const conversion = result.calendarConversion || {};
+    assert.strictEqual(conversion.calendarType, 'lunar');
+    assert.strictEqual(conversion.solarDate, item.expectedSolarDate);
+    assert.strictEqual(conversion.source, item.expectedConversionSource);
+    console.log(`PASS ${item.id} ${item.title}`);
+  });
+}
+
 function run() {
+  assertDataPackRegistry();
+  assertUnsupportedLunarInputs();
+  assertImplicitLunarInputs();
+
   const results = acceptanceCases.map((item) => {
     const result = buildBaziProfile(item.input);
     const actual = extractPillars(result);
