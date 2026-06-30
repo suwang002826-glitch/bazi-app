@@ -1,14 +1,14 @@
-const app = getApp();
+﻿const app = getApp();
 
 Page({
   data: {
     cases: [],
     filteredCases: [],
     history: [],
-    filterOptions: ['全部', '八字', '六爻', '奇门'],
+    filterOptions: ['全部', '八字'],
     filterIndex: 0,
     statusOptions: ['待验证', '已应验', '未应验', '需复盘'],
-    emptyText: '暂无命例档案，可先在八字、六爻或奇门完成一次解读，再从最近记录中存档。'
+    emptyText: '暂无八字命例。完成一次八字排盘后，可从最近记录中存入命例档案。'
   },
 
   onShow() {
@@ -16,8 +16,8 @@ Page({
   },
 
   loadData() {
-    const cases = wx.getStorageSync('caseArchive') || [];
-    const history = (wx.getStorageSync('readingHistory') || []).slice(0, 10);
+    const cases = (wx.getStorageSync('caseArchive') || []).filter((item) => this.isBaziRecord(item));
+    const history = (wx.getStorageSync('readingHistory') || []).filter((item) => this.isBaziRecord(item)).slice(0, 10);
     this.setData({
       cases,
       filteredCases: this.filterCases(cases, this.data.filterIndex),
@@ -28,7 +28,12 @@ Page({
   filterCases(cases, filterIndex) {
     const type = this.data.filterOptions[filterIndex];
     if (!type || type === '全部') return cases;
-    return cases.filter((item) => item.type === type);
+    return cases.filter((item) => this.isBaziRecord(item));
+  },
+
+  isBaziRecord(item) {
+    if (!item) return false;
+    return item.type === '八字' || item.type === '鍏瓧';
   },
 
   onFilterChange(event) {
@@ -50,7 +55,7 @@ Page({
       title: item.title,
       createdAt: item.createdAt,
       summary: item.summary,
-      tag: item.type === '六爻' ? '问事' : (item.type === '奇门' ? '起局' : '命盘'),
+      tag: '命盘',
       status: '待验证',
       verifiedAt: '',
       accurate: '',
@@ -136,3 +141,4 @@ Page({
     });
   }
 });
+

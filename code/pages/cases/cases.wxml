@@ -1,10 +1,8 @@
-<view class="page cases-page">
-  <x-pattern />
-
+﻿<view class="page cases-page">
   <view class="section hero-case">
     <view class="section-kicker">命例库</view>
     <view class="section-title">命例档案</view>
-    <view class="muted">把测试过程中的八字、六爻、奇门记录沉淀为本机命例，用于复盘准确度、记录反馈和后续精修。</view>
+    <view class="muted">把八字排盘记录沉淀为本机命例，用于复盘准确度、记录反馈和后续精修。</view>
   </view>
 
   <view class="section">
@@ -75,6 +73,7 @@
         <button class="secondary save-btn" bindtap="saveCase" data-id="{{item.id}}">存档</button>
       </view>
     </block>
-    <view wx:else class="empty-text">暂无可保存记录。</view>
+    <view wx:else class="empty-text">暂无可保存的八字记录。</view>
   </view>
 </view>
+

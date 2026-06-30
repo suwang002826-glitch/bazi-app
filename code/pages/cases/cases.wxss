@@ -240,3 +240,103 @@
   font-size: 25rpx;
   line-height: 1.65;
 }
+
+/* Dark archive pass: align case archive with the main app visual system. */
+.cases-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #07080e 0%, #101127 54%, #07080e 100%);
+  color: #f2f0e4;
+}
+
+.cases-page .section {
+  border: 1rpx solid rgba(217, 191, 113, .14);
+  border-radius: 16rpx;
+  background:
+    linear-gradient(145deg, rgba(242, 240, 228, .075), rgba(242, 240, 228, .025)),
+    rgba(18, 21, 50, .92);
+  box-shadow:
+    inset 0 1rpx 0 rgba(242, 240, 228, .08),
+    0 8rpx 16rpx rgba(0, 0, 0, .22);
+}
+
+.hero-case {
+  border-color: rgba(217, 191, 113, .18);
+  background:
+    linear-gradient(145deg, rgba(217, 191, 113, .10), rgba(242, 240, 228, .025)),
+    rgba(7, 8, 14, .62);
+}
+
+.cases-page .section-title,
+.case-title,
+.history-title,
+.feedback-title {
+  color: #f2f0e4;
+}
+
+.cases-page .muted,
+.case-note,
+.case-version {
+  color: rgba(242, 240, 228, .58);
+}
+
+.case-card {
+  border-color: rgba(217, 191, 113, .14);
+  background:
+    linear-gradient(145deg, rgba(242, 240, 228, .08), rgba(242, 240, 228, .024)),
+    rgba(7, 8, 14, .40);
+}
+
+.filter-chip {
+  border-color: rgba(217, 191, 113, .16);
+  background: rgba(7, 8, 14, .34);
+  color: rgba(242, 240, 228, .70);
+}
+
+.filter-chip.active {
+  border-color: rgba(217, 191, 113, .38);
+  background: #d9bf71;
+  color: #222559;
+}
+
+.case-tag,
+.case-status {
+  border: 1rpx solid rgba(217, 191, 113, .18);
+  background: rgba(217, 191, 113, .10);
+  color: #d9bf71;
+}
+
+.case-summary {
+  color: rgba(242, 240, 228, .78);
+}
+
+.feedback-panel {
+  border-color: rgba(217, 191, 113, .12);
+  background: rgba(7, 8, 14, .34);
+}
+
+.feedback-field text {
+  color: rgba(217, 191, 113, .78);
+}
+
+.feedback-field input,
+.feedback-field textarea {
+  border: 1rpx solid rgba(217, 191, 113, .12);
+  background: rgba(18, 21, 50, .72);
+  color: #f2f0e4;
+  box-shadow: inset 0 1rpx 0 rgba(242, 240, 228, .05);
+}
+
+.history-save-row {
+  border-bottom-color: rgba(242, 240, 228, .08);
+}
+
+.danger-btn {
+  border-color: rgba(203, 91, 79, .28);
+  color: #e9a096;
+}
+
+.empty-text {
+  border: 1rpx solid rgba(217, 191, 113, .10);
+  background: rgba(7, 8, 14, .34);
+  color: rgba(242, 240, 228, .62);
+}
