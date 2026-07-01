@@ -84,6 +84,31 @@ function findRow(rows, label) {
   return rows.find((row) => row.label === label) || { cells: [] };
 }
 
+function splitCellLines(text) {
+  const value = String(text || '').trim();
+  if (!value) return ['—'];
+  return value
+    .split(/[、,\s]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function hiddenItemsFromCell(cell) {
+  if (!cell) return [];
+  if (cell.richLines && cell.richLines.length) {
+    return cell.richLines.map((item) => ({
+      stem: item.stem || '—',
+      tenGod: item.tenGod || '',
+      className: item.className || 'plain'
+    }));
+  }
+  return [
+    cell.hidden1Show ? { stem: cell.hidden1Stem, tenGod: cell.hidden1God, className: cell.hidden1Class || 'plain' } : null,
+    cell.hidden2Show ? { stem: cell.hidden2Stem, tenGod: cell.hidden2God, className: cell.hidden2Class || 'plain' } : null,
+    cell.hidden3Show ? { stem: cell.hidden3Stem, tenGod: cell.hidden3God, className: cell.hidden3Class || 'plain' } : null
+  ].filter(Boolean);
+}
+
 function buildSongPlate(baziPlate) {
   if (!baziPlate) return null;
   const rows = baziPlate.rows || [];
@@ -101,19 +126,30 @@ function buildSongPlate(baziPlate) {
     spirits: findRow(rows, '神煞')
   };
 
-  const pillars = columns.map((column, index) => ({
+  const pillars = columns.map((column, index) => {
+    const stemCell = rowMap.stem.cells[index] || {};
+    const branchCell = rowMap.branch.cells[index] || {};
+    const hiddenCell = rowMap.hidden.cells[index] || {};
+    const subStar = cellToText(rowMap.subStar.cells[index]) || '无';
+    const spirits = cellToText(rowMap.spirits.cells[index]);
+    return {
       label: column.label,
       star: cellToText(rowMap.star.cells[index]),
-      stem: cellToText(rowMap.stem.cells[index]),
-      branch: cellToText(rowMap.branch.cells[index]),
-      hidden: cellToText(rowMap.hidden.cells[index]) || '无',
-      subStar: cellToText(rowMap.subStar.cells[index]) || '无',
+      stem: cellToText(stemCell),
+      stemClass: stemCell.className || 'plain',
+      branch: cellToText(branchCell),
+      branchClass: branchCell.className || 'plain',
+      hidden: cellToText(hiddenCell) || '无',
+      hiddenItems: hiddenItemsFromCell(hiddenCell),
+      subStar,
+      subStarLines: splitCellLines(subStar),
       stage: cellToText(rowMap.stage.cells[index]),
       seat: cellToText(rowMap.seat.cells[index]),
       void: cellToText(rowMap.void.cells[index]),
       nayin: cellToText(rowMap.nayin.cells[index]),
-      spirits: cellToText(rowMap.spirits.cells[index])
-    }));
+      spirits
+    };
+  });
   pillars.forEach((pillar) => {
     pillar.spiritItems = splitSpiritNames(pillar.spirits).map(toSpiritItem);
     pillar.spirits = pillar.spirits || '—';
@@ -121,6 +157,18 @@ function buildSongPlate(baziPlate) {
 
   return {
     pillars,
+    tableRows: [
+      { label: '主星', rowClass: 'plate-star-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.star) })) },
+      { label: '天干', rowClass: 'plate-stem-row', isMain: true, cells: pillars.map((item) => ({ text: item.stem, className: item.stemClass })) },
+      { label: '地支', rowClass: 'plate-branch-row', isMain: true, cells: pillars.map((item) => ({ text: item.branch, className: item.branchClass })) },
+      { label: '藏干', rowClass: 'plate-hidden-row', isHidden: true, cells: pillars.map((item) => ({ hiddenItems: item.hiddenItems })) },
+      { label: '副星', rowClass: 'plate-substar-row', isText: true, cells: pillars.map((item) => ({ lines: item.subStarLines })) },
+      { label: '星运', rowClass: 'plate-small-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.stage) })) },
+      { label: '自坐', rowClass: 'plate-small-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.seat) })) },
+      { label: '空亡', rowClass: 'plate-small-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.void) })) },
+      { label: '纳音', rowClass: 'plate-small-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.nayin) })) },
+      { label: '神煞', rowClass: 'plate-spirit-row', isSpirit: true, cells: pillars.map((item) => ({ spiritItems: item.spiritItems })) }
+    ],
     metaRows: [
       { label: '藏干', values: pillars.map((item) => item.hidden) },
       { label: '星运', values: pillars.map((item) => item.stage) },
