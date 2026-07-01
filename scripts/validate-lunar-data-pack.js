@@ -28,9 +28,14 @@ const REQUIRED_RECORD_FIELDS = [
 
 function readJson(filePath, errors) {
   try {
+    if (path.extname(filePath) === '.js') {
+      const resolvedPath = require.resolve(filePath);
+      delete require.cache[resolvedPath];
+      return require(resolvedPath);
+    }
     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (error) {
-    errors.push(`${filePath}: invalid JSON (${error.message})`);
+    errors.push(`${filePath}: invalid data-pack module (${error.message})`);
     return null;
   }
 }
