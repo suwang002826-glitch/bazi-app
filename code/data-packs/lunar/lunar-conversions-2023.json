@@ -1,10 +1,12 @@
 {
   "dataPackId": "lunar-conversions-2023",
-  "calendarDataVersion": "lunar-data-pack@2026.07.01",
+  "calendarDataVersion": "lunar-data-pack@2026.07.02-preview",
   "source": "data-pack:lunar-conversions-2023",
   "status": "acceptance-seed",
   "coverage": {
-    "years": [2023],
+    "years": [
+      2023
+    ],
     "scope": "acceptance samples only",
     "completeLunarCalendar": false
   },

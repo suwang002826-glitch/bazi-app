@@ -1,9 +1,11 @@
 const lunarConversions2023 = require('../../data-packs/lunar/lunar-conversions-2023');
+const lunarConversions2025Candidate = require('../../data-packs/lunar/lunar-conversions-2025-candidate');
 const lunarManifest = require('../../data-packs/lunar/manifest');
 
 const lunarPackModules = {
   'lunar-conversions-2023.js': lunarConversions2023,
-  'lunar-conversions-2023.json': lunarConversions2023
+  'lunar-conversions-2023.json': lunarConversions2023,
+  'lunar-conversions-2025-candidate.js': lunarConversions2025Candidate
 };
 
 function loadLunarDataPacks(manifest = lunarManifest) {
@@ -45,7 +47,8 @@ function findLunarConversion(lunarInput) {
         calendarDataVersion: dataPack.calendarDataVersion,
         source: dataPack.source,
         dataPackStatus: dataPack.status,
-        completeLunarCalendar: Boolean(dataPack.coverage && dataPack.coverage.completeLunarCalendar)
+        completeLunarCalendar: Boolean(dataPack.coverage && dataPack.coverage.completeLunarCalendar),
+        runtimeApproval: dataPack.runtimeApproval || null
       };
     }
   }
@@ -53,10 +56,12 @@ function findLunarConversion(lunarInput) {
 }
 
 function getLunarDataPackCoverage() {
-  const runtimePacks = lunarManifest.packs.filter((pack) => pack.runtimeEnabled !== false);
   const years = Array.from(new Set(
-    runtimePacks.flatMap((pack) => pack.years || [])
+    lunarManifest.packs
+      .filter((pack) => pack.runtimeEnabled !== false)
+      .flatMap((pack) => pack.years || [])
   )).sort((a, b) => a - b);
+  const runtimePacks = lunarManifest.packs.filter((pack) => pack.runtimeEnabled !== false);
   const packIds = runtimePacks.map((pack) => pack.dataPackId);
   const completeLunarCalendar = runtimePacks.length > 0
     && runtimePacks.every((pack) => Boolean(pack.completeLunarCalendar));
