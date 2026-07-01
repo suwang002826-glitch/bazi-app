@@ -450,6 +450,7 @@ const validFullSourceControlsRoot = createTempRepository(
         {
           reviewedBy: 'test-reviewer',
           reviewedAt: '2026-07-01T00:00:00+08:00',
+          reviewStatus: 'approved-for-runtime',
           scope: 'fixture full pack source controls',
           note: 'validates source controls for complete lunar packs'
         }
@@ -464,6 +465,89 @@ const validFullSourceControlsRoot = createTempRepository(
 );
 assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: validFullSourceControlsRoot }).errors, []);
 
+const pendingRuntimeFullRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-full-source-controls-pending',
+        path: 'pack-full-source-controls-pending.json',
+        years: [2023],
+        completeLunarCalendar: true,
+        runtimeEnabled: true
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-full-source-controls-pending.json': {
+      dataPackId: 'pack-full-source-controls-pending',
+      calendarDataVersion: 'lunar-data-pack@test',
+      source: 'test:pack-full-source-controls-pending',
+      status: 'official-full',
+      coverage: {
+        years: [2023],
+        scope: 'full lunar calendar year',
+        completeLunarCalendar: true
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture primary',
+          sourceVersion: 'v1',
+          sourceUrl: 'https://example.invalid/primary.pdf',
+          rawSourceChecksum: {
+            algorithm: 'sha256',
+            value: 'a'.repeat(64)
+          },
+          retrievedAt: '2026-07-01T00:00:00+08:00',
+          note: 'primary source fixture'
+        },
+        {
+          sourceName: 'fixture secondary',
+          sourceVersion: 'v1',
+          sourceUrl: 'https://example.invalid/secondary.pdf',
+          rawSourceChecksum: {
+            algorithm: 'sha256',
+            value: 'b'.repeat(64)
+          },
+          retrievedAt: '2026-07-01T00:00:00+08:00',
+          note: 'secondary source fixture'
+        }
+      ],
+      generatedAt: '2026-07-01T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      generator: {
+        name: 'lunar-data-pack-generator',
+        version: 'test-v1',
+        inputChecksum: {
+          algorithm: 'sha256',
+          value: 'c'.repeat(64)
+        }
+      },
+      reviewLedger: [
+        {
+          reviewedBy: 'test-reviewer',
+          reviewedAt: '2026-07-01T00:00:00+08:00',
+          reviewStatus: 'pending-independent-review',
+          scope: 'fixture full pack source controls',
+          note: 'pending review must not unlock runtime'
+        }
+      ],
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(fullSourceRecords)
+      },
+      records: fullSourceRecords
+    }
+  }
+);
+const pendingRuntimeFullResult = validateLunarDataPackRepository({ rootDir: pendingRuntimeFullRoot });
+assertHasError(
+  pendingRuntimeFullResult.errors,
+  'pack-full-source-controls-pending: runtime complete lunar calendar packs require reviewLedger reviewStatus approved-for-runtime'
+);
 const draftFullRecords = [
   {
     caseId: 'BZI-DRAFT-FULL',

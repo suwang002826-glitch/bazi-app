@@ -341,6 +341,23 @@ function validateRuntimeExposure(pack, manifestEntry, errors) {
   }
 }
 
+function validateRuntimeApproval(pack, manifestEntry, errors) {
+  if (!manifestEntry || manifestEntry.runtimeEnabled === false) return;
+  if (!pack.coverage || pack.coverage.completeLunarCalendar !== true) return;
+
+  const reviewLedger = Array.isArray(pack.reviewLedger) ? pack.reviewLedger : [];
+  const hasRuntimeApproval = reviewLedger.some((review) => (
+    review.reviewStatus === 'approved-for-runtime'
+  ));
+
+  if (!hasRuntimeApproval) {
+    errors.push(`${pack.dataPackId}: runtime complete lunar calendar packs require reviewLedger reviewStatus approved-for-runtime`);
+  }
+
+  if (reviewLedger.some((review) => review.reviewStatus === 'pending-independent-review')) {
+    errors.push(`${pack.dataPackId}: runtime complete lunar calendar packs must not keep pending-independent-review`);
+  }
+}
 function validateRecordsChecksum(pack, errors) {
   if (!pack.recordsChecksum || typeof pack.recordsChecksum !== 'object') {
     errors.push(`${pack.dataPackId}: recordsChecksum must be an object`);
@@ -395,6 +412,7 @@ function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
   }
 
   validateRuntimeExposure(pack, manifestEntry, errors);
+  validateRuntimeApproval(pack, manifestEntry, errors);
 
   if (!Array.isArray(pack.records)) {
     errors.push(`${pack.dataPackId}: records must be an array`);
