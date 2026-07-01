@@ -31,6 +31,21 @@ const ZODIAC_BY_BRANCH = {
   亥: '猪'
 };
 
+const ZODIAC_ICON_BY_BRANCH = {
+  子: 'zi',
+  丑: 'chou',
+  寅: 'yin',
+  卯: 'mao',
+  辰: 'chen',
+  巳: 'si',
+  午: 'wu',
+  未: 'wei',
+  申: 'shen',
+  酉: 'you',
+  戌: 'xu',
+  亥: 'hai'
+};
+
 function isBaziRecord(item) {
   if (!item) return false;
   return item.type === '八字' || item.type === '鍏瓧';
@@ -70,9 +85,11 @@ function getYearBranch(result) {
 
 function buildZodiacSeal(result) {
   const branch = getYearBranch(result);
+  const iconKey = ZODIAC_ICON_BY_BRANCH[branch] || 'zi';
   return {
     branch,
     animal: ZODIAC_BY_BRANCH[branch] || '鼠',
+    icon: `/assets/zodiac/${iconKey}.png`,
     className: BRANCH_ELEMENTS[branch] || 'water'
   };
 }

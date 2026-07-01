@@ -54,6 +54,7 @@
           </view>
         </view>
         <view class="zodiac-seal {{item.zodiacSeal.className}}">
+          <image class="zodiac-image" src="{{item.zodiacSeal.icon}}" mode="aspectFit" />
           <view class="zodiac-animal">{{item.zodiacSeal.animal}}</view>
           <view class="zodiac-branch">{{item.zodiacSeal.branch}}</view>
         </view>
