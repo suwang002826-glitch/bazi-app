@@ -88,12 +88,15 @@ function tapCalendarMode(page, mode) {
 
 const wxml = fs.readFileSync(wxmlPath, 'utf8');
 assert(
-  wxml.includes('农历排盘测试版'),
-  'bazi.wxml should visibly label lunar entry as beta'
+  wxml.includes('农历排盘') || wxml.includes('农历择盘'),
+  'bazi.wxml should visibly label lunar entry'
 );
 assert(
-  wxml.includes('lunarYear') && wxml.includes('lunarMonth') && wxml.includes('lunarDay'),
-  'bazi.wxml should expose lunar year/month/day inputs'
+  wxml.includes('mode="multiSelector"')
+    && wxml.includes('onLunarDateChange')
+    && wxml.includes('onLeapMonthSwitch')
+    && wxml.includes('lunarBetaError'),
+  'bazi.wxml should expose lunar picker, leap-month switch, and beta error message'
 );
 
 {

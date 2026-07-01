@@ -1,16 +1,30 @@
 {
-  "calendarDataVersion": "lunar-data-pack@2026.07.01",
-  "status": "acceptance-seed",
+  "calendarDataVersion": "lunar-data-pack@2026.07.02-preview",
+  "status": "candidate-preview",
   "packs": [
     {
       "dataPackId": "lunar-conversions-2023",
       "path": "lunar-conversions-2023.js",
-      "years": [2023],
+      "years": [
+        2023
+      ],
       "completeLunarCalendar": false,
       "runtimeEnabled": true
+    },
+    {
+      "dataPackId": "lunar-data-pack-2025-candidate",
+      "path": "lunar-conversions-2025-candidate.js",
+      "years": [
+        2024,
+        2025
+      ],
+      "completeLunarCalendar": false,
+      "runtimeEnabled": true,
+      "runtimeApprovalStatus": "blocked"
     }
   ],
   "warnings": [
-    "This is a data-pack foundation. It only contains verified acceptance seed records and is not a complete lunar calendar."
+    "This is an internal preview data-pack foundation. 2025 PMO candidate records are not approved for stable runtime promises.",
+    "Only verified records can be used; dates outside listed packs must fail closed."
   ]
 }

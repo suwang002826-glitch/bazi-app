@@ -108,7 +108,7 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-09-29',
-    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.01',
+    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.02-preview',
     expectedConversionSource: 'data-pack:lunar-conversions-2023',
     expected: ['癸卯', '辛酉', '庚寅', '丙戌'],
     note: '第三轮要求农历输入从 data-pack 转换，不再读取代码内置白名单。'
@@ -130,7 +130,7 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-03-31',
-    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.01',
+    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.02-preview',
     expectedConversionSource: 'data-pack:lunar-conversions-2023',
     expected: ['癸卯', '乙卯', '戊子', '丁巳'],
     note: '第三轮要求农历闰月输入从 data-pack 转换，不再读取代码内置白名单。'
