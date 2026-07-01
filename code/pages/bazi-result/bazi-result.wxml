@@ -107,16 +107,6 @@
         </view>
       </view>
 
-      <view class="element-panel">
-        <view class="sub-heading">五行权重</view>
-        <view class="element-row" wx:for="{{result.distribution}}" wx:key="name">
-          <view class="element-name">{{item.name}}</view>
-          <view class="element-track">
-            <view class="element-bar" style="width: {{item.percent}}%;"></view>
-          </view>
-          <view class="element-value">{{item.percent}}%</view>
-        </view>
-      </view>
     </view>
 
     <view wx:elif="{{activeResultTab === '专业细盘'}}">
