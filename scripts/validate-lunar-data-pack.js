@@ -192,6 +192,10 @@ function validateManifest(manifest, errors) {
   if (!Array.isArray(manifest.warnings)) errors.push('manifest: warnings must be an array');
 }
 
+function isDraftStatus(status) {
+  return String(status || '').toLowerCase() === 'draft';
+}
+
 function validateRecord(record, pack, index, seen, repositoryState, errors) {
   REQUIRED_RECORD_FIELDS.forEach((field) => {
     if (record[field] === undefined || record[field] === null || record[field] === '') {
@@ -331,6 +335,12 @@ function validateCompleteLunarCalendarSourceControls(pack, errors) {
   }
 }
 
+function validateRuntimeExposure(pack, manifestEntry, errors) {
+  if (isDraftStatus(pack.status) && manifestEntry.runtimeEnabled !== false) {
+    errors.push(`${pack.dataPackId}: draft data-packs must set manifest runtimeEnabled false`);
+  }
+}
+
 function validateRecordsChecksum(pack, errors) {
   if (!pack.recordsChecksum || typeof pack.recordsChecksum !== 'object') {
     errors.push(`${pack.dataPackId}: recordsChecksum must be an object`);
@@ -384,6 +394,8 @@ function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
     errors.push(`${pack.dataPackId}: coverage.completeLunarCalendar ${pack.coverage.completeLunarCalendar} does not match manifest ${manifestEntry.completeLunarCalendar}`);
   }
 
+  validateRuntimeExposure(pack, manifestEntry, errors);
+
   if (!Array.isArray(pack.records)) {
     errors.push(`${pack.dataPackId}: records must be an array`);
     return 0;
@@ -425,6 +437,9 @@ function validateLunarDataPackRepository(options = {}) {
       validateYearsArray(`manifest.packs[${index}]`, entry.years, errors);
       if (typeof entry.completeLunarCalendar !== 'boolean') {
         errors.push(`manifest.packs[${index}]: completeLunarCalendar must be boolean`);
+      }
+      if (entry.runtimeEnabled !== undefined && typeof entry.runtimeEnabled !== 'boolean') {
+        errors.push(`manifest.packs[${index}]: runtimeEnabled must be boolean when present`);
       }
       if (entry.dataPackId && manifestPackIds.has(entry.dataPackId)) {
         errors.push(`manifest.packs[${index}]: duplicate dataPackId ${entry.dataPackId}`);
