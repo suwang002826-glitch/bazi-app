@@ -65,11 +65,70 @@ function canonicalize(value) {
   return value;
 }
 
+function canonicalText(value) {
+  return JSON.stringify(canonicalize(value));
+}
+
 function checksumRecords(records) {
   return crypto
     .createHash('sha256')
-    .update(JSON.stringify(canonicalize(records)))
+    .update(canonicalText(records))
     .digest('hex');
+}
+
+function replaceExtension(filePath, extension) {
+  return path.join(path.dirname(filePath), `${path.basename(filePath, path.extname(filePath))}${extension}`);
+}
+
+function formatLunarPath(lunarDir, filePath) {
+  return path.relative(lunarDir, filePath).replace(/\\/g, '/');
+}
+
+function validateMirroredData(left, right, label, errors) {
+  if (left && right && canonicalText(left) !== canonicalText(right)) {
+    errors.push(label);
+  }
+}
+
+function validateManifestMirror(lunarDir, manifest, errors) {
+  const manifestJsPath = path.join(lunarDir, 'manifest.js');
+  if (!fs.existsSync(manifestJsPath)) {
+    errors.push('manifest: missing runtime mirror manifest.js');
+    return;
+  }
+
+  const runtimeManifest = readJson(manifestJsPath, errors);
+  validateMirroredData(
+    manifest,
+    runtimeManifest,
+    'manifest mirror mismatch between manifest.json and manifest.js',
+    errors
+  );
+}
+
+function validatePackMirror(lunarDir, packPath, pack, dataPackId, errors) {
+  const extension = path.extname(packPath);
+  const mirrorExtension = extension === '.js' ? '.json' : '.js';
+  const mirrorPath = replaceExtension(packPath, mirrorExtension);
+  const activePathLabel = formatLunarPath(lunarDir, packPath);
+  const mirrorPathLabel = formatLunarPath(lunarDir, mirrorPath);
+
+  if (!fs.existsSync(mirrorPath)) {
+    if (extension === '.js') {
+      errors.push(`${dataPackId}: missing source mirror ${mirrorPathLabel}`);
+    }
+    return;
+  }
+
+  const mirrorPack = readJson(mirrorPath, errors);
+  const sourceLabel = extension === '.js' ? mirrorPathLabel : activePathLabel;
+  const runtimeLabel = extension === '.js' ? activePathLabel : mirrorPathLabel;
+  validateMirroredData(
+    extension === '.js' ? mirrorPack : pack,
+    extension === '.js' ? pack : mirrorPack,
+    `${dataPackId}: source/runtime mirror mismatch between ${sourceLabel} and ${runtimeLabel}`,
+    errors
+  );
 }
 
 function recordKey(record) {
@@ -286,6 +345,7 @@ function validateLunarDataPackRepository(options = {}) {
   const manifest = readJson(manifestPath, errors);
 
   validateManifest(manifest, errors);
+  if (manifest) validateManifestMirror(lunarDir, manifest, errors);
 
   const packIds = [];
   const manifestPackIds = new Set();
@@ -316,7 +376,10 @@ function validateLunarDataPackRepository(options = {}) {
       }
 
       const pack = readJson(packPath, errors);
-      if (pack) recordCount += validatePack(pack, manifest, entry, repositoryState, errors);
+      if (pack) {
+        validatePackMirror(lunarDir, packPath, pack, entry.dataPackId, errors);
+        recordCount += validatePack(pack, manifest, entry, repositoryState, errors);
+      }
     });
   }
 

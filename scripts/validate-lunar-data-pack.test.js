@@ -15,11 +15,16 @@ function writeText(filePath, value) {
   fs.writeFileSync(filePath, value, 'utf8');
 }
 
+function writeModule(filePath, value) {
+  writeText(filePath, `module.exports = ${JSON.stringify(value, null, 2)};\n`);
+}
+
 function createTempRepository(manifest, packs) {
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lunar-data-pack-test-'));
   const lunarDir = path.join(rootDir, 'code', 'data-packs', 'lunar');
   fs.mkdirSync(lunarDir, { recursive: true });
   writeJson(path.join(lunarDir, 'manifest.json'), manifest);
+  writeModule(path.join(lunarDir, 'manifest.js'), manifest);
 
   Object.entries(packs).forEach(([fileName, pack]) => {
     writeJson(path.join(lunarDir, fileName), pack);
@@ -331,9 +336,7 @@ const commonJsRecords = [
     sourceNote: 'commonjs fixture'
   }
 ];
-writeText(
-  path.join(commonJsRoot, 'code', 'data-packs', 'lunar', 'pack-commonjs.js'),
-  `module.exports = ${JSON.stringify({
+const commonJsPack = {
     dataPackId: 'pack-commonjs',
     calendarDataVersion: 'lunar-data-pack@test',
     source: 'test:pack-commonjs',
@@ -359,8 +362,159 @@ writeText(
       value: checksumRecords(commonJsRecords)
     },
     records: commonJsRecords
-  }, null, 2)};\n`
-);
+};
+writeJson(path.join(commonJsRoot, 'code', 'data-packs', 'lunar', 'pack-commonjs.json'), commonJsPack);
+writeModule(path.join(commonJsRoot, 'code', 'data-packs', 'lunar', 'pack-commonjs.js'), commonJsPack);
 assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: commonJsRoot }).errors, []);
+
+const missingSourceRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-missing-source',
+        path: 'pack-missing-source.js',
+        years: [2023],
+        completeLunarCalendar: false
+      }
+    ],
+    warnings: []
+  },
+  {}
+);
+writeModule(
+  path.join(missingSourceRoot, 'code', 'data-packs', 'lunar', 'pack-missing-source.js'),
+  {
+    ...commonJsPack,
+    dataPackId: 'pack-missing-source',
+    source: 'test:pack-missing-source'
+  }
+);
+const missingSourceResult = validateLunarDataPackRepository({ rootDir: missingSourceRoot });
+assertHasError(
+  missingSourceResult.errors,
+  'pack-missing-source: missing source mirror pack-missing-source.json'
+);
+
+const manifestMirrorRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [],
+    warnings: []
+  },
+  {}
+);
+writeModule(
+  path.join(manifestMirrorRoot, 'code', 'data-packs', 'lunar', 'manifest.js'),
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'runtime-drift',
+    packs: [],
+    warnings: []
+  }
+);
+const manifestMirrorResult = validateLunarDataPackRepository({ rootDir: manifestMirrorRoot });
+assertHasError(manifestMirrorResult.errors, 'manifest mirror mismatch between manifest.json and manifest.js');
+
+const mirrorSourceRecords = [
+  {
+    caseId: 'BZI-MIRROR',
+    lunarYear: 2023,
+    lunarMonth: 1,
+    lunarDay: 1,
+    isLeapMonth: false,
+    solarDate: '2023-01-22',
+    sourceNote: 'source mirror fixture'
+  }
+];
+const mirrorRuntimeRecords = [
+  {
+    caseId: 'BZI-MIRROR',
+    lunarYear: 2023,
+    lunarMonth: 1,
+    lunarDay: 1,
+    isLeapMonth: false,
+    solarDate: '2023-01-22',
+    sourceNote: 'runtime mirror drift'
+  }
+];
+const mirrorRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-mirror',
+        path: 'pack-mirror.js',
+        years: [2023],
+        completeLunarCalendar: false
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-mirror.json': {
+      dataPackId: 'pack-mirror',
+      calendarDataVersion: 'lunar-data-pack@test',
+      source: 'test:pack-mirror',
+      status: 'test-fixture',
+      coverage: {
+        years: [2023],
+        scope: 'test',
+        completeLunarCalendar: false
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-01T00:00:00+08:00',
+          note: 'source/runtime mirror validation fixture'
+        }
+      ],
+      generatedAt: '2026-07-01T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(mirrorSourceRecords)
+      },
+      records: mirrorSourceRecords
+    }
+  }
+);
+writeModule(
+  path.join(mirrorRoot, 'code', 'data-packs', 'lunar', 'pack-mirror.js'),
+  {
+    dataPackId: 'pack-mirror',
+    calendarDataVersion: 'lunar-data-pack@test',
+    source: 'test:pack-mirror',
+    status: 'test-fixture',
+    coverage: {
+      years: [2023],
+      scope: 'test',
+      completeLunarCalendar: false
+    },
+    authoritySource: 'test-fixture',
+    sourceLedger: [
+      {
+        sourceName: 'fixture',
+        sourceVersion: 'v1',
+        retrievedAt: '2026-07-01T00:00:00+08:00',
+        note: 'source/runtime mirror validation fixture'
+      }
+    ],
+    generatedAt: '2026-07-01T00:00:00+08:00',
+    generatedBy: 'validate-lunar-data-pack.test',
+    recordsChecksum: {
+      algorithm: 'sha256',
+      value: checksumRecords(mirrorRuntimeRecords)
+    },
+    records: mirrorRuntimeRecords
+  }
+);
+const mirrorResult = validateLunarDataPackRepository({ rootDir: mirrorRoot });
+assertHasError(mirrorResult.errors, 'pack-mirror: source/runtime mirror mismatch between pack-mirror.json and pack-mirror.js');
 
 console.log('PASS lunar data-pack schema validation');
