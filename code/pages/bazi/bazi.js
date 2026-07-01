@@ -3,6 +3,27 @@ const { createBaziPlate } = require('../../utils/baziPlate');
 
 const app = getApp();
 
+const LUNAR_YEAR_OPTIONS = Array.from({ length: 201 }, (_, index) => String(1900 + index));
+const LUNAR_MONTH_OPTIONS = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
+const LUNAR_DAY_OPTIONS = [
+  '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+  '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'
+];
+
+function getLunarPickerValue(year, month, day) {
+  const yearIndex = Math.max(0, LUNAR_YEAR_OPTIONS.indexOf(String(year || '2023')));
+  const monthIndex = Math.min(Math.max(Number(month || 1) - 1, 0), LUNAR_MONTH_OPTIONS.length - 1);
+  const dayIndex = Math.min(Math.max(Number(day || 1) - 1, 0), LUNAR_DAY_OPTIONS.length - 1);
+  return [yearIndex, monthIndex, dayIndex];
+}
+
+function getLunarDateText(form) {
+  const monthLabel = LUNAR_MONTH_OPTIONS[Math.min(Math.max(Number(form.lunarMonth || 1) - 1, 0), 11)] || '正月';
+  const dayLabel = LUNAR_DAY_OPTIONS[Math.min(Math.max(Number(form.lunarDay || 1) - 1, 0), 29)] || '初一';
+  return `${form.lunarYear}年 ${form.isLeapMonth ? '闰' : ''}${monthLabel} ${dayLabel}`;
+}
+
 Page({
   data: {
     genderOptions: ['男', '女'],
@@ -13,6 +34,9 @@ Page({
     saveCase: true,
     isGenerating: false,
     lunarBetaError: '',
+    lunarPickerRange: [LUNAR_YEAR_OPTIONS, LUNAR_MONTH_OPTIONS, LUNAR_DAY_OPTIONS],
+    lunarPickerValue: getLunarPickerValue('2023', '8', '15'),
+    lunarDateText: '2023年 八月 十五',
     form: {
       name: '',
       gender: '男',
@@ -53,9 +77,6 @@ Page({
       'form.calendarType': mode === '农历' ? 'lunar' : 'solar'
     };
     this.setData(patch);
-    if (mode === '农历') {
-      wx.showToast({ title: '农历排盘测试版已开启', icon: 'none' });
-    }
   },
 
   onDateChange(event) {
@@ -78,8 +99,37 @@ Page({
     this.setData({ 'form.lunarDay': event.detail.value, lunarBetaError: '' });
   },
 
+  onLunarDateChange(event) {
+    const value = event.detail.value || [0, 0, 0];
+    const lunarYear = LUNAR_YEAR_OPTIONS[value[0]] || '2023';
+    const lunarMonth = String((Number(value[1]) || 0) + 1);
+    const lunarDay = String((Number(value[2]) || 0) + 1);
+    const nextForm = {
+      ...this.data.form,
+      lunarYear,
+      lunarMonth,
+      lunarDay
+    };
+    this.setData({
+      'form.lunarYear': lunarYear,
+      'form.lunarMonth': lunarMonth,
+      'form.lunarDay': lunarDay,
+      lunarPickerValue: value,
+      lunarDateText: getLunarDateText(nextForm),
+      lunarBetaError: ''
+    });
+  },
+
   onLeapMonthSwitch(event) {
-    this.setData({ 'form.isLeapMonth': event.detail.value, lunarBetaError: '' });
+    const nextForm = {
+      ...this.data.form,
+      isLeapMonth: event.detail.value
+    };
+    this.setData({
+      'form.isLeapMonth': event.detail.value,
+      lunarDateText: getLunarDateText(nextForm),
+      lunarBetaError: ''
+    });
   },
 
   composeBirthPlace(region) {
