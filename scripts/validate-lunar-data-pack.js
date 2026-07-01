@@ -271,6 +271,66 @@ function validateSourceLedger(pack, errors) {
   }
 }
 
+function validateSha256ChecksumObject(label, checksum, errors) {
+  if (!checksum || typeof checksum !== 'object') {
+    errors.push(`${label} must be an object`);
+    return false;
+  }
+
+  if (checksum.algorithm !== 'sha256') {
+    errors.push(`${label}.algorithm must be sha256`);
+  }
+
+  if (!/^[0-9a-f]{64}$/.test(String(checksum.value || ''))) {
+    errors.push(`${label}.value must be a sha256 hex digest`);
+    return false;
+  }
+
+  return true;
+}
+
+function validateCompleteLunarCalendarSourceControls(pack, errors) {
+  const sourceLedger = Array.isArray(pack.sourceLedger) ? pack.sourceLedger : [];
+  if (sourceLedger.length < 2) {
+    errors.push(`${pack.dataPackId}: complete lunar calendar packs require at least 2 sourceLedger entries`);
+  }
+
+  sourceLedger.forEach((source, index) => {
+    const label = `${pack.dataPackId}.sourceLedger[${index}]`;
+    if (!source.sourceUrl) {
+      errors.push(`${label}: missing sourceUrl`);
+    }
+    validateSha256ChecksumObject(`${label}: rawSourceChecksum`, source.rawSourceChecksum, errors);
+  });
+
+  if (!pack.generator || typeof pack.generator !== 'object') {
+    errors.push(`${pack.dataPackId}: generator must be an object`);
+  } else {
+    ['name', 'version'].forEach((field) => {
+      if (!pack.generator[field]) {
+        errors.push(`${pack.dataPackId}.generator: missing ${field}`);
+      }
+    });
+    validateSha256ChecksumObject(`${pack.dataPackId}.generator: inputChecksum`, pack.generator.inputChecksum, errors);
+  }
+
+  if (!Array.isArray(pack.reviewLedger) || pack.reviewLedger.length === 0) {
+    errors.push(`${pack.dataPackId}: reviewLedger must be a non-empty array`);
+  } else {
+    pack.reviewLedger.forEach((review, index) => {
+      const label = `${pack.dataPackId}.reviewLedger[${index}]`;
+      ['reviewedBy', 'scope', 'note'].forEach((field) => {
+        if (!review[field]) {
+          errors.push(`${label}: missing ${field}`);
+        }
+      });
+      if (!review.reviewedAt || !isIsoDateTime(review.reviewedAt)) {
+        errors.push(`${label}: reviewedAt must be ISO datetime`);
+      }
+    });
+  }
+}
+
 function validateRecordsChecksum(pack, errors) {
   if (!pack.recordsChecksum || typeof pack.recordsChecksum !== 'object') {
     errors.push(`${pack.dataPackId}: recordsChecksum must be an object`);
@@ -330,6 +390,9 @@ function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
   }
 
   validateSourceLedger(pack, errors);
+  if (pack.coverage && pack.coverage.completeLunarCalendar === true) {
+    validateCompleteLunarCalendarSourceControls(pack, errors);
+  }
   validateRecordsChecksum(pack, errors);
 
   const seen = new Set();
