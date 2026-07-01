@@ -18,6 +18,9 @@ const {
 const {
   validateLunarPromotionReadinessRepository
 } = require('./validate-lunar-promotion-readiness');
+const {
+  validateLunarRuntimeApprovalReviewRepository
+} = require('./validate-lunar-runtime-approval-review');
 
 const acceptanceCases = [
   {
@@ -221,6 +224,17 @@ function assertPromotionReadiness() {
   console.log(`PASS PROMOTION READINESS gate ${readinessResult.summary.blockers.join(', ')}`);
 }
 
+function assertRuntimeApprovalReview() {
+  const approvalResult = validateLunarRuntimeApprovalReviewRepository({
+    rootDir: path.join(__dirname, '..')
+  });
+  assert.deepStrictEqual(approvalResult.errors, []);
+  assert.strictEqual(approvalResult.summary.approvalDecision, 'not-approved');
+  assert.strictEqual(approvalResult.summary.proposedRuntimeScope, 'gregorian-year-2023-limited');
+  assert.strictEqual(approvalResult.summary.requiresUiScopeWarning, true);
+  console.log(`PASS RUNTIME APPROVAL REVIEW ${approvalResult.summary.approvalDecision}`);
+}
+
 function assertUnsupportedLunarInputs() {
   unsupportedLunarCases.forEach((item) => {
     assert.throws(
@@ -259,6 +273,7 @@ function run() {
   assertDraftDataPacks();
   assertReviewMatrix();
   assertPromotionReadiness();
+  assertRuntimeApprovalReview();
   assertUnsupportedLunarInputs();
   assertImplicitLunarInputs();
 
@@ -339,3 +354,4 @@ require('./generate-lunar-data-pack.test');
 require('./generate-lunar-draft-data-pack.test');
 require('./validate-lunar-review-matrix.test');
 require('./validate-lunar-promotion-readiness.test');
+require('./validate-lunar-runtime-approval-review.test');

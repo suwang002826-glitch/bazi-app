@@ -1,0 +1,34 @@
+{
+  "reviewId": "lunar-runtime-approval-review-2023-hko-limited",
+  "status": "proposal",
+  "sourceChecklistId": "lunar-promotion-checklist-2023-hko-draft",
+  "sourceDraftDataPackId": "lunar-conversions-2023-full-draft",
+  "approvalDecision": "not-approved",
+  "recommendation": "design-limited-runtime-before-approval",
+  "proposedRuntimeScope": "gregorian-year-2023-limited",
+  "completeLunarCalendar": false,
+  "requiresUiScopeWarning": true,
+  "requiresStructuredOutOfCoverageError": true,
+  "requiresRuntimeManifestRegistrationReview": true,
+  "requiresIndependentSourceReviewBeforeFullCalendarClaim": true,
+  "proposedVersion": "lunar-data-pack@2026.07.01-hko-2023-limited.1",
+  "remainingBlockers": [
+    "runtime-approval-not-granted",
+    "approved-for-runtime-blocked"
+  ],
+  "allowedClaimsIfApprovedLater": [
+    "Supports HKO 2023 Gregorian-year lunar conversion coverage",
+    "Does not claim complete lunar-year coverage",
+    "Returns structured errors outside registered coverage"
+  ],
+  "forbiddenClaims": [
+    "Complete lunar calendar support",
+    "Full historical lunar conversion support",
+    "Independent authority verified"
+  ],
+  "notes": [
+    "This review is not an approval.",
+    "A limited runtime package may be designed next, but runtimeApproval must remain false until an explicit approval PR changes it.",
+    "UI copy must disclose the 2023 Gregorian-year limitation before any limited runtime feature is exposed."
+  ]
+}
