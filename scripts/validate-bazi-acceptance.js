@@ -15,6 +15,9 @@ const {
 const {
   validateLunarReviewMatrixRepository
 } = require('./validate-lunar-review-matrix');
+const {
+  validateLunarPromotionReadinessRepository
+} = require('./validate-lunar-promotion-readiness');
 
 const acceptanceCases = [
   {
@@ -205,6 +208,16 @@ function assertReviewMatrix() {
   console.log(`PASS REVIEW MATRIX validation ${matrixResult.summary.sampleCount} sample(s)`);
 }
 
+function assertPromotionReadiness() {
+  const readinessResult = validateLunarPromotionReadinessRepository({
+    rootDir: path.join(__dirname, '..')
+  });
+  assert.deepStrictEqual(readinessResult.errors, []);
+  assert.strictEqual(readinessResult.summary.promotionReady, false);
+  assert.ok(readinessResult.summary.blockers.includes('human-review-pending'));
+  console.log(`PASS PROMOTION READINESS gate ${readinessResult.summary.blockers.join(', ')}`);
+}
+
 function assertUnsupportedLunarInputs() {
   unsupportedLunarCases.forEach((item) => {
     assert.throws(
@@ -242,6 +255,7 @@ function run() {
   assertDataPackRegistry();
   assertDraftDataPacks();
   assertReviewMatrix();
+  assertPromotionReadiness();
   assertUnsupportedLunarInputs();
   assertImplicitLunarInputs();
 
@@ -321,3 +335,4 @@ require('./validate-lunar-beta-entry');
 require('./generate-lunar-data-pack.test');
 require('./generate-lunar-draft-data-pack.test');
 require('./validate-lunar-review-matrix.test');
+require('./validate-lunar-promotion-readiness.test');

@@ -1,0 +1,29 @@
+{
+  "checklistId": "lunar-promotion-checklist-2023-hko-draft",
+  "status": "pending-review",
+  "sourceMatrixId": "lunar-review-matrix-2023-hko-draft",
+  "sourceDraftDataPackId": "lunar-conversions-2023-full-draft",
+  "runtimeApproval": false,
+  "requiredGates": [
+    "source-draft-data-pack",
+    "review-matrix",
+    "human-review-ledger",
+    "approved-for-runtime"
+  ],
+  "gates": {
+    "sourceDraftDataPack": "present",
+    "reviewMatrix": "present",
+    "humanReviewLedger": "pending",
+    "approvedForRuntime": "blocked"
+  },
+  "promotionRule": {
+    "allSamplesMustPassHumanReview": true,
+    "approvedForRuntimeRequired": true,
+    "pendingReviewBlocksRuntime": true
+  },
+  "notes": [
+    "This checklist records runtime promotion readiness only.",
+    "It must not be used to enable runtime data while status is pending-review.",
+    "The draft remains blocked until all matrix samples have human review conclusions and runtime approval is explicit."
+  ]
+}
