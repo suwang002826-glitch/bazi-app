@@ -9,6 +9,21 @@ const BASIC_ELEMENT_CLASS = {
   水: 'water'
 };
 
+const ZODIAC_BY_BRANCH = {
+  子: '鼠',
+  丑: '牛',
+  寅: '虎',
+  卯: '兔',
+  辰: '龙',
+  巳: '蛇',
+  午: '马',
+  未: '羊',
+  申: '猴',
+  酉: '鸡',
+  戌: '狗',
+  亥: '猪'
+};
+
 const SPIRIT_INFO = {
   天乙贵人: { figure: '乙', title: '天乙贵人', category: '贵人', meaning: '主逢凶有解、遇事得助，是四柱神煞中常用于观察助力与转圜空间的贵曜。', advice: '宜主动求教、借力专业人士；不可因见贵人而轻忽现实准备。' },
   太极贵人: { figure: '太', title: '太极贵人', category: '贵人', meaning: '多主悟性、清静、好学与对玄学、哲理、宗教文化的亲近倾向。', advice: '适合深学一门、静心复盘，把感悟落成行动。' },
@@ -229,15 +244,65 @@ function decorateProfessionalDetail(detail) {
   };
 }
 
+function getAgeFromSolarTime(solarTime) {
+  const year = Number(String(solarTime || '').slice(0, 4));
+  if (!Number.isFinite(year) || year < 1900) return '';
+  return `${new Date().getFullYear() - year}岁`;
+}
+
+function getHintText(result, title) {
+  const hit = (result.validationHints || []).find((item) => item.title === title);
+  return hit ? hit.text : '';
+}
+
+function buildBasicInfo(result) {
+  if (!result) return null;
+  const yearPillar = (result.pillars || [])[0] || {};
+  const fetal = result.detailProfile && result.detailProfile.fetalOrigin || {};
+  const palace = result.detailProfile && result.detailProfile.palaceProfile || {};
+  const life = palace.life || {};
+  const body = palace.body || {};
+  const age = getAgeFromSolarTime(result.solarTime);
+  const zodiac = ZODIAC_BY_BRANCH[yearPillar.branch] || yearPillar.branch || '未定';
+  const gender = result.gender || '未填';
+  const sectionHint = getHintText(result, '节气边界校验');
+
+  return {
+    name: result.displayName || '未命名',
+    seal: result.dayMaster && result.dayMaster.stem || yearPillar.branch || '命',
+    chips: [`生肖：${zodiac}`, age ? `${age} ${gender}` : gender],
+    highlights: [
+      { label: '日主属性', value: result.dayMaster ? result.dayMaster.text : '待校验' },
+      { label: '格局旺衰', value: result.professional ? `${result.professional.pattern.name} · ${result.professional.strength.status}` : '待校验' },
+      { label: '喜用参考', value: result.professional ? result.professional.usefulGod.usefulText : '待校验' }
+    ],
+    rows: [
+      { label: '阳历', value: result.solarTime || '未记录' },
+      { label: '真太阳时', value: result.adjustedSolarTime || result.solarTime || '未校准' },
+      { label: '出生地区', value: `${result.birthPlace || '未填写'} · 东经 ${result.longitude || '--'}°` },
+      { label: '节气校验', value: sectionHint || '按节气换月与真太阳时口径校验。' },
+      { label: '胎元', value: fetal.value ? `${fetal.value}（${fetal.nayin}）` : '未生成' },
+      { label: '空亡', value: result.detailProfile && result.detailProfile.voidText ? result.detailProfile.voidText : '未见' }
+    ],
+    palaceRows: [
+      { label: '命宫', value: life.value || '未生成' },
+      { label: '身宫', value: body.value || '未生成' },
+      { label: '排盘口径', value: '节气换月 · 真太阳时校正' }
+    ]
+  };
+}
+
 Page({
   data: {
     result: null,
     baziPlate: null,
     songPlate: null,
+    basicInfo: null,
     professionalDetail: null,
-    resultTabs: ['基本命盘', '专业细盘', '分析解读'],
-    activeResultTab: '基本命盘',
-    isBasicTab: true,
+    resultTabs: ['基本信息', '基本命盘', '专业细盘', '分析解读'],
+    activeResultTab: '基本信息',
+    isInfoTab: true,
+    isBasicTab: false,
     isProTab: false,
     isAnalysisTab: false,
     selectedLuckIndex: 0,
@@ -258,6 +323,7 @@ Page({
         result,
         baziPlate: reading.baziPlate,
         songPlate: buildSongPlate(reading.baziPlate, result),
+        basicInfo: buildBasicInfo(result),
         professionalDetail,
         selectedLuckIndex: professionalDetail.selectedLuckIndex,
         selectedYearIndex: professionalDetail.selectedYearIndex,
@@ -271,6 +337,7 @@ Page({
     const tab = event.currentTarget.dataset.tab;
     this.setData({
       activeResultTab: tab,
+      isInfoTab: tab === '基本信息',
       isBasicTab: tab === '基本命盘',
       isProTab: tab === '专业细盘',
       isAnalysisTab: tab === '分析解读'

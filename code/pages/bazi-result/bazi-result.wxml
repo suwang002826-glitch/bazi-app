@@ -27,7 +27,42 @@
     </view>
 
     <view class="result-tabs">
-      <view class="result-tab" wx:for="{{resultTabs}}" wx:key="*this" bindtap="onResultTabChange" data-tab="{{item}}">{{item}}</view>
+      <view class="result-tab {{activeResultTab === item ? 'active' : ''}}" wx:for="{{resultTabs}}" wx:key="*this" bindtap="onResultTabChange" data-tab="{{item}}">{{item}}</view>
+    </view>
+
+    <view wx:if="{{isInfoTab}}" class="basic-info-page">
+      <view class="basic-info-hero">
+        <view class="basic-info-seal">{{basicInfo.seal}}</view>
+        <view class="basic-info-main">
+          <view class="basic-info-name">{{basicInfo.name}}</view>
+          <view class="basic-info-sub">命盘基础档案</view>
+        </view>
+        <view class="basic-info-chips">
+          <view class="basic-info-chip" wx:for="{{basicInfo.chips}}" wx:key="*this">{{item}}</view>
+        </view>
+      </view>
+
+      <view class="info-list-card">
+        <view class="info-row" wx:for="{{basicInfo.rows}}" wx:key="label">
+          <view class="info-label">{{item.label}}</view>
+          <view class="info-value">{{item.value}}</view>
+        </view>
+      </view>
+
+      <view class="info-section-title">命盘要点</view>
+      <view class="info-highlight-grid">
+        <view class="info-highlight-card" wx:for="{{basicInfo.highlights}}" wx:key="label">
+          <view class="highlight-label">{{item.label}}</view>
+          <view class="highlight-value">{{item.value}}</view>
+        </view>
+      </view>
+
+      <view class="info-list-card compact-info-card">
+        <view class="info-row" wx:for="{{basicInfo.palaceRows}}" wx:key="label">
+          <view class="info-label">{{item.label}}</view>
+          <view class="info-value">{{item.value}}</view>
+        </view>
+      </view>
     </view>
 
     <view wx:if="{{isBasicTab}}">
