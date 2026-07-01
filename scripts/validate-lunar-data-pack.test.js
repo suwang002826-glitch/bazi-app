@@ -464,6 +464,124 @@ const validFullSourceControlsRoot = createTempRepository(
 );
 assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: validFullSourceControlsRoot }).errors, []);
 
+const draftFullRecords = [
+  {
+    caseId: 'BZI-DRAFT-FULL',
+    lunarYear: 2023,
+    lunarMonth: 1,
+    lunarDay: 2,
+    isLeapMonth: false,
+    solarDate: '2023-01-23',
+    sourceNote: 'draft full pack runtime gate fixture'
+  }
+];
+const draftFullPack = {
+  dataPackId: 'pack-draft-full',
+  calendarDataVersion: 'lunar-data-pack@test',
+  source: 'test:pack-draft-full',
+  status: 'draft',
+  coverage: {
+    years: [2023],
+    scope: 'draft full lunar calendar year',
+    completeLunarCalendar: true
+  },
+  authoritySource: 'test-fixture',
+  sourceLedger: [
+    {
+      sourceName: 'fixture primary',
+      sourceVersion: 'v1',
+      sourceUrl: 'https://example.invalid/primary.pdf',
+      rawSourceChecksum: {
+        algorithm: 'sha256',
+        value: 'd'.repeat(64)
+      },
+      retrievedAt: '2026-07-01T00:00:00+08:00',
+      note: 'primary draft source fixture'
+    },
+    {
+      sourceName: 'fixture secondary',
+      sourceVersion: 'v1',
+      sourceUrl: 'https://example.invalid/secondary.pdf',
+      rawSourceChecksum: {
+        algorithm: 'sha256',
+        value: 'e'.repeat(64)
+      },
+      retrievedAt: '2026-07-01T00:00:00+08:00',
+      note: 'secondary draft source fixture'
+    }
+  ],
+  generatedAt: '2026-07-01T00:00:00+08:00',
+  generatedBy: 'validate-lunar-data-pack.test',
+  generator: {
+    name: 'lunar-data-pack-generator',
+    version: 'test-v1',
+    inputChecksum: {
+      algorithm: 'sha256',
+      value: 'f'.repeat(64)
+    }
+  },
+  reviewLedger: [
+    {
+      reviewedBy: 'test-reviewer',
+      reviewedAt: '2026-07-01T00:00:00+08:00',
+      scope: 'draft runtime exposure gate',
+      note: 'draft full pack must not be runtime enabled'
+    }
+  ],
+  recordsChecksum: {
+    algorithm: 'sha256',
+    value: checksumRecords(draftFullRecords)
+  },
+  records: draftFullRecords
+};
+const draftRuntimeEnabledRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-draft-full',
+        path: 'pack-draft-full.json',
+        years: [2023],
+        completeLunarCalendar: true,
+        runtimeEnabled: true
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-draft-full.json': draftFullPack
+  }
+);
+const draftRuntimeEnabledResult = validateLunarDataPackRepository({ rootDir: draftRuntimeEnabledRoot });
+assertHasError(
+  draftRuntimeEnabledResult.errors,
+  'pack-draft-full: draft data-packs must set manifest runtimeEnabled false'
+);
+
+const draftRuntimeDisabledRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-draft-full',
+        path: 'pack-draft-full.json',
+        years: [2023],
+        completeLunarCalendar: true,
+        runtimeEnabled: false
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-draft-full.json': draftFullPack
+  }
+);
+assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: draftRuntimeDisabledRoot }).errors, []);
+
+
+
 const commonJsRoot = createTempRepository(
   {
     calendarDataVersion: 'lunar-data-pack@test',

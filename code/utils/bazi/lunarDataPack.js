@@ -7,7 +7,7 @@ const lunarPackModules = {
 };
 
 function loadLunarDataPacks(manifest = lunarManifest) {
-  return manifest.packs.map((pack) => {
+  return manifest.packs.filter((pack) => pack.runtimeEnabled !== false).map((pack) => {
     const dataPack = lunarPackModules[pack.path];
     if (!dataPack) {
       const error = new Error(`Lunar data-pack file is not registered: ${pack.path}`);
@@ -53,12 +53,13 @@ function findLunarConversion(lunarInput) {
 }
 
 function getLunarDataPackCoverage() {
+  const runtimePacks = lunarManifest.packs.filter((pack) => pack.runtimeEnabled !== false);
   const years = Array.from(new Set(
-    lunarManifest.packs.flatMap((pack) => pack.years || [])
+    runtimePacks.flatMap((pack) => pack.years || [])
   )).sort((a, b) => a - b);
-  const packIds = lunarManifest.packs.map((pack) => pack.dataPackId);
-  const completeLunarCalendar = lunarManifest.packs.length > 0
-    && lunarManifest.packs.every((pack) => Boolean(pack.completeLunarCalendar));
+  const packIds = runtimePacks.map((pack) => pack.dataPackId);
+  const completeLunarCalendar = runtimePacks.length > 0
+    && runtimePacks.every((pack) => Boolean(pack.completeLunarCalendar));
 
   return {
     calendarDataVersion: lunarManifest.calendarDataVersion,
@@ -72,6 +73,7 @@ function getLunarDataPackCoverage() {
 
 module.exports = {
   lunarManifest,
+  loadLunarDataPacks,
   findLunarConversion,
   getLunarDataPackCoverage
 };

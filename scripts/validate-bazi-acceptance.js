@@ -292,4 +292,5 @@ function run() {
 }
 
 run();
+require('./validate-lunar-runtime-loader.test');
 require('./validate-lunar-beta-entry');
