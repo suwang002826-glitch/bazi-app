@@ -24,6 +24,9 @@ const {
 const {
   validateLunarLimitedRuntimeScopeRepository
 } = require('./validate-lunar-limited-runtime-scope');
+const {
+  validateLunarLimitedRuntimeCandidateRepository
+} = require('./validate-lunar-limited-runtime-candidate');
 
 const acceptanceCases = [
   {
@@ -250,6 +253,19 @@ function assertLimitedRuntimeScope() {
   console.log(`PASS LIMITED RUNTIME SCOPE ${scopeResult.summary.coverageStart}..${scopeResult.summary.coverageEnd}`);
 }
 
+function assertLimitedRuntimeCandidate() {
+  const candidateResult = validateLunarLimitedRuntimeCandidateRepository({
+    rootDir: path.join(__dirname, '..')
+  });
+  assert.deepStrictEqual(candidateResult.errors, []);
+  assert.strictEqual(candidateResult.summary.candidatePackCount, 1);
+  assert.strictEqual(candidateResult.summary.recordCount, 365);
+  assert.strictEqual(candidateResult.summary.runtimeEnabled, false);
+  assert.strictEqual(candidateResult.summary.manifestRegistered, false);
+  assert.strictEqual(candidateResult.summary.completeLunarCalendar, false);
+  console.log(`PASS LIMITED RUNTIME CANDIDATE ${candidateResult.summary.recordCount} records`);
+}
+
 function assertUnsupportedLunarInputs() {
   unsupportedLunarCases.forEach((item) => {
     assert.throws(
@@ -290,6 +306,7 @@ function run() {
   assertPromotionReadiness();
   assertRuntimeApprovalReview();
   assertLimitedRuntimeScope();
+  assertLimitedRuntimeCandidate();
   assertUnsupportedLunarInputs();
   assertImplicitLunarInputs();
 
@@ -372,3 +389,5 @@ require('./validate-lunar-review-matrix.test');
 require('./validate-lunar-promotion-readiness.test');
 require('./validate-lunar-runtime-approval-review.test');
 require('./validate-lunar-limited-runtime-scope.test');
+require('./generate-lunar-limited-runtime-candidate.test');
+require('./validate-lunar-limited-runtime-candidate.test');
