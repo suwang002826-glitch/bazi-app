@@ -15,30 +15,42 @@
   },
   "sources": [
     {
-      "sourceId": "sample-primary-2023",
-      "sourceType": "authority-placeholder",
-      "sourceName": "Sample Primary Lunar Almanac",
+      "sourceId": "hko-open-data-calendar-2023-csv",
+      "sourceRole": "primary-data",
+      "sourceType": "authority-open-data",
+      "sourceName": "HKO Gregorian-Lunar Calendar Conversion Table 2023 CSV",
       "sourceVersion": "2023",
-      "sourceUrl": "https://example.invalid/lunar-primary-2023.pdf",
+      "dataProvider": "Hong Kong Observatory",
+      "datasetName": "Gregorian-Lunar Calendar Conversion Table",
+      "resourceFormat": "CSV",
+      "landingPageUrl": "https://data.gov.hk/en-data/dataset/hk-hko-rss-gregorian-lunar-calendar-conversion-table",
+      "sourceUrl": "https://data.weather.gov.hk/weatherAPI/hko_data/calendar/nongli_calendar_2023.csv",
+      "byteLength": 14054,
       "retrievedAt": "2026-07-01T00:00:00+08:00",
       "rawSourceChecksum": {
         "algorithm": "sha256",
-        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "value": "765361bc4a65ce8bc4687f062d1c8afdb08deba1fb365aaea7c7b44481cb7419"
       },
-      "note": "Sample only. Replace with an approved authority source before generating a complete pack."
+      "note": "Official HKO open-data CSV downloaded and checksummed before draft record generation."
     },
     {
-      "sourceId": "sample-secondary-2023",
-      "sourceType": "cross-check-placeholder",
-      "sourceName": "Sample Secondary Lunar Almanac",
+      "sourceId": "hko-calendar-2023-text",
+      "sourceRole": "cross-check-text",
+      "sourceType": "authority-text",
+      "sourceName": "HKO Gregorian-Lunar Calendar Conversion Table 2023 Text",
       "sourceVersion": "2023",
-      "sourceUrl": "https://example.invalid/lunar-secondary-2023.pdf",
+      "dataProvider": "Hong Kong Observatory",
+      "datasetName": "Gregorian-Lunar Calendar Conversion Table",
+      "resourceFormat": "TXT",
+      "landingPageUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2023e.txt",
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2023e.txt",
+      "byteLength": 28989,
       "retrievedAt": "2026-07-01T00:00:00+08:00",
       "rawSourceChecksum": {
         "algorithm": "sha256",
-        "value": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "value": "f3bbdef5c9b0c0158ca8328004e347da714494572effc23fea97af48052402e5"
       },
-      "note": "Sample only. Use this slot for an independent cross-check source."
+      "note": "Official HKO text table downloaded and checksummed as a cross-check source."
     }
   ],
   "generator": {

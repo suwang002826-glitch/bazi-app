@@ -16,10 +16,16 @@ function checksum(value) {
 function createSource(overrides = {}) {
   return {
     sourceId: 'fixture-primary',
-    sourceType: 'authority',
+    sourceRole: 'primary-data',
+    sourceType: 'authority-open-data',
     sourceName: 'Fixture Primary Almanac',
     sourceVersion: '2023',
+    dataProvider: 'Fixture Observatory',
+    datasetName: 'Fixture Gregorian-Lunar Calendar Conversion Table',
+    resourceFormat: 'CSV',
+    landingPageUrl: 'https://example.invalid/lunar-source-page',
     sourceUrl: 'https://example.invalid/lunar-primary-2023.pdf',
+    byteLength: 1234,
     retrievedAt: '2026-07-01T00:00:00+08:00',
     rawSourceChecksum: {
       algorithm: 'sha256',
@@ -48,8 +54,11 @@ function createValidManifest(overrides = {}) {
       createSource(),
       createSource({
         sourceId: 'fixture-secondary',
+        sourceRole: 'cross-check-text',
         sourceName: 'Fixture Secondary Almanac',
+        resourceFormat: 'TXT',
         sourceUrl: 'https://example.invalid/lunar-secondary-2023.pdf',
+        byteLength: 2345,
         rawSourceChecksum: {
           algorithm: 'sha256',
           value: checksum('b')
@@ -110,7 +119,13 @@ const invalidResult = validateSourceManifest(createValidManifest({
   sources: [
     createSource({
       sourceId: '',
+      sourceRole: '',
+      dataProvider: '',
+      datasetName: '',
+      resourceFormat: 'XLS',
+      landingPageUrl: 'not-a-url',
       sourceUrl: '',
+      byteLength: 0,
       rawSourceChecksum: {
         algorithm: 'md5',
         value: 'not-a-sha'
@@ -140,7 +155,13 @@ assertHasError(invalidResult.errors, 'coverage.years must contain only integers'
 assertHasError(invalidResult.errors, 'coverage.completeLunarCalendar must be true');
 assertHasError(invalidResult.errors, 'sources must contain at least 2 entries');
 assertHasError(invalidResult.errors, 'sources[0]: missing sourceId');
+assertHasError(invalidResult.errors, 'sources[0]: missing sourceRole');
+assertHasError(invalidResult.errors, 'sources[0]: missing dataProvider');
+assertHasError(invalidResult.errors, 'sources[0]: missing datasetName');
+assertHasError(invalidResult.errors, 'sources[0]: resourceFormat must be CSV, TXT, PDF, JSON, or HTML');
+assertHasError(invalidResult.errors, 'sources[0]: landingPageUrl must be an http(s) URL');
 assertHasError(invalidResult.errors, 'sources[0]: missing sourceUrl');
+assertHasError(invalidResult.errors, 'sources[0]: byteLength must be a positive integer');
 assertHasError(invalidResult.errors, 'sources[0]: rawSourceChecksum.algorithm must be sha256');
 assertHasError(invalidResult.errors, 'sources[0]: rawSourceChecksum.value must be a sha256 hex digest');
 assertHasError(invalidResult.errors, 'reviewPolicy.requiresManualReview must be true');

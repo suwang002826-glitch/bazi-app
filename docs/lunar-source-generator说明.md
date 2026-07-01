@@ -12,7 +12,7 @@
 - `writesPack` 必须是 `false`。
 - `targetRuntimeEnabled` 必须是 `false`。
 - 至少需要两份来源记录。
-- 每份来源都必须有 `sourceUrl` 和 `rawSourceChecksum`。
+- 每份来源都必须有 `dataProvider`、`datasetName`、`sourceRole`、`resourceFormat`、`landingPageUrl`、`sourceUrl`、`byteLength` 和 `rawSourceChecksum`。
 - `rawSourceChecksum.algorithm` 必须是 `sha256`。
 - `reviewPolicy.runtimeEnabled` 必须是 `false`。
 - `outputPolicy.requiresRecordsChecksum` 必须是 `true`。

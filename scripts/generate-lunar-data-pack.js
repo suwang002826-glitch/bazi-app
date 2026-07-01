@@ -9,6 +9,15 @@ function isIsoDateTime(value) {
   return !Number.isNaN(new Date(text).getTime());
 }
 
+function isHttpUrl(value) {
+  try {
+    const url = new URL(String(value || ''));
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (error) {
+    return false;
+  }
+}
+
 function validateRequiredText(label, value, errors) {
   if (!value || typeof value !== 'string') {
     errors.push(`${label}: missing ${label.split('.').pop()}`);
@@ -70,9 +79,14 @@ function validateSource(source, index, errors) {
   const label = `sources[${index}]`;
   [
     'sourceId',
+    'sourceRole',
     'sourceType',
     'sourceName',
     'sourceVersion',
+    'dataProvider',
+    'datasetName',
+    'resourceFormat',
+    'landingPageUrl',
     'sourceUrl',
     'retrievedAt',
     'note'
@@ -81,6 +95,25 @@ function validateSource(source, index, errors) {
       errors.push(`${label}: missing ${field}`);
     }
   });
+
+  if (source && source.resourceFormat) {
+    const format = String(source.resourceFormat).toUpperCase();
+    if (!['CSV', 'TXT', 'PDF', 'JSON', 'HTML'].includes(format)) {
+      errors.push(`${label}: resourceFormat must be CSV, TXT, PDF, JSON, or HTML`);
+    }
+  }
+
+  if (source && source.landingPageUrl && !isHttpUrl(source.landingPageUrl)) {
+    errors.push(`${label}: landingPageUrl must be an http(s) URL`);
+  }
+
+  if (source && source.sourceUrl && !isHttpUrl(source.sourceUrl)) {
+    errors.push(`${label}: sourceUrl must be an http(s) URL`);
+  }
+
+  if (!source || !Number.isInteger(source.byteLength) || source.byteLength <= 0) {
+    errors.push(`${label}: byteLength must be a positive integer`);
+  }
 
   if (source && source.retrievedAt && !isIsoDateTime(source.retrievedAt)) {
     errors.push(`${label}: retrievedAt must be ISO datetime`);
