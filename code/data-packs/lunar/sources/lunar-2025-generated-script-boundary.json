@@ -1,0 +1,52 @@
+{
+  "reviewId": "lunar-2025-generated-script-boundary",
+  "status": "reference-only",
+  "createdAt": "2026-07-02T00:00:00+08:00",
+  "reviewScope": "2025 pasted generated script containing daily lunar rows, solar terms, and city longitude data",
+  "sourceClass": "generated-script-attachment",
+  "sourceClaim": "Script header claims PMO / National Time Service Center compilation standard.",
+  "sourceControlDecision": {
+    "mayUseAsPrimarySource": false,
+    "mayCreateDraftPack": false,
+    "mayCreateRuntimeCandidate": false,
+    "mayRegisterRuntimeManifest": false,
+    "mayUseForHumanReviewNotes": true,
+    "requiresOriginalSourceBeforeImport": true,
+    "reason": "The attachment is a generated script, not the original PMO PDF/CSV/TXT source. It has no independent raw-source URL, no checksum trail, and contains day-ganzhi values that conflict with the registered PMO extraction."
+  },
+  "allowedUses": [
+    "human-review-reference",
+    "lunar-date-cross-check-only"
+  ],
+  "forbiddenUses": [
+    "runtime-approved-data-pack",
+    "day-ganzhi-authority",
+    "solar-term-authority",
+    "source-ledger-primary-record",
+    "manifest-runtime-registration"
+  ],
+  "conflictEvidence": [
+    {
+      "date": "2025-01-01",
+      "field": "dayGanzhi",
+      "generatedScriptValue": "庚辰",
+      "registeredPmoPackValue": "庚午",
+      "decision": "Do not use generated-script dayGanzhi values for authority promotion."
+    },
+    {
+      "date": "2025-07-25",
+      "field": "dayGanzhi",
+      "generatedScriptValue": "乙巳",
+      "registeredPmoPackValue": "乙未",
+      "decision": "Do not use generated-script dayGanzhi values for authority promotion."
+    }
+  ],
+  "trustedPromotionPath": {
+    "primarySource": "PMO-CALENDAR-1900-2025 PDF registered in docs/权威资料源登记.md",
+    "primarySourceChecksumRequired": true,
+    "lunarDateCrossCheck": "HKO 2025 nongli calendar comparison report",
+    "dayGanzhiRequirement": "Use PMO extraction plus independent anchor or explicitly documented single-source PMO approval.",
+    "solarTermRequirement": "Use PMO extraction plus HKO major-term comparison; minor terms require additional source or documented single-source PMO approval."
+  },
+  "blocksRuntimePromotion": true
+}

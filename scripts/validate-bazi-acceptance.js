@@ -426,3 +426,4 @@ require('./generate-lunar-limited-runtime-candidate.test');
 require('./validate-lunar-limited-runtime-candidate.test');
 require('./validate-lunar-limited-preview-gate.test');
 require('./validate-lunar-authority-source-intake.test');
+require('./validate-lunar-source-boundary.test');
