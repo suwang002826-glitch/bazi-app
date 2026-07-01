@@ -49,6 +49,16 @@
         </view>
       </view>
       <view class="brief-summary">{{result.professional.chartSummary.oneLine}}</view>
+      <view class="brief-elements">
+        <view class="brief-elements-title">五行偏性</view>
+        <view class="brief-element-row" wx:for="{{result.distribution}}" wx:key="name">
+          <view class="brief-element-name">{{item.name}}</view>
+          <view class="brief-element-track">
+            <view class="brief-element-bar" style="width: {{item.percent}}%;"></view>
+          </view>
+          <view class="brief-element-value">{{item.percent}}%</view>
+        </view>
+      </view>
     </view>
 
     <view class="result-tabs">
@@ -165,6 +175,13 @@
         </view>
       </scroll-view>
 
+      <view class="current-flow-card">
+        <view class="current-flow-kicker">当前查看</view>
+        <view class="current-flow-title">
+          {{professionalDetail.activeLuck.yearRange}} {{professionalDetail.activeLuck.value}}大运 · {{professionalDetail.selectedFlowYear.year}} {{professionalDetail.selectedFlowYear.value}}流年 · {{professionalDetail.selectedMonth.monthTitle}} {{professionalDetail.selectedMonth.value}}流月
+        </view>
+      </view>
+
       <view class="flow-block">
         <view class="side-label">
           <text>大</text>
@@ -259,8 +276,8 @@
       </view>
 
       <view class="action-row">
-        <button class="ghost-action" bindtap="openGanzhiDiagram">智能干支图示 ›</button>
-        <button class="ghost-action small" bindtap="openAiCommand">AI指令 ›</button>
+        <button class="ghost-action" bindtap="openGanzhiDiagram">干支关系 ›</button>
+        <button class="ghost-action small" bindtap="openAiCommand">白话解析 ›</button>
       </view>
 
       <view class="relation-panel">

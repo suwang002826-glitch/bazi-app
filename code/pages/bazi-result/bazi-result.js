@@ -158,12 +158,15 @@ Page({
     const detail = this.data.professionalDetail;
     if (!detail) return;
     wx.showModal({
-      title: '智能干支图示',
+      title: '干支关系',
       content: [
-        `当前流年：${detail.selectedFlowYear ? `${detail.selectedFlowYear.year} ${detail.selectedFlowYear.value}` : '未选'}`,
         `当前大运：${detail.activeLuck ? `${detail.activeLuck.yearRange} ${detail.activeLuck.value}` : '未选'}`,
+        `当前流年：${detail.selectedFlowYear ? `${detail.selectedFlowYear.year} ${detail.selectedFlowYear.value}` : '未选'}`,
         `当前流月：${detail.selectedMonth ? `${detail.selectedMonth.monthTitle} ${detail.selectedMonth.value}` : '未选'}`,
-        '后续可扩展为干支生克、合冲刑害与五行气势图。'
+        '',
+        `岁运天干：${detail.relationLines[0] ? detail.relationLines[0].text : '待分析'}`,
+        `岁运地支：${detail.relationLines[1] ? detail.relationLines[1].text : '待分析'}`,
+        '此处先给关系摘要，后续可扩展为可视化干支图。'
       ].join('\n'),
       showCancel: false,
       confirmText: '知道了'
@@ -175,15 +178,17 @@ Page({
     const detail = this.data.professionalDetail;
     if (!result || !detail) return;
     wx.showModal({
-      title: 'AI 指令',
+      title: '白话解析',
       content: [
-        '请基于以下命盘上下文做白话解读：',
+        '当前命盘可先从这几处入手：',
         `日主：${result.dayMaster.text}`,
         `格局：${result.professional.pattern.name}`,
         `旺衰：${result.professional.strength.status}`,
         `喜用：${result.professional.usefulGod.usefulText}`,
         `当前流年：${detail.selectedFlowYear ? `${detail.selectedFlowYear.year} ${detail.selectedFlowYear.value}` : '未选'}`,
-        `当前流月：${detail.selectedMonth ? `${detail.selectedMonth.monthTitle} ${detail.selectedMonth.value}` : '未选'}`
+        `当前流月：${detail.selectedMonth ? `${detail.selectedMonth.monthTitle} ${detail.selectedMonth.value}` : '未选'}`,
+        '',
+        '解读口径：先看日主承载，再看岁运触发，最后落到现实取舍。'
       ].join('\n'),
       showCancel: false,
       confirmText: '知道了'
