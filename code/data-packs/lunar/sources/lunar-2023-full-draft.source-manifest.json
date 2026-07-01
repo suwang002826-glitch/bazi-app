@@ -1,0 +1,59 @@
+{
+  "sourceManifestVersion": "lunar-source-manifest@2026.07.01",
+  "manifestKind": "source-scaffold",
+  "targetDataPackId": "lunar-conversions-2023-full-draft",
+  "targetCalendarDataVersion": "lunar-data-pack@2026.07.01-full-draft.1",
+  "status": "draft",
+  "writesPack": false,
+  "targetRuntimeEnabled": false,
+  "coverage": {
+    "years": [
+      2023
+    ],
+    "scope": "complete lunar year source-control dry run",
+    "completeLunarCalendar": true
+  },
+  "sources": [
+    {
+      "sourceId": "sample-primary-2023",
+      "sourceType": "authority-placeholder",
+      "sourceName": "Sample Primary Lunar Almanac",
+      "sourceVersion": "2023",
+      "sourceUrl": "https://example.invalid/lunar-primary-2023.pdf",
+      "retrievedAt": "2026-07-01T00:00:00+08:00",
+      "rawSourceChecksum": {
+        "algorithm": "sha256",
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "note": "Sample only. Replace with an approved authority source before generating a complete pack."
+    },
+    {
+      "sourceId": "sample-secondary-2023",
+      "sourceType": "cross-check-placeholder",
+      "sourceName": "Sample Secondary Lunar Almanac",
+      "sourceVersion": "2023",
+      "sourceUrl": "https://example.invalid/lunar-secondary-2023.pdf",
+      "retrievedAt": "2026-07-01T00:00:00+08:00",
+      "rawSourceChecksum": {
+        "algorithm": "sha256",
+        "value": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "note": "Sample only. Use this slot for an independent cross-check source."
+    }
+  ],
+  "generator": {
+    "name": "lunar-data-pack-generator",
+    "version": "0.1.0",
+    "mode": "dry-run"
+  },
+  "reviewPolicy": {
+    "minimumSourceCount": 2,
+    "requiresManualReview": true,
+    "runtimeEnabled": false
+  },
+  "outputPolicy": {
+    "requiresRecordsChecksum": true,
+    "requiresRuntimeMirrors": true,
+    "requiresManualReviewBeforeRuntime": true
+  }
+}

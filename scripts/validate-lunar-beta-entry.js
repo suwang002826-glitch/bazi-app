@@ -29,7 +29,8 @@ function loadBaziPage() {
     toasts: [],
     navigations: [],
     storage: [],
-    history: []
+    history: [],
+    cases: []
   };
   const app = {
     globalData: {
@@ -38,6 +39,12 @@ function loadBaziPage() {
     },
     addHistory(item) {
       calls.history.push(item);
+    },
+    addCase(item) {
+      calls.cases.push(item);
+    },
+    formatDateTime(date) {
+      return date.toISOString().slice(0, 19).replace('T', ' ');
     }
   };
 
@@ -117,6 +124,9 @@ assert(
   page.generateReading();
 
   assert.strictEqual(calls.navigations.length, 1);
+  assert.strictEqual(calls.history.length, 1);
+  assert.strictEqual(calls.cases.length, 1);
+  assert.strictEqual(calls.cases[0].createdAt.length, 19);
   assert.strictEqual(app.globalData.currentBaziReading.result.calendarConversion.calendarType, 'lunar');
   assert.strictEqual(app.globalData.currentBaziReading.result.calendarConversion.solarDate, '2023-09-29');
   assert.strictEqual(page.data.lunarBetaError, '');
