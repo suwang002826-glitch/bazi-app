@@ -1275,6 +1275,7 @@ function buildBaziProfile(form) {
   ];
 
   return {
+    sourceInput: { ...form, normalizedBirthDate: normalizedForm.birthDate, normalizedBirthTime: normalizedForm.birthTime },
     displayName: normalizedForm.name || '未命名',
     title: `${normalizedForm.name || '未命名'}的八字排盘`,
     betaLabel: '内测排盘口径',

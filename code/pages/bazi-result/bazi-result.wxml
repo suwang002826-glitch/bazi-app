@@ -13,7 +13,9 @@
 
   <view wx:if="{{result}}" class="result-shell">
     <view class="bazi-profile">
-      <view class="profile-seal">{{result.dayMaster.stem}}</view>
+      <view class="profile-zodiac-seal {{basicInfo.zodiacSeal.className}}">
+        <image class="profile-zodiac-image" src="{{basicInfo.zodiacSeal.icon}}" mode="aspectFit" />
+      </view>
       <view class="profile-main">
         <view class="profile-name">{{result.displayName}}</view>
         <view class="profile-time">阳历：{{result.solarTime}}</view>
@@ -32,7 +34,9 @@
 
     <view wx:if="{{isInfoTab}}" class="basic-info-page">
       <view class="basic-info-hero">
-        <view class="basic-info-seal">{{basicInfo.seal}}</view>
+        <view class="basic-info-seal {{basicInfo.zodiacSeal.className}}">
+          <image class="basic-info-zodiac-image" src="{{basicInfo.zodiacSeal.icon}}" mode="aspectFit" />
+        </view>
         <view class="basic-info-main">
           <view class="basic-info-name">{{basicInfo.name}}</view>
           <view class="basic-info-sub">命盘基础档案</view>

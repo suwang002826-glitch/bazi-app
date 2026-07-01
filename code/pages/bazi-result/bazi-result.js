@@ -24,6 +24,71 @@ const ZODIAC_BY_BRANCH = {
   亥: '猪'
 };
 
+const ZODIAC_ICON_BY_BRANCH = {
+  子: 'zi',
+  丑: 'chou',
+  寅: 'yin',
+  卯: 'mao',
+  辰: 'chen',
+  巳: 'si',
+  午: 'wu',
+  未: 'wei',
+  申: 'shen',
+  酉: 'you',
+  戌: 'xu',
+  亥: 'hai'
+};
+
+const BRANCH_ELEMENT_CLASS = {
+  寅: 'wood',
+  卯: 'wood',
+  巳: 'fire',
+  午: 'fire',
+  辰: 'earth',
+  戌: 'earth',
+  丑: 'earth',
+  未: 'earth',
+  申: 'metal',
+  酉: 'metal',
+  子: 'water',
+  亥: 'water'
+};
+
+const LUNAR_MONTH_LABELS = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
+const LUNAR_DAY_LABELS = [
+  '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+  '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'
+];
+const WESTERN_ZODIACS = [
+  { name: '摩羯座', start: [12, 22] },
+  { name: '水瓶座', start: [1, 20] },
+  { name: '双鱼座', start: [2, 19] },
+  { name: '白羊座', start: [3, 21] },
+  { name: '金牛座', start: [4, 20] },
+  { name: '双子座', start: [5, 21] },
+  { name: '巨蟹座', start: [6, 22] },
+  { name: '狮子座', start: [7, 23] },
+  { name: '处女座', start: [8, 23] },
+  { name: '天秤座', start: [9, 23] },
+  { name: '天蝎座', start: [10, 24] },
+  { name: '射手座', start: [11, 23] },
+  { name: '摩羯座', start: [12, 22] }
+];
+const MANSIONS_28 = ['角', '亢', '氐', '房', '心', '尾', '箕', '斗', '牛', '女', '虚', '危', '室', '壁', '奎', '娄', '胃', '昴', '毕', '觜', '参', '井', '鬼', '柳', '星', '张', '翼', '轸'];
+const TRIGRAMS = ['坎', '坤', '震', '巽', '中', '乾', '兑', '艮', '离'];
+const MING_GUA_GROUP = {
+  坎: '东四命',
+  离: '东四命',
+  震: '东四命',
+  巽: '东四命',
+  乾: '西四命',
+  兑: '西四命',
+  艮: '西四命',
+  坤: '西四命',
+  中: '西四命'
+};
+
 const SPIRIT_INFO = {
   天乙贵人: { figure: '乙', title: '天乙贵人', category: '贵人', meaning: '主逢凶有解、遇事得助，是四柱神煞中常用于观察助力与转圜空间的贵曜。', advice: '宜主动求教、借力专业人士；不可因见贵人而轻忽现实准备。' },
   太极贵人: { figure: '太', title: '太极贵人', category: '贵人', meaning: '多主悟性、清静、好学与对玄学、哲理、宗教文化的亲近倾向。', advice: '适合深学一门、静心复盘，把感悟落成行动。' },
@@ -250,6 +315,68 @@ function getAgeFromSolarTime(solarTime) {
   return `${new Date().getFullYear() - year}岁`;
 }
 
+function parseSolarDate(solarTime) {
+  const match = String(solarTime || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return null;
+  return {
+    year: Number(match[1]),
+    month: Number(match[2]),
+    day: Number(match[3]),
+    date: new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+  };
+}
+
+function getLunarInputText(input) {
+  if (!input || input.calendarType !== 'lunar') return '公历生日输入 · 以节气排盘为准';
+  const month = LUNAR_MONTH_LABELS[Math.max(0, Math.min(11, Number(input.lunarMonth || 1) - 1))] || '正月';
+  const day = LUNAR_DAY_LABELS[Math.max(0, Math.min(29, Number(input.lunarDay || 1) - 1))] || '初一';
+  return `${input.lunarYear}年${input.isLeapMonth ? '闰' : ''}${month}${day}`;
+}
+
+function getWesternZodiac(solarTime) {
+  const parsed = parseSolarDate(solarTime);
+  if (!parsed) return '未校验';
+  let hit = WESTERN_ZODIACS[0].name;
+  WESTERN_ZODIACS.forEach((item) => {
+    const [month, day] = item.start;
+    if (parsed.month > month || (parsed.month === month && parsed.day >= day)) {
+      hit = item.name;
+    }
+  });
+  return hit;
+}
+
+function getMansion(solarTime) {
+  const parsed = parseSolarDate(solarTime);
+  if (!parsed) return '未校验';
+  const epoch = new Date(2000, 0, 1);
+  const days = Math.floor((parsed.date - epoch) / 86400000);
+  const index = ((days % 28) + 28) % 28;
+  return `${MANSIONS_28[index]}宿`;
+}
+
+function getMingGua(result) {
+  const parsed = parseSolarDate(result.solarTime);
+  if (!parsed) return '未校验';
+  const digitSum = String(parsed.year).split('').reduce((sum, item) => sum + Number(item), 0);
+  const reduced = digitSum > 9 ? String(digitSum).split('').reduce((sum, item) => sum + Number(item), 0) : digitSum;
+  let guaNumber = result.gender === '女' ? (4 + reduced) % 9 : (11 - reduced) % 9;
+  if (guaNumber === 0) guaNumber = 9;
+  const gua = TRIGRAMS[guaNumber - 1] || '坤';
+  return `${gua}卦（${MING_GUA_GROUP[gua] || '西四命'}）`;
+}
+
+function getZodiacSeal(yearPillar) {
+  const branch = yearPillar.branch || '子';
+  const key = ZODIAC_ICON_BY_BRANCH[branch] || 'zi';
+  return {
+    branch,
+    animal: ZODIAC_BY_BRANCH[branch] || '鼠',
+    icon: `/assets/zodiac/${key}.png`,
+    className: BRANCH_ELEMENT_CLASS[branch] || 'water'
+  };
+}
+
 function getHintText(result, title) {
   const hit = (result.validationHints || []).find((item) => item.title === title);
   return hit ? hit.text : '';
@@ -258,6 +385,8 @@ function getHintText(result, title) {
 function buildBasicInfo(result) {
   if (!result) return null;
   const yearPillar = (result.pillars || [])[0] || {};
+  const monthPillar = (result.pillars || [])[1] || {};
+  const dayPillar = (result.pillars || [])[2] || {};
   const fetal = result.detailProfile && result.detailProfile.fetalOrigin || {};
   const palace = result.detailProfile && result.detailProfile.palaceProfile || {};
   const life = palace.life || {};
@@ -266,10 +395,14 @@ function buildBasicInfo(result) {
   const zodiac = ZODIAC_BY_BRANCH[yearPillar.branch] || yearPillar.branch || '未定';
   const gender = result.gender || '未填';
   const sectionHint = getHintText(result, '节气边界校验');
+  const zodiacSeal = getZodiacSeal(yearPillar);
+  const monthHidden = monthPillar.hiddenStems && monthPillar.hiddenStems[0];
+  const currentInput = result.sourceInput || result.input || {};
 
   return {
     name: result.displayName || '未命名',
     seal: result.dayMaster && result.dayMaster.stem || yearPillar.branch || '命',
+    zodiacSeal,
     chips: [`生肖：${zodiac}`, age ? `${age} ${gender}` : gender],
     highlights: [
       { label: '日主属性', value: result.dayMaster ? result.dayMaster.text : '待校验' },
@@ -277,16 +410,23 @@ function buildBasicInfo(result) {
       { label: '喜用参考', value: result.professional ? result.professional.usefulGod.usefulText : '待校验' }
     ],
     rows: [
+      { label: '农历', value: getLunarInputText(currentInput) },
       { label: '阳历', value: result.solarTime || '未记录' },
       { label: '真太阳时', value: result.adjustedSolarTime || result.solarTime || '未校准' },
       { label: '出生地区', value: `${result.birthPlace || '未填写'} · 东经 ${result.longitude || '--'}°` },
+      { label: '人元司令', value: monthHidden ? `${monthPillar.branch}月以${monthHidden.stem}${monthHidden.tenGod}为主气` : '按月令藏干取主气' },
       { label: '节气校验', value: sectionHint || '按节气换月与真太阳时口径校验。' },
+      { label: '起运节令', value: result.luck && result.luck.boundary ? result.luck.boundary : '按出生后前后节令折算' },
+      { label: '星座', value: getWesternZodiac(result.solarTime) },
+      { label: '星宿', value: getMansion(result.solarTime) },
       { label: '胎元', value: fetal.value ? `${fetal.value}（${fetal.nayin}）` : '未生成' },
       { label: '空亡', value: result.detailProfile && result.detailProfile.voidText ? result.detailProfile.voidText : '未见' }
     ],
     palaceRows: [
       { label: '命宫', value: life.value || '未生成' },
+      { label: '胎息', value: dayPillar.value ? `${dayPillar.value}（日柱气息参考）` : '未生成' },
       { label: '身宫', value: body.value || '未生成' },
+      { label: '命卦', value: getMingGua(result) },
       { label: '排盘口径', value: '节气换月 · 真太阳时校正' }
     ]
   };

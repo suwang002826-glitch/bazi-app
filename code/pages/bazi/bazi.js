@@ -215,6 +215,7 @@ Page({
     try {
       result = buildBaziProfile(readingInput);
       result.gender = readingInput.gender || '未填';
+      result.sourceInput = readingInput;
     } catch (error) {
       const lunarBetaError = this.getLunarBetaError(error);
       this.setData({
