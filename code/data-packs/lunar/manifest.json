@@ -4,7 +4,7 @@
   "packs": [
     {
       "dataPackId": "lunar-conversions-2023",
-      "path": "lunar-conversions-2023.json",
+      "path": "lunar-conversions-2023.js",
       "years": [2023],
       "completeLunarCalendar": false
     }
