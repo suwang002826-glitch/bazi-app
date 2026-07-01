@@ -26,45 +26,6 @@
       </view>
     </view>
 
-    <view class="destiny-brief">
-      <view class="brief-head">
-        <view>
-          <view class="brief-kicker">命盘摘要</view>
-          <view class="brief-title">先看格局，再看细盘</view>
-        </view>
-        <view class="brief-seal">{{result.dayMaster.text}}</view>
-      </view>
-      <view class="brief-grid">
-        <view class="brief-item">
-          <text>日主</text>
-          <text>{{result.dayMaster.text}}</text>
-        </view>
-        <view class="brief-item">
-          <text>格局</text>
-          <text>{{result.professional.pattern.name}}</text>
-        </view>
-        <view class="brief-item">
-          <text>旺衰</text>
-          <text>{{result.professional.strength.status}}</text>
-        </view>
-        <view class="brief-item">
-          <text>喜用</text>
-          <text>{{result.professional.usefulGod.usefulText}}</text>
-        </view>
-      </view>
-      <view class="brief-summary">{{result.professional.chartSummary.oneLine}}</view>
-      <view class="brief-elements">
-        <view class="brief-elements-title">五行偏性</view>
-        <view class="brief-element-row" wx:for="{{result.distribution}}" wx:key="name">
-          <view class="brief-element-name">{{item.name}}</view>
-          <view class="brief-element-track">
-            <view class="brief-element-bar" style="width: {{item.percent}}%;"></view>
-          </view>
-          <view class="brief-element-value">{{item.percent}}%</view>
-        </view>
-      </view>
-    </view>
-
     <view class="result-tabs">
       <view
         class="result-tab {{activeResultTab === item ? 'active' : ''}}"
@@ -121,6 +82,23 @@
               <text wx:else class="spirit-empty">未见常用神煞入柱</text>
             </view>
           </view>
+        </view>
+      </view>
+
+      <view class="five-element-ratio">
+        <view class="ratio-head">
+          <view>
+            <view class="ratio-kicker">五行比例</view>
+            <view class="ratio-title">命盘五行分布</view>
+          </view>
+          <view class="ratio-daymaster">日主 {{result.dayMaster.text}}</view>
+        </view>
+        <view class="ratio-row" wx:for="{{result.distribution}}" wx:key="name">
+          <view class="ratio-name">{{item.name}}</view>
+          <view class="ratio-track">
+            <view class="ratio-bar" style="width: {{item.percent}}%;"></view>
+          </view>
+          <view class="ratio-value">{{item.percent}}%</view>
         </view>
       </view>
 
