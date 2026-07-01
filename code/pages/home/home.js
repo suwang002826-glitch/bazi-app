@@ -9,20 +9,6 @@ const LUNAR_DAYS = [
 const DUTIES = ['建', '除', '满', '平', '定', '执', '破', '危', '成', '收', '开', '闭'];
 const GODS = ['青龙', '明堂', '天刑', '朱雀', '金匮', '天德', '白虎', '玉堂', '天牢', '玄武', '司命', '勾陈'];
 const ELEMENTS = ['木', '火', '土', '金', '水'];
-const JIE_TERMS = [
-  { key: '立春', angle: 315, month: 2, day: 4, branch: '寅', index: 0 },
-  { key: '惊蛰', angle: 345, month: 3, day: 6, branch: '卯', index: 1 },
-  { key: '清明', angle: 15, month: 4, day: 5, branch: '辰', index: 2 },
-  { key: '立夏', angle: 45, month: 5, day: 6, branch: '巳', index: 3 },
-  { key: '芒种', angle: 75, month: 6, day: 6, branch: '午', index: 4 },
-  { key: '小暑', angle: 105, month: 7, day: 7, branch: '未', index: 5 },
-  { key: '立秋', angle: 135, month: 8, day: 8, branch: '申', index: 6 },
-  { key: '白露', angle: 165, month: 9, day: 8, branch: '酉', index: 7 },
-  { key: '寒露', angle: 195, month: 10, day: 8, branch: '戌', index: 8 },
-  { key: '立冬', angle: 225, month: 11, day: 7, branch: '亥', index: 9 },
-  { key: '大雪', angle: 255, month: 12, day: 7, branch: '子', index: 10 },
-  { key: '小寒', angle: 285, month: 1, day: 6, branch: '丑', index: 11 }
-];
 
 function pad(value) {
   return String(value).padStart(2, '0');
@@ -41,75 +27,16 @@ function ganzhi(index) {
   return `${STEMS[normalized % 10]}${BRANCHES[normalized % 12]}`;
 }
 
-function normalizeAngle(value) {
-  return ((value % 360) + 360) % 360;
-}
-
-function angleDiff(current, target) {
-  return ((normalizeAngle(current - target) + 540) % 360) - 180;
-}
-
-function sunLongitude(date) {
-  const days = (date.getTime() - Date.UTC(2000, 0, 1, 12)) / 86400000;
-  const meanLongitude = normalizeAngle(280.46646 + 0.98564736 * days);
-  const anomaly = normalizeAngle(357.52911 + 0.98560028 * days) * Math.PI / 180;
-  const center = 1.914602 * Math.sin(anomaly) + 0.019993 * Math.sin(2 * anomaly) + 0.000289 * Math.sin(3 * anomaly);
-  return normalizeAngle(meanLongitude + center);
-}
-
-function findSolarTermTime(year, term) {
-  const termYear = term.month === 1 ? year + 1 : year;
-  let start = new Date(termYear, term.month - 1, term.day - 3, 0, 0, 0, 0);
-  let end = new Date(termYear, term.month - 1, term.day + 3, 0, 0, 0, 0);
-  let startDiff = angleDiff(sunLongitude(start), term.angle);
-  let endDiff = angleDiff(sunLongitude(end), term.angle);
-
-  for (let expand = 0; startDiff > 0 || endDiff < 0; expand += 1) {
-    if (expand > 6) break;
-    start = new Date(start.getTime() - 86400000);
-    end = new Date(end.getTime() + 86400000);
-    startDiff = angleDiff(sunLongitude(start), term.angle);
-    endDiff = angleDiff(sunLongitude(end), term.angle);
-  }
-
-  for (let i = 0; i < 42; i += 1) {
-    const mid = new Date((start.getTime() + end.getTime()) / 2);
-    const diff = angleDiff(sunLongitude(mid), term.angle);
-    if (diff >= 0) {
-      end = mid;
-    } else {
-      start = mid;
-    }
-  }
-
-  return end;
-}
-
-function getActiveJie(date) {
-  const timeline = [];
-  [date.getFullYear() - 1, date.getFullYear(), date.getFullYear() + 1].forEach((year) => {
-    JIE_TERMS.forEach((term) => {
-      timeline.push({ ...term, date: findSolarTermTime(year, term) });
-    });
-  });
-  timeline.sort((a, b) => a.date - b.date);
-  for (let i = timeline.length - 1; i >= 0; i -= 1) {
-    if (date >= timeline[i].date) return timeline[i];
-  }
-  return timeline[0];
-}
-
 function dayIndex(date) {
   return Math.floor(date.getTime() / 86400000) + 49;
 }
 
-function monthGanzhi(date) {
-  const activeJie = getActiveJie(date);
-  return ganzhi((date.getFullYear() - 1984) * 12 + activeJie.index + 2);
-}
-
 function yearGanzhi(year) {
   return ganzhi(year - 1984);
+}
+
+function monthGanzhi(date) {
+  return ganzhi((date.getFullYear() - 1984) * 12 + date.getMonth() + 2);
 }
 
 function hourBranch(date) {
@@ -123,10 +50,8 @@ function lunarLabel(date) {
 function festivalLabel(date) {
   const month = date.getMonth() + 1;
   const day = date.getDate();
+  if (month === 1 && day === 1) return '元旦';
   if (month === 7 && day === 1) return '建党日';
-  if (month === 7 && day === 7) return '小暑';
-  if (month === 7 && day === 11) return '人口日';
-  if (month === 7 && day === 23) return '大暑';
   if (month === 8 && day === 1) return '建军节';
   return '';
 }
@@ -181,6 +106,57 @@ function buildMonthCells(viewDate, selectedDate) {
   });
 }
 
+function pickAlmanac(date, positive) {
+  const goodPool = [
+    ['祭祀', '整理', '复盘', '学习', '静心'],
+    ['开工', '订盘', '会友', '问学', '立约'],
+    ['祈福', '修整', '记录', '归档', '择时'],
+    ['安床', '出行', '拜访', '求医', '纳采']
+  ];
+  const avoidPool = [
+    ['急断', '冲动决策', '反复犹疑', '深夜争执'],
+    ['破土', '动怒', '借贷', '口舌争执'],
+    ['迁移', '冒进', '轻诺', '过度消耗'],
+    ['仓促签约', '远行冒险', '情绪决策']
+  ];
+  const source = positive ? goodPool : avoidPool;
+  return source[Math.abs(dayIndex(date)) % source.length];
+}
+
+function buildElementPulse(date) {
+  const index = Math.abs(dayIndex(date));
+  const name = ELEMENTS[index % ELEMENTS.length];
+  const percent = 42 + (index % 37);
+  const copyMap = {
+    木: '宜规划、学习、修整思路，少急于求成。',
+    火: '宜表达、公开、推动进度，忌情绪上头。',
+    土: '宜稳定、归档、处理现实事务，忌拖延。',
+    金: '宜决断、整理规则、处理契约，忌过硬。',
+    水: '宜观察、沟通、复盘信息，忌反复犹豫。'
+  };
+  return { name, percent, copy: copyMap[name] };
+}
+
+function buildAdvice(date, duty, god) {
+  const hints = [
+    `今日为${duty}日，值神${god}，宜先定心，再做判断。`,
+    `所选日期以${ganzhi(dayIndex(date))}日为主，适合先记录事实，再看格局。`,
+    '若需排盘，可先确认出生时间、地点与真太阳时，后续用于命例复盘。',
+    '日课只作观象参考，重要事项仍以现实条件和审慎判断为准。'
+  ];
+  return hints[Math.abs(date.getDate()) % hints.length];
+}
+
+function buildReminder(date, clash, hour) {
+  const options = [
+    { title: '重要事先缓一步', copy: `今日冲${clash}，遇到催促先核对条件，再决定。` },
+    { title: '先记录再判断', copy: `${hour}时可做短复盘，把事实、感受、选择分开写。` },
+    { title: '避免反复起念', copy: '同一件事不宜频繁摇摆，先定标准，再看结果。' },
+    { title: '以修身为主', copy: '日课重在趋吉避凶，不作绝对命运裁断。' }
+  ];
+  return options[Math.abs(date.getDate()) % options.length];
+}
+
 function buildAnalysis(date) {
   const index = dayIndex(date);
   const branchIndex = index % 12;
@@ -197,76 +173,19 @@ function buildAnalysis(date) {
   const reminder = buildReminder(date, clash, hour);
 
   return {
-    title: '智能分析',
     dateLine: `${formatDate(date)} ${formatTime(date)} · 周${WEEKDAYS[date.getDay()]}`,
     lunarLine: `农历 ${lunarLabel(date)} · ${yearGanzhi(date.getFullYear())}年 ${monthGanzhi(date)}月 ${ganzhi(index)}日 ${hour}时`,
     duty,
     god,
     clash: `冲${clash}`,
     hourText: `${hour}时 ${pad(hourRangeStart)}:00-${pad(hourRangeEnd)}:59`,
-    good,
-    avoid,
-    advice,
-    element,
-    reminder,
     sections: [
-      { key: '宜忌', title: '今日宜忌', tag: '取舍', tone: 'good', primary: good.slice(0, 3).join('、'), secondary: avoid.slice(0, 3).join('、'), note: '先做宜事，少碰忌事。' },
-      { key: '日课', title: '日课提示', tag: duty, tone: 'course', primary: `${duty}日 · 值神${god}`, secondary: advice, note: '适合定一件正事复盘。' },
-      { key: '五行', title: '五行气势', tag: element.name, tone: 'element', primary: `${element.name}气偏显`, secondary: element.copy, note: `${element.name} ${element.percent}%` },
-      { key: '提醒', title: '今日提醒', tag: `冲${clash}`, tone: 'alert', primary: reminder.title, secondary: reminder.copy, note: `${hour}时参考` }
+      { key: 'good', title: '今日宜忌', tag: '取舍', tone: 'good', primary: good.slice(0, 3).join('、'), secondary: avoid.slice(0, 3).join('、'), note: '先做宜事，少碰忌事。' },
+      { key: 'course', title: '日课提示', tag: duty, tone: 'course', primary: `${duty}日 · 值神${god}`, secondary: advice, note: '适合定一件正事复盘。' },
+      { key: 'element', title: '五行气势', tag: element.name, tone: 'element', primary: `${element.name}气偏显`, secondary: element.copy, note: `${element.name} ${element.percent}%` },
+      { key: 'alert', title: '今日提醒', tag: `冲${clash}`, tone: 'alert', primary: reminder.title, secondary: reminder.copy, note: `${hour}时参考` }
     ]
   };
-}
-
-function pickAlmanac(date, positive) {
-  const goodPool = [
-    ['祭祀', '整理', '复盘', '学习', '静心'],
-    ['开光', '订盟', '会友', '问学', '立约'],
-    ['祈福', '修整', '记录', '归档', '择时'],
-    ['安床', '出行', '拜访', '求医', '纳采']
-  ];
-  const avoidPool = [
-    ['急断', '冲动决策', '反复犹疑', '深夜争执'],
-    ['破土', '动怒', '借贷', '口舌争执'],
-    ['迁怒', '冒进', '轻诺', '过度消耗'],
-    ['仓促签约', '远行冒险', '情绪决策']
-  ];
-  const source = positive ? goodPool : avoidPool;
-  return source[Math.abs(dayIndex(date)) % source.length];
-}
-
-function buildAdvice(date, duty, god) {
-  const hints = [
-    `今日为${duty}日，值神${god}，宜先定心，再做判断。`,
-    `所选日期以${ganzhi(dayIndex(date))}日为主，适合先记录事实，再看格局。`,
-    `若需排盘，可先确认出生时间、地点与真太阳时，后续用于命例复盘。`,
-    `日课只作观象参考，重要事项仍以现实条件和审慎判断为准。`
-  ];
-  return hints[Math.abs(date.getDate()) % hints.length];
-}
-
-function buildElementPulse(date) {
-  const index = Math.abs(dayIndex(date));
-  const name = ELEMENTS[index % ELEMENTS.length];
-  const percent = 42 + (index % 37);
-  const copyMap = {
-    木: '宜规划、学习、修整思路，少急于求成。',
-    火: '宜表达、公开、推动进度，忌情绪上头。',
-    土: '宜稳定、归档、处理现实事务，忌拖延。',
-    金: '宜决断、整理规则、处理合同，忌过硬。',
-    水: '宜观察、沟通、复盘信息，忌反复犹豫。'
-  };
-  return { name, percent, copy: copyMap[name] };
-}
-
-function buildReminder(date, clash, hour) {
-  const options = [
-    { title: '重要事先缓一步', copy: `今日冲${clash}，遇到催促先核对条件，再决定。` },
-    { title: '先记录再判断', copy: `${hour}时可做短复盘，把事实、感受、选择分开写。` },
-    { title: '避免反复起念', copy: '同一件事不宜频繁摇摆，先定标准，再看结果。' },
-    { title: '以修身为主', copy: '日课重在趋吉避凶，不作绝对命运裁断。' }
-  ];
-  return options[Math.abs(date.getDate()) % options.length];
 }
 
 Page({
@@ -292,10 +211,7 @@ Page({
       selectedTimestamp: selectedDate.getTime(),
       viewTimestamp: viewDate.getTime(),
       selected: {
-        day: selectedDate.getDate(),
-        lunar: lunarLabel(selectedDate),
-        ganzhi: `${yearGanzhi(selectedDate.getFullYear())}年 ${monthGanzhi(selectedDate)}月 ${ganzhi(dayIndex(selectedDate))}日 ${hourBranch(selectedDate)}时`,
-        week: `周${WEEKDAYS[selectedDate.getDay()]}`
+        ganzhi: `${yearGanzhi(selectedDate.getFullYear())}年 ${monthGanzhi(selectedDate)}月 ${ganzhi(dayIndex(selectedDate))}日 ${hourBranch(selectedDate)}时`
       },
       calendarCells: buildMonthCells(viewDate, selectedDate),
       analysis: buildAnalysis(selectedDate)
@@ -340,9 +256,5 @@ Page({
 
   onNextMonth() {
     this.changeMonth(1);
-  },
-
-  goBazi() {
-    wx.switchTab({ url: '/pages/bazi/bazi' });
   }
 });
