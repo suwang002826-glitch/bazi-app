@@ -1,0 +1,53 @@
+{
+  "checklistId": "lunar-promotion-checklist-2025-pmo-candidate",
+  "status": "pending-approval",
+  "createdAt": "2026-07-02T00:00:00+08:00",
+  "sourceDataPackId": "lunar-data-pack-2025-candidate",
+  "sourceBoundaryReviewId": "lunar-2025-generated-script-boundary",
+  "approvalDecision": "not-approved",
+  "runtimeApproval": false,
+  "promotableToStableRuntime": false,
+  "scope": {
+    "gregorianYear": 2025,
+    "completeSolarYear": true,
+    "completeLunarCalendar": false,
+    "runtimeMode": "candidate-preview"
+  },
+  "requiredGates": [
+    "pmoPrimarySourceRegistered",
+    "hkoLunarDateCrossCheck",
+    "dayGanzhiSecondAuthorityAnchor",
+    "majorSolarTermsCrossCheck",
+    "minorSolarTermsSecondSource",
+    "generatedScriptBoundary",
+    "stableRuntimeApproval"
+  ],
+  "gates": {
+    "pmoPrimarySourceRegistered": "passed",
+    "hkoLunarDateCrossCheck": "passed",
+    "dayGanzhiSecondAuthorityAnchor": "blocked",
+    "majorSolarTermsCrossCheck": "passed",
+    "minorSolarTermsSecondSource": "blocked",
+    "generatedScriptBoundary": "passed",
+    "stableRuntimeApproval": "blocked"
+  },
+  "evidence": {
+    "primarySource": "docs/权威资料源登记.md#PMO-CALENDAR-1900-2025",
+    "pmoExtractionReport": "work/authority-sources/extracted/pmo-calendar-2025-draft.json",
+    "hkoLunarDateReport": "work/authority-sources/validation/pmo-vs-hko-2025-lunar-report.json",
+    "dayGanzhiCycleReport": "work/authority-sources/validation/pmo-2025-day-ganzhi-cycle-report.json",
+    "majorSolarTermsReport": "work/authority-sources/validation/pmo-vs-hko-2025-major-solar-terms-report.json",
+    "generatedScriptBoundary": "code/data-packs/lunar/sources/lunar-2025-generated-script-boundary.json"
+  },
+  "remainingBlockers": [
+    "day-ganzhi-second-authority-anchor-pending",
+    "minor-solar-terms-second-source-pending",
+    "stable-runtime-approval-not-granted"
+  ],
+  "notes": [
+    "PMO 2025 lunar year/month/day records have passed HKO cross-check.",
+    "PMO 2025 day-ganzhi records have passed continuity checks but still need an independent authority anchor or an explicit PMO single-source approval decision.",
+    "HKO 2025 solar-term comparison currently covers 12 major terms only; PMO minor terms still need an additional source or explicit PMO single-source approval decision.",
+    "Generated script attachments remain reference-only and must not be used to promote runtime data."
+  ]
+}
