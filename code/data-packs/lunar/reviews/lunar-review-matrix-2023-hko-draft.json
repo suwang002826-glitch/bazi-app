@@ -1,0 +1,128 @@
+{
+  "matrixId": "lunar-review-matrix-2023-hko-draft",
+  "status": "pending-review",
+  "sourceDraftDataPackId": "lunar-conversions-2023-full-draft",
+  "sourceRecordsChecksum": {
+    "algorithm": "sha256",
+    "value": "fbf2fa374ddde8342e442d114d9258926ac29274647a20d6c6d5740b96767b4d"
+  },
+  "runtimeApproval": false,
+  "coverage": {
+    "gregorianYears": [2023],
+    "lunarYears": [2022, 2023],
+    "completeGregorianCalendar": true,
+    "completeLunarCalendar": false
+  },
+  "requiredCategories": [
+    "gregorian-year-start",
+    "lunar-year-start",
+    "leap-month-start",
+    "leap-month-acceptance",
+    "leap-month-end",
+    "festival-duanwu",
+    "festival-qixi",
+    "festival-mid-autumn",
+    "gregorian-year-end"
+  ],
+  "samples": [
+    {
+      "caseId": "HKO-2023-0001",
+      "category": "gregorian-year-start",
+      "title": "公历年初仍属于上一农历年",
+      "solarDate": "2023-01-01",
+      "lunarYear": 2022,
+      "lunarMonth": 12,
+      "lunarDay": 10,
+      "isLeapMonth": false,
+      "reviewFocus": "确认公历年表开头不能被误判为 2023 农历年"
+    },
+    {
+      "caseId": "HKO-2023-0022",
+      "category": "lunar-year-start",
+      "title": "2023 农历正月初一",
+      "solarDate": "2023-01-22",
+      "lunarYear": 2023,
+      "lunarMonth": 1,
+      "lunarDay": 1,
+      "isLeapMonth": false,
+      "reviewFocus": "确认春节作为农历年起点"
+    },
+    {
+      "caseId": "HKO-2023-0081",
+      "category": "leap-month-start",
+      "title": "闰二月初一",
+      "solarDate": "2023-03-22",
+      "lunarYear": 2023,
+      "lunarMonth": 2,
+      "lunarDay": 1,
+      "isLeapMonth": true,
+      "reviewFocus": "确认闰月起点和普通二月区分"
+    },
+    {
+      "caseId": "HKO-2023-0090",
+      "category": "leap-month-acceptance",
+      "title": "闰二月初十验收样例",
+      "solarDate": "2023-03-31",
+      "lunarYear": 2023,
+      "lunarMonth": 2,
+      "lunarDay": 10,
+      "isLeapMonth": true,
+      "reviewFocus": "确认 BZI-006 使用的闰月样例在草案数据中存在"
+    },
+    {
+      "caseId": "HKO-2023-0109",
+      "category": "leap-month-end",
+      "title": "闰二月廿九",
+      "solarDate": "2023-04-19",
+      "lunarYear": 2023,
+      "lunarMonth": 2,
+      "lunarDay": 29,
+      "isLeapMonth": true,
+      "reviewFocus": "确认 2023 闰二月为 29 天"
+    },
+    {
+      "caseId": "HKO-2023-0173",
+      "category": "festival-duanwu",
+      "title": "端午节",
+      "solarDate": "2023-06-22",
+      "lunarYear": 2023,
+      "lunarMonth": 5,
+      "lunarDay": 5,
+      "isLeapMonth": false,
+      "reviewFocus": "确认普通农历节日样例"
+    },
+    {
+      "caseId": "HKO-2023-0234",
+      "category": "festival-qixi",
+      "title": "七夕",
+      "solarDate": "2023-08-22",
+      "lunarYear": 2023,
+      "lunarMonth": 7,
+      "lunarDay": 7,
+      "isLeapMonth": false,
+      "reviewFocus": "确认下半年普通农历日期样例"
+    },
+    {
+      "caseId": "HKO-2023-0272",
+      "category": "festival-mid-autumn",
+      "title": "中秋节验收样例",
+      "solarDate": "2023-09-29",
+      "lunarYear": 2023,
+      "lunarMonth": 8,
+      "lunarDay": 15,
+      "isLeapMonth": false,
+      "reviewFocus": "确认 BZI-005 使用的八月十五样例在草案数据中存在"
+    },
+    {
+      "caseId": "HKO-2023-0365",
+      "category": "gregorian-year-end",
+      "title": "公历年末",
+      "solarDate": "2023-12-31",
+      "lunarYear": 2023,
+      "lunarMonth": 11,
+      "lunarDay": 19,
+      "isLeapMonth": false,
+      "reviewFocus": "确认公历年表末尾仍不是完整农历年结束"
+    }
+  ]
+}
