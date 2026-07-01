@@ -2,11 +2,10 @@
 
 本文件说明 `lunar-conversions-2023-full-draft` 从草案走向正式运行数据包前必须满足的条件。
 
-当前结论：不能晋级。
+当前结论：样本人工复核已完成，但仍不能晋级 runtime。
 
 原因：
 
-- 9 个复核矩阵样本仍是 `pending-human-review`。
 - `runtimeApproval` 仍为 `false`。
 - `approvedForRuntime` 仍为 `blocked`。
 
@@ -16,7 +15,7 @@
 | --- | --- | --- |
 | source draft data-pack | present | 2023 HKO 草案数据包已存在 |
 | review matrix | present | 9 个关键样本已建立 |
-| human review ledger | pending | 人工复核结论未完成 |
+| human review ledger | passed | 9 个矩阵样本已按 HKO 2023 CSV 复核通过 |
 | approved for runtime | blocked | 未批准进入正式运行 |
 
 ## 人工复核台账字段

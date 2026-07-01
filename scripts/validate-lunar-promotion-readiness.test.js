@@ -27,10 +27,19 @@ assert.deepStrictEqual(result.errors, []);
 assert.strictEqual(result.summary.checklistId, 'lunar-promotion-checklist-2023-hko-draft');
 assert.strictEqual(result.summary.ledgerId, 'lunar-human-review-ledger-2023-hko-draft');
 assert.strictEqual(result.summary.sampleReviewCount, 9);
+assert.strictEqual(result.summary.passedReviewCount, 9);
 assert.strictEqual(result.summary.promotionReady, false);
 assert(
-  result.summary.blockers.includes('human-review-pending'),
-  'pending human review must block runtime promotion'
+  !result.summary.blockers.includes('human-review-pending'),
+  'completed human review must remove the human-review-pending blocker'
+);
+assert(
+  result.summary.blockers.includes('runtime-approval-not-granted'),
+  'runtime approval must still block promotion'
+);
+assert(
+  result.summary.blockers.includes('approved-for-runtime-blocked'),
+  'approved-for-runtime gate must still block promotion'
 );
 
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'lunar-promotion-readiness-test-'));

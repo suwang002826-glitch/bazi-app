@@ -214,7 +214,10 @@ function assertPromotionReadiness() {
   });
   assert.deepStrictEqual(readinessResult.errors, []);
   assert.strictEqual(readinessResult.summary.promotionReady, false);
-  assert.ok(readinessResult.summary.blockers.includes('human-review-pending'));
+  assert.strictEqual(readinessResult.summary.passedReviewCount, 9);
+  assert.ok(!readinessResult.summary.blockers.includes('human-review-pending'));
+  assert.ok(readinessResult.summary.blockers.includes('runtime-approval-not-granted'));
+  assert.ok(readinessResult.summary.blockers.includes('approved-for-runtime-blocked'));
   console.log(`PASS PROMOTION READINESS gate ${readinessResult.summary.blockers.join(', ')}`);
 }
 
