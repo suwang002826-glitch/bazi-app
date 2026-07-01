@@ -13,7 +13,7 @@
   "gates": {
     "sourceDraftDataPack": "present",
     "reviewMatrix": "present",
-    "humanReviewLedger": "pending",
+    "humanReviewLedger": "passed",
     "approvedForRuntime": "blocked"
   },
   "promotionRule": {
@@ -24,6 +24,7 @@
   "notes": [
     "This checklist records runtime promotion readiness only.",
     "It must not be used to enable runtime data while status is pending-review.",
-    "The draft remains blocked until all matrix samples have human review conclusions and runtime approval is explicit."
+    "The 9 matrix samples have same-provider HKO CSV review conclusions.",
+    "The draft remains blocked until runtime approval is explicit."
   ]
 }

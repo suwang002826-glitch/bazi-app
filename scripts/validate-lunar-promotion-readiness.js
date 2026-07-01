@@ -83,6 +83,7 @@ function validateLedger(ledger, matrix, blockers, errors) {
   }
 
   const reviews = Array.isArray(ledger.sampleReviews) ? ledger.sampleReviews : [];
+  let passedReviewCount = 0;
   if (!Array.isArray(ledger.sampleReviews)) {
     errors.push(`${ledger.ledgerId}: sampleReviews must be an array`);
   }
@@ -121,6 +122,9 @@ function validateLedger(ledger, matrix, blockers, errors) {
     if (review.reviewStatus === 'pending-human-review') {
       addBlocker(blockers, 'human-review-pending');
     }
+    if (review.reviewStatus === 'passed') {
+      passedReviewCount += 1;
+    }
     if (review.reviewStatus === 'failed' || review.reviewStatus === 'needs-follow-up') {
       addBlocker(blockers, 'human-review-not-passed');
     }
@@ -133,7 +137,10 @@ function validateLedger(ledger, matrix, blockers, errors) {
     });
   if (!allPassed) addBlocker(blockers, 'human-review-pending');
 
-  return reviews.length;
+  return {
+    sampleReviewCount: reviews.length,
+    passedReviewCount
+  };
 }
 
 function validateLunarPromotionReadinessRepository(options = {}) {
@@ -143,7 +150,7 @@ function validateLunarPromotionReadinessRepository(options = {}) {
   const { matrix, checklist, ledger } = readReviewFiles(rootDir, errors);
 
   validateChecklist(checklist, matrix, blockers, errors);
-  const sampleReviewCount = validateLedger(ledger, matrix, blockers, errors);
+  const ledgerSummary = validateLedger(ledger, matrix, blockers, errors);
 
   return {
     errors,
@@ -151,7 +158,8 @@ function validateLunarPromotionReadinessRepository(options = {}) {
       checklistId: checklist ? checklist.checklistId || '' : '',
       ledgerId: ledger ? ledger.ledgerId || '' : '',
       sourceMatrixId: matrix ? matrix.matrixId || '' : '',
-      sampleReviewCount,
+      sampleReviewCount: ledgerSummary.sampleReviewCount || 0,
+      passedReviewCount: ledgerSummary.passedReviewCount || 0,
       promotionReady: errors.length === 0 && blockers.length === 0,
       blockers
     }
