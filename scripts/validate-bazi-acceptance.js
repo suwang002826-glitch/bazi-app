@@ -292,3 +292,4 @@ function run() {
 }
 
 run();
+require('./validate-lunar-beta-entry');
