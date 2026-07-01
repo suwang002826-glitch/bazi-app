@@ -6,7 +6,8 @@
       "dataPackId": "lunar-conversions-2023",
       "path": "lunar-conversions-2023.js",
       "years": [2023],
-      "completeLunarCalendar": false
+      "completeLunarCalendar": false,
+      "runtimeEnabled": true
     }
   ],
   "warnings": [
