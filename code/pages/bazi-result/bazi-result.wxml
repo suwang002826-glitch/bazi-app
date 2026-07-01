@@ -1,13 +1,13 @@
 ﻿<view class="page bazi-result-page">
   <view class="result-topbar">
-    <view class="back-button" bindtap="goBack">鈥?/view>
+    <view class="back-button" bindtap="goBack">鈥</view>
     <view class="result-title">鍏瓧鎺掔洏</view>
     <view class="more-button"></view>
   </view>
 
   <view wx:if="{{!result}}" class="empty-state">
     <view class="empty-title">鏆傛棤鎺掔洏</view>
-    <view class="empty-copy">璇峰厛濉啓鍑虹敓淇℃伅锛屽啀鐢熸垚鍏瓧鎺掔洏銆?/view>
+    <view class="empty-copy">璇峰厛濉啓鍑虹敓淇℃伅锛屽啀鐢熸垚鍏瓧鎺掔洏銆</view>
     <button bindtap="goBack">杩斿洖濉啓</button>
   </view>
 
@@ -39,7 +39,7 @@
     <view wx:if="{{activeResultTab === '鍩烘湰鍛界洏'}}">
       <view class="song-overview">
         <view class="overview-title">鍥涙煴鍛界洏</view>
-        <view class="overview-copy">浠ュ勾銆佹湀銆佹棩銆佹椂鍒嗗垪鍛堢幇锛屽厛鐪嬬粨鏋勶紝鍐嶇湅缁嗛」銆?/view>
+        <view class="overview-copy">浠ュ勾銆佹湀銆佹棩銆佹椂鍒嗗垪鍛堢幇锛屽厛鐪嬬粨鏋勶紝鍐嶇湅缁嗛」銆</view>
         <view class="pillar-grid">
           <view class="pillar-card" wx:for="{{songPlate.pillars}}" wx:key="label">
             <view class="pillar-label">{{item.label}}</view>
@@ -68,7 +68,7 @@
           <view class="detail-label">绁炵厼</view>
           <view class="spirit-values">
             <view class="spirit-basic-line" wx:for="{{songPlate.pillars}}" wx:key="label">
-              <text class="spirit-basic-label">{{item.label}}锛?/text>
+              <text class="spirit-basic-label">{{item.label}}锛</text>
               <view class="spirit-chip-row" wx:if="{{item.spiritItems.length}}">
                 <text
                   class="spirit-name-chip"
@@ -146,7 +146,7 @@
                   <text class="hidden-stem {{cell.hidden3Class}}">{{cell.hidden3Stem}}</text>
                   <text class="hidden-god">{{cell.hidden3God}}</text>
                 </view>
-                <text wx:if="{{!cell.hidden1Show}}" class="cell-main">鈥?/text>
+                <text wx:if="{{!cell.hidden1Show}}" class="cell-main">鈥</text>
               </block>
               <block wx:elif="{{cell.lines.length}}">
                 <text class="cell-line" wx:for="{{cell.lines}}" wx:for-item="line" wx:key="*this">{{line}}</text>
@@ -165,13 +165,13 @@
         <view class="current-flow-title">
           {{professionalDetail.activeLuck.yearRange}} {{professionalDetail.activeLuck.value}}澶ц繍 路 {{professionalDetail.selectedFlowYear.year}} {{professionalDetail.selectedFlowYear.value}}娴佸勾 路 {{professionalDetail.selectedMonth.monthTitle}} {{professionalDetail.selectedMonth.value}}娴佹湀
         </view>
-        <view class="current-flow-hint">宸﹀彸婊戝姩鏌ョ湅瀹屾暣澶ц繍銆佹祦骞淬€佹祦鏈?/view>
+        <view class="current-flow-hint">宸﹀彸婊戝姩鏌ョ湅瀹屾暣澶ц繍銆佹祦骞淬€佹祦鏈</view>
       </view>
 
       <view class="flow-block with-fade">
         <view class="side-label">
-          <text>澶?/text>
-          <text>杩?/text>
+          <text>澶</text>
+          <text>杩</text>
         </view>
         <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
           <view class="luck-strip" style="width: {{professionalDetail.luckStripWidth}}rpx; min-width: {{professionalDetail.luckStripWidth}}rpx;">
@@ -194,8 +194,8 @@
         <view class="flow-side">
           <view class="flow-side-top">濮嬩簬</view>
           <view class="side-label">
-            <text>娴?/text>
-            <text>骞?/text>
+            <text>娴</text>
+            <text>骞</text>
           </view>
           <view class="flow-side-bottom">姝簬</view>
         </view>
@@ -230,8 +230,8 @@
 
       <view class="flow-block with-fade">
         <view class="side-label">
-          <text>娴?/text>
-          <text>鏈?/text>
+          <text>娴</text>
+          <text>鏈</text>
         </view>
         <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
           <view class="month-strip" style="width: {{professionalDetail.flowMonthStripWidth}}rpx; min-width: {{professionalDetail.flowMonthStripWidth}}rpx;">
@@ -262,13 +262,13 @@
       </view>
 
       <view class="action-row">
-        <button class="ghost-action" bindtap="openGanzhiDiagram">骞叉敮鍏崇郴 鈥?/button>
-        <button class="ghost-action small" bindtap="openAiCommand">鐧借瘽瑙ｆ瀽 鈥?/button>
+        <button class="ghost-action" bindtap="openGanzhiDiagram">骞叉敮鍏崇郴 鈥</button>
+        <button class="ghost-action small" bindtap="openAiCommand">鐧借瘽瑙ｆ瀽 鈥</button>
       </view>
 
       <view class="relation-panel">
         <view class="relation-line" wx:for="{{professionalDetail.relationLines}}" wx:key="label">
-          <text>{{item.label}}锛?/text>{{item.text}}
+          <text>{{item.label}}锛</text>{{item.text}}
         </view>
       </view>
 
@@ -307,7 +307,7 @@
         </view>
       </view>
 
-      <view class="sub-heading">鏍煎眬涓庢椇琛?/view>
+      <view class="sub-heading">鏍煎眬涓庢椇琛</view>
       <view class="profile-card featured-profile">
         <view class="profile-title">{{result.professional.pattern.name}}</view>
         <view class="muted">{{result.professional.pattern.basis}}</view>
@@ -315,7 +315,7 @@
         <view class="muted basis-line" wx:for="{{result.professional.strength.basis}}" wx:key="*this">{{item}}</view>
       </view>
 
-      <view class="sub-heading">鍠滅敤绁炲弬鑰?/view>
+      <view class="sub-heading">鍠滅敤绁炲弬鑰</view>
       <view class="profile-card useful-card">
         <view>
           <view class="profile-title">鍠滅敤 {{result.professional.usefulGod.usefulText}}</view>
@@ -334,14 +334,14 @@
 
     <view wx:else>
       <view class="focus-card quick-focus-card">
-        <view class="sub-heading compact-heading">鍏堢湅杩欎笁鐐?/view>
+        <view class="sub-heading compact-heading">鍏堢湅杩欎笁鐐</view>
         <view class="focus-line">
           <text class="focus-index">1</text>
           <text>{{result.professional.chartSummary.oneLine}}</text>
         </view>
         <view class="focus-line">
           <text class="focus-index">2</text>
-          <text>鍠滅敤鍙傝€?{{result.professional.usefulGod.usefulText}}锛屽繉 {{result.professional.usefulGod.avoidText}}銆傝繖鏄秼鍔挎彁绀猴紝涓嶆槸缁濆瀹氳銆?/text>
+          <text>鍠滅敤鍙傝€?{{result.professional.usefulGod.usefulText}}锛屽繉 {{result.professional.usefulGod.avoidText}}銆傝繖鏄秼鍔挎彁绀猴紝涓嶆槸缁濆瀹氳銆</text>
         </view>
         <view class="focus-line">
           <text class="focus-index">3</text>
@@ -386,7 +386,7 @@
         <view class="spirit-modal-title-block">
           <view class="spirit-modal-kicker">{{spiritModal.category}}</view>
           <view class="spirit-modal-title">{{spiritModal.title}}</view>
-          <view class="spirit-modal-source">浼犵粺瀛愬钩绁炵厼 路 娴嬭瘯鐗堥噴涔?/view>
+          <view class="spirit-modal-source">浼犵粺瀛愬钩绁炵厼 路 娴嬭瘯鐗堥噴涔</view>
         </view>
       </view>
       <view class="spirit-modal-section">
@@ -401,10 +401,11 @@
         <view class="spirit-modal-label">浣跨敤鎻愰啋</view>
         <view class="spirit-modal-copy">{{spiritModal.advice}}</view>
       </view>
-      <button class="spirit-modal-close" bindtap="closeSpiritInfo">鐭ラ亾浜?/button>
+      <button class="spirit-modal-close" bindtap="closeSpiritInfo">鐭ラ亾浜</button>
     </view>
   </view>
 </view>
+
 
 
 
