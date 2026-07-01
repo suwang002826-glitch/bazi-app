@@ -139,6 +139,9 @@ Page({
     professionalDetail: null,
     resultTabs: ['基本命盘', '专业细盘', '分析解读'],
     activeResultTab: '基本命盘',
+    isBasicTab: true,
+    isProTab: false,
+    isAnalysisTab: false,
     selectedLuckIndex: 0,
     selectedYearIndex: 0,
     selectedYearOffset: 0,
@@ -167,7 +170,13 @@ Page({
   },
 
   onResultTabChange(event) {
-    this.setData({ activeResultTab: event.currentTarget.dataset.tab });
+    const tab = event.currentTarget.dataset.tab;
+    this.setData({
+      activeResultTab: tab,
+      isBasicTab: tab === '基本命盘',
+      isProTab: tab === '专业细盘',
+      isAnalysisTab: tab === '分析解读'
+    });
   },
 
   refreshProfessionalDetail(patch) {

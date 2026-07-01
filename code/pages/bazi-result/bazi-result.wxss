@@ -569,6 +569,19 @@
   width: auto;
 }
 
+.hidden-rich-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6rpx 10rpx;
+  width: 100%;
+}
+
+.hidden-rich-wrap .hidden-stem-line {
+  width: auto;
+}
+
 .hidden-stem-line {
   display: inline-flex;
   flex-direction: column;
