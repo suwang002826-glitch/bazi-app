@@ -1,0 +1,59 @@
+{
+  "scopeId": "lunar-limited-runtime-scope-2023-hko",
+  "status": "design-only",
+  "relatedIssue": "#41",
+  "sourceRuntimeApprovalReviewId": "lunar-runtime-approval-review-2023-hko-limited",
+  "sourceDraftDataPackId": "lunar-conversions-2023-full-draft",
+  "runtimeEnabled": false,
+  "completeLunarCalendar": false,
+  "coverage": {
+    "mode": "gregorian-year",
+    "startDate": "2023-01-01",
+    "endDate": "2023-12-31",
+    "description": "Only Gregorian dates in 2023 covered by the HKO 2023 lunar draft data-pack are in scope."
+  },
+  "authoritySource": {
+    "provider": "Hong Kong Observatory",
+    "providerShortName": "HKO",
+    "dataset": "hko-open-data-calendar-2023-csv",
+    "sourceManifestId": "lunar-2023-full-draft.source-manifest"
+  },
+  "userWarning": {
+    "required": true,
+    "copy": "当前仅为 2023 年 HKO / 香港天文台农历数据预览，非完整农历历法能力；超出 2023 年范围的农历输入不会计算。"
+  },
+  "outOfCoverageError": {
+    "required": true,
+    "code": "LUNAR_DATE_OUTSIDE_LIMITED_RUNTIME_SCOPE",
+    "message": "当前受限农历预览仅支持 2023-01-01 至 2023-12-31 的 HKO 数据。",
+    "requiredFields": [
+      "inputDate",
+      "supportedStartDate",
+      "supportedEndDate",
+      "completeLunarCalendar",
+      "calendarDataVersion"
+    ]
+  },
+  "manifestRegistration": {
+    "allowedInThisPr": false,
+    "requiresSeparateManifestApproval": true,
+    "requiredApprovalDecision": "approved-for-runtime",
+    "targetManifest": "code/data-packs/lunar/manifest.json"
+  },
+  "runtimeIntegration": {
+    "allowedInThisPr": false,
+    "formalBaziEntryMustRemainUnchanged": true,
+    "calendarAdapterWhitelistAllowed": false
+  },
+  "forbiddenClaims": [
+    "Complete lunar calendar support",
+    "Full historical lunar conversion support",
+    "Independent authority verified",
+    "Runtime enabled"
+  ],
+  "nextRequiredPrs": [
+    "Create limited runtime pack only after explicit approval.",
+    "Register limited runtime in manifest only in a separate reviewed PR.",
+    "Add UI scope warning before exposing any preview entry."
+  ]
+}
