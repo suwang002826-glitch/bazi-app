@@ -367,6 +367,36 @@ writeJson(path.join(commonJsRoot, 'code', 'data-packs', 'lunar', 'pack-commonjs.
 writeModule(path.join(commonJsRoot, 'code', 'data-packs', 'lunar', 'pack-commonjs.js'), commonJsPack);
 assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: commonJsRoot }).errors, []);
 
+const missingSourceRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-missing-source',
+        path: 'pack-missing-source.js',
+        years: [2023],
+        completeLunarCalendar: false
+      }
+    ],
+    warnings: []
+  },
+  {}
+);
+writeModule(
+  path.join(missingSourceRoot, 'code', 'data-packs', 'lunar', 'pack-missing-source.js'),
+  {
+    ...commonJsPack,
+    dataPackId: 'pack-missing-source',
+    source: 'test:pack-missing-source'
+  }
+);
+const missingSourceResult = validateLunarDataPackRepository({ rootDir: missingSourceRoot });
+assertHasError(
+  missingSourceResult.errors,
+  'pack-missing-source: missing source mirror pack-missing-source.json'
+);
+
 const manifestMirrorRoot = createTempRepository(
   {
     calendarDataVersion: 'lunar-data-pack@test',
