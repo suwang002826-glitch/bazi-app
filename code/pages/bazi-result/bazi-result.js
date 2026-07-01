@@ -398,11 +398,13 @@ function buildBasicInfo(result) {
   const zodiacSeal = getZodiacSeal(yearPillar);
   const monthHidden = monthPillar.hiddenStems && monthPillar.hiddenStems[0];
   const currentInput = result.sourceInput || result.input || {};
+  const lunarText = getLunarInputText(currentInput);
 
   return {
     name: result.displayName || '未命名',
     seal: result.dayMaster && result.dayMaster.stem || yearPillar.branch || '命',
     zodiacSeal,
+    topLunar: lunarText,
     chips: [`生肖：${zodiac}`, age ? `${age} ${gender}` : gender],
     highlights: [
       { label: '日主属性', value: result.dayMaster ? result.dayMaster.text : '待校验' },
@@ -410,7 +412,7 @@ function buildBasicInfo(result) {
       { label: '喜用参考', value: result.professional ? result.professional.usefulGod.usefulText : '待校验' }
     ],
     rows: [
-      { label: '农历', value: getLunarInputText(currentInput) },
+      { label: '农历', value: lunarText },
       { label: '阳历', value: result.solarTime || '未记录' },
       { label: '真太阳时', value: result.adjustedSolarTime || result.solarTime || '未校准' },
       { label: '出生地区', value: `${result.birthPlace || '未填写'} · 东经 ${result.longitude || '--'}°` },

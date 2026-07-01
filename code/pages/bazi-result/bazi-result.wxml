@@ -19,6 +19,7 @@
       <view class="profile-main">
         <view class="profile-name">{{result.displayName}}</view>
         <view class="profile-time">阳历：{{result.solarTime}}</view>
+        <view class="profile-lunar">农历：{{basicInfo.topLunar}}</view>
         <view class="profile-time">校准：{{result.adjustedSolarTime}}</view>
         <view class="profile-place">{{result.birthPlace}} · 东经 {{result.longitude}}°</view>
       </view>
