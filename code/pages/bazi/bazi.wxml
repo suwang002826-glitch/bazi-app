@@ -77,10 +77,7 @@
         </view>
         <picker mode="multiSelector" range="{{lunarPickerRange}}" value="{{lunarPickerValue}}" bindchange="onLunarDateChange">
           <view class="lunar-picker-field">
-            <view class="lunar-picker-main">
-              <view class="lunar-picker-label">农历生日</view>
-              <view class="lunar-picker-value">{{lunarDateText}}</view>
-            </view>
+            <view class="lunar-picker-value">{{lunarDateText}}</view>
             <view class="row-symbol">›</view>
           </view>
         </picker>
