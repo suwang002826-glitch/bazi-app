@@ -294,3 +294,4 @@ function run() {
 run();
 require('./validate-lunar-runtime-loader.test');
 require('./validate-lunar-beta-entry');
+require('./generate-lunar-data-pack.test');
