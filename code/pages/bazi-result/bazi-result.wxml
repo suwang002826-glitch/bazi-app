@@ -2,7 +2,7 @@
   <view class="result-topbar">
     <view class="back-button" bindtap="goBack">‹</view>
     <view class="result-title">八字排盘</view>
-    <view class="more-button">•••</view>
+    <view class="more-button"></view>
   </view>
 
   <view wx:if="{{!result}}" class="empty-state">
@@ -19,6 +19,10 @@
         <view class="profile-time">阳历：{{result.solarTime}}</view>
         <view class="profile-time">校准：{{result.adjustedSolarTime}}</view>
         <view class="profile-place">{{result.birthPlace}} · 东经 {{result.longitude}}°</view>
+      </view>
+      <view class="profile-side">
+        <view class="profile-status">{{result.professional.strength.status}}</view>
+        <view class="profile-archive" bindtap="archiveCurrentCase" hover-class="tap-soft">存档</view>
       </view>
     </view>
 
@@ -170,9 +174,10 @@
         <view class="current-flow-title">
           {{professionalDetail.activeLuck.yearRange}} {{professionalDetail.activeLuck.value}}大运 · {{professionalDetail.selectedFlowYear.year}} {{professionalDetail.selectedFlowYear.value}}流年 · {{professionalDetail.selectedMonth.monthTitle}} {{professionalDetail.selectedMonth.value}}流月
         </view>
+        <view class="current-flow-hint">左右滑动查看完整大运、流年、流月</view>
       </view>
 
-      <view class="flow-block">
+      <view class="flow-block with-fade">
         <view class="side-label">
           <text>大</text>
           <text>运</text>
@@ -194,7 +199,7 @@
         </scroll-view>
       </view>
 
-      <view class="flow-block">
+      <view class="flow-block with-fade">
         <view class="flow-side">
           <view class="flow-side-top">始于</view>
           <view class="side-label">
@@ -232,7 +237,7 @@
         </scroll-view>
       </view>
 
-      <view class="flow-block">
+      <view class="flow-block with-fade">
         <view class="side-label">
           <text>流</text>
           <text>月</text>

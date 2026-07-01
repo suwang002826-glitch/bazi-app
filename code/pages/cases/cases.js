@@ -52,6 +52,10 @@ Page({
     });
   },
 
+  goBazi() {
+    wx.switchTab({ url: '/pages/bazi/bazi' });
+  },
+
   toggleFeedback(event) {
     const id = Number(event.currentTarget.dataset.id);
     const expandedCaseId = Number(this.data.expandedCaseId) === id ? 0 : id;

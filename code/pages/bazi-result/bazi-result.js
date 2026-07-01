@@ -195,6 +195,32 @@ Page({
     });
   },
 
+  archiveCurrentCase() {
+    if (!this.data.result) return;
+    const reading = app.globalData.currentBaziReading || wx.getStorageSync('currentBaziReading');
+    app.addCase({
+      sourceId: Date.now(),
+      type: '八字',
+      title: this.data.result.title,
+      createdAt: app.formatDateTime(new Date()),
+      summary: [
+        this.data.result.professional.chartSummary.oneLine,
+        this.data.professionalDetail && this.data.professionalDetail.selectedFlowYear
+          ? `当前查看${this.data.professionalDetail.selectedFlowYear.year} ${this.data.professionalDetail.selectedFlowYear.value}流年`
+          : ''
+      ].filter(Boolean).join(' '),
+      tag: '命盘',
+      status: '待验证',
+      verifiedAt: '',
+      accurate: '',
+      inaccurate: '',
+      userFeedback: '',
+      note: '由八字结果页存档，可用于后续复盘。',
+      payload: reading || null
+    });
+    wx.showToast({ title: '已存入命例', icon: 'success' });
+  },
+
   goBack() {
     const pages = getCurrentPages();
     if (pages.length > 1) {

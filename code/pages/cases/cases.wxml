@@ -24,9 +24,13 @@
             <view class="case-title">{{item.title}}</view>
             <view class="muted">{{item.type}} · {{item.archivedAt}}</view>
           </view>
-          <view class="case-tag">{{item.tag}}</view>
+          <view class="case-status" bindtap="cycleStatus" data-id="{{item.id}}">{{item.status || '待验证'}}</view>
         </view>
-        <view class="case-status" bindtap="cycleStatus" data-id="{{item.id}}">{{item.status || '待验证'}}</view>
+        <view class="case-meta-row">
+          <text>{{item.tag}}</text>
+          <text>{{item.type}}</text>
+          <text>{{item.archivedAt}}</text>
+        </view>
         <view class="case-summary">{{item.summary}}</view>
         <view class="case-note">{{item.note}}</view>
         <view class="case-version">规则版本 {{item.engineVersion || 'local-rules'}}</view>
@@ -65,7 +69,12 @@
         </view>
       </view>
     </block>
-    <view wx:else class="empty-text">{{emptyText}}</view>
+    <view wx:else class="archive-empty">
+      <view class="empty-mark">命</view>
+      <view class="empty-title">暂无命例</view>
+      <view class="empty-copy">{{emptyText}}</view>
+      <button class="primary empty-action" bindtap="goBazi">去排盘</button>
+    </view>
   </view>
 
   <view class="section">
@@ -80,7 +89,11 @@
         <button class="secondary save-btn" bindtap="saveCase" data-id="{{item.id}}">存档</button>
       </view>
     </block>
-    <view wx:else class="empty-text">暂无可保存的八字记录。</view>
+    <view wx:else class="archive-empty compact-empty">
+      <view class="empty-title">暂无最近排盘</view>
+      <view class="empty-copy">完成一次八字排盘后，可在这里快速存入命例档案。</view>
+      <button class="secondary empty-action" bindtap="goBazi">去排盘</button>
+    </view>
   </view>
 </view>
 
