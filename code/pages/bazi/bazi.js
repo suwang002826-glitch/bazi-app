@@ -24,6 +24,12 @@ Page({
     disclaimer: app.globalData.disclaimer
   },
 
+  onLoad() {
+    this.setData({
+      disclaimer: app.globalData.disclaimer || '术数内容仅作传统文化学习与复盘参考。'
+    });
+  },
+
   onNameInput(event) {
     this.setData({ 'form.name': event.detail.value });
   },
@@ -94,26 +100,33 @@ Page({
     }
 
     this.setData({ isGenerating: true });
-    const result = buildBaziProfile(this.data.form);
-    const baziPlate = createBaziPlate(result);
-    const reading = { result, baziPlate };
-    app.globalData.currentBaziReading = reading;
-    wx.setStorageSync('currentBaziReading', reading);
+    try {
+      const result = buildBaziProfile(this.data.form);
+      const baziPlate = createBaziPlate(result);
+      const reading = { result, baziPlate };
+      app.globalData.currentBaziReading = reading;
+      wx.setStorageSync('currentBaziReading', reading);
 
-    const triggerText = result.flowTriggerSummary && result.flowTriggerSummary.summary
-      ? `流运触发：${result.flowTriggerSummary.summary}`
-      : '';
-    if (this.data.saveCase) {
-      app.addHistory({
-        type: '八字',
-        title: result.title,
-        summary: [result.professional.chartSummary.oneLine, triggerText, result.aiText].filter(Boolean).join(' '),
-        payload: reading
+      const triggerText = result.flowTriggerSummary && result.flowTriggerSummary.summary
+        ? `流运触发：${result.flowTriggerSummary.summary}`
+        : '';
+      if (this.data.saveCase) {
+        app.addHistory({
+          type: '八字',
+          title: result.title,
+          summary: [result.professional.chartSummary.oneLine, triggerText, result.aiText].filter(Boolean).join(' '),
+          payload: reading
+        });
+      }
+      wx.navigateTo({ url: '/pages/bazi-result/bazi-result' });
+    } catch (error) {
+      wx.showToast({
+        title: error && error.message ? error.message : '排盘失败，请稍后重试',
+        icon: 'none'
       });
+      console.error('Bazi generateReading failed:', error);
+    } finally {
+      this.setData({ isGenerating: false });
     }
-    wx.navigateTo({
-      url: '/pages/bazi-result/bazi-result',
-      complete: () => this.setData({ isGenerating: false })
-    });
   }
 });
