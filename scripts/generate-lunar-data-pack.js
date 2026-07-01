@@ -657,6 +657,8 @@ if (require.main === module) {
 module.exports = {
   createDryRunSummary,
   createRawSourceDryRunSummaries,
+  parseHkoCsvRows,
   runCli,
+  sha256,
   validateSourceManifest
 };

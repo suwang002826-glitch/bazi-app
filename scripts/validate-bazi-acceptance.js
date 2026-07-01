@@ -9,6 +9,9 @@ const {
 const {
   validateLunarDataPackRepository
 } = require('./validate-lunar-data-pack');
+const {
+  validateLunarDraftDataPackRepository
+} = require('./validate-lunar-draft-data-pack');
 
 const acceptanceCases = [
   {
@@ -183,6 +186,14 @@ function assertDataPackRegistry() {
   console.log(`PASS DATA-PACK manifest registry ${coverage.calendarDataVersion}`);
 }
 
+function assertDraftDataPacks() {
+  const draftResult = validateLunarDraftDataPackRepository({
+    rootDir: path.join(__dirname, '..')
+  });
+  assert.deepStrictEqual(draftResult.errors, []);
+  console.log(`PASS DRAFT DATA-PACK validation ${draftResult.summary.draftPackCount} draft pack(s)`);
+}
+
 function assertUnsupportedLunarInputs() {
   unsupportedLunarCases.forEach((item) => {
     assert.throws(
@@ -218,6 +229,7 @@ function assertImplicitLunarInputs() {
 
 function run() {
   assertDataPackRegistry();
+  assertDraftDataPacks();
   assertUnsupportedLunarInputs();
   assertImplicitLunarInputs();
 
@@ -295,3 +307,4 @@ run();
 require('./validate-lunar-runtime-loader.test');
 require('./validate-lunar-beta-entry');
 require('./generate-lunar-data-pack.test');
+require('./generate-lunar-draft-data-pack.test');
