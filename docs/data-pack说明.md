@@ -94,11 +94,18 @@ node scripts/validate-lunar-data-pack.js
 
 `manifest.json` 是农历 data-pack 的总入口。新增年份包或样例包时，必须先把包加入 `manifest.packs`，再由 `lunarDataPack` 读取。
 
+`manifest.packs[].runtimeEnabled` 用来控制小程序运行时是否加载该包：
+
+- `runtimeEnabled: true` 或未设置：允许运行时加载。
+- `runtimeEnabled: false`：只允许体检、生成、复核，不允许小程序运行时加载。
+- `status: draft` 的数据包必须设置 `runtimeEnabled: false`，避免草稿完整包被误当作稳定能力。
+
 当前小程序运行环境仍需要在 `lunarDataPack` 内登记可加载的 JSON 文件路径，但这只是运行时加载限制，不允许把农历记录重新写回 `calendarAdapter`。
 
 验收脚本必须检查：
 
 - `lunarDataPack` 暴露的 coverage 摘要与 `manifest.json` 一致。
+- draft 包不能运行时启用。
 - 包外农历输入会抛出结构化错误。
 - 错误里必须带 `calendarDataVersion`、`status`、`completeLunarCalendar` 和可用包列表。
 
