@@ -1,4 +1,4 @@
-<view class="page home-page">
+﻿<view class="page home-page">
   <view class="home-shell">
     <view class="calendar-top">
       <view class="brand-mark">
@@ -6,21 +6,21 @@
           <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFit" />
         </view>
         <view>
-          <view class="brand-title">万年历</view>
-          <view class="brand-subtitle">玄门命理 · 日课参考</view>
+          <view class="brand-title">涓囧勾鍘?/view>
+          <view class="brand-subtitle">鐜勯棬鍛界悊 路 鏃ヨ鍙傝€?/view>
         </view>
       </view>
-      <view class="date-selector">{{nowText}}⌄</view>
+      <view class="date-selector">{{nowText}}鈱?/view>
     </view>
 
     <view class="month-card">
       <view class="month-head">
-        <view class="nav-arrow" bindtap="onPrevMonth" hover-class="tap-active">‹</view>
+        <view class="nav-arrow" bindtap="onPrevMonth" hover-class="tap-active">鈥?/view>
         <view class="month-center">
           <view class="month-title">{{monthTitle}}</view>
           <view class="month-sub">{{selected.ganzhi}}</view>
         </view>
-        <view class="nav-arrow" bindtap="onNextMonth" hover-class="tap-active">›</view>
+        <view class="nav-arrow" bindtap="onNextMonth" hover-class="tap-active">鈥?/view>
       </view>
 
       <view class="weekday-row">
@@ -46,10 +46,10 @@
     <view class="analysis-card">
       <view class="analysis-head">
         <view>
-          <view class="analysis-title">智能分析</view>
+          <view class="analysis-title">鏅鸿兘鍒嗘瀽</view>
           <view class="analysis-date">{{analysis.dateLine}}</view>
         </view>
-        <view class="analysis-pill">日课</view>
+        <view class="analysis-pill">鏃ヨ</view>
       </view>
 
       <view class="analysis-lunar">{{analysis.lunarLine}}</view>
@@ -68,36 +68,21 @@
 
       <view class="analysis-meta compact-meta">
         <view>
-          <text>建除</text>
+          <text>寤洪櫎</text>
           <text>{{analysis.duty}}</text>
         </view>
         <view>
-          <text>值神</text>
+          <text>鍊肩</text>
           <text>{{analysis.god}}</text>
         </view>
         <view>
-          <text>冲煞</text>
+          <text>鍐茬厼</text>
           <text>{{analysis.clash}}</text>
         </view>
         <view>
-          <text>时辰</text>
+          <text>鏃惰景</text>
           <text>{{analysis.hourText}}</text>
         </view>
       </view>
     </view>
 
-    <view class="bazi-entry-card" bindtap="goBazi" hover-class="entry-card-active">
-      <view class="entry-kicker">八字排盘</view>
-      <view class="entry-title">排一生命盘</view>
-      <view class="entry-copy">录入出生时间与地点，生成四柱、大运、流年细盘。</view>
-      <view class="entry-footer">
-        <view class="entry-tags">
-          <text>四柱</text>
-          <text>大运</text>
-          <text>流年</text>
-        </view>
-        <view class="entry-action">开始排盘</view>
-      </view>
-    </view>
-  </view>
-</view>

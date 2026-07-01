@@ -1,6 +1,6 @@
 page {
   min-height: 100%;
-  background: #07080e;
+  background: #0b0d16;
   color: #f2f0e4;
   font-family: "KaiTi", "STKaiti", "Kaiti SC", "楷体", "SimKai", serif;
 }
@@ -30,7 +30,7 @@ button {
   z-index: 1;
   min-height: 100vh;
   padding: 24rpx 22rpx calc(46rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, #07080e 0%, #101127 54%, #07080e 100%);
+  background: linear-gradient(180deg, #0b0d16 0%, #171832 54%, #0b0d16 100%);
 }
 
 .section {
@@ -40,7 +40,7 @@ button {
   padding: 26rpx;
   border: 1rpx solid rgba(217, 191, 113, .14);
   border-radius: 18rpx;
-  background: linear-gradient(145deg, rgba(242, 240, 228, .075), rgba(242, 240, 228, .025)), rgba(18, 21, 50, .92);
+  background: linear-gradient(145deg, rgba(242, 240, 228, .095), rgba(242, 240, 228, .035)), rgba(24, 27, 58, .94);
   box-shadow: inset 0 1rpx 0 rgba(242, 240, 228, .08), 0 12rpx 24rpx rgba(0, 0, 0, .22);
 }
 
@@ -91,7 +91,7 @@ textarea {
   width: 100%;
   border: 1rpx solid rgba(217, 191, 113, .14);
   border-radius: 12rpx;
-  background: rgba(7, 8, 14, .46);
+  background: rgba(11, 13, 22, .52);
   color: #f2f0e4;
   font-size: 29rpx;
   box-shadow: inset 0 1rpx 0 rgba(242, 240, 228, .06);
@@ -178,7 +178,7 @@ button[disabled] {
   padding: 24rpx;
   border: 1rpx solid rgba(217, 191, 113, .14);
   border-radius: 18rpx;
-  background: rgba(18, 21, 50, .88);
+  background: rgba(24, 27, 58, .90);
 }
 
 .result-line {
