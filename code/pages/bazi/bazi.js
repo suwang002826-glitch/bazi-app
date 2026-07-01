@@ -6,7 +6,9 @@ const app = getApp();
 Page({
   data: {
     genderOptions: ['男', '女'],
-    calendarModes: ['公历', '农历', '四柱'],
+    calendarModes: ['公历', '农历'],
+    groupOptions: ['练习', '亲友', '客户', '复盘'],
+    groupIndex: 0,
     activeCalendarMode: '公历',
     saveCase: true,
     isGenerating: false,
@@ -24,6 +26,7 @@ Page({
       region: ['北京市', '北京市', '东城区'],
       regionText: '北京市 北京市 东城区',
       birthPlace: '北京市 北京市 东城区',
+      group: '练习',
       longitude: '116.40',
       useTrueSolarTime: false
     },
@@ -52,10 +55,6 @@ Page({
     this.setData(patch);
     if (mode === '农历') {
       wx.showToast({ title: '农历排盘测试版已开启', icon: 'none' });
-      return;
-    }
-    if (mode === '四柱') {
-      wx.showToast({ title: '四柱直排待开放，先按公历排盘', icon: 'none' });
     }
   },
 
@@ -97,6 +96,15 @@ Page({
       'form.region': region,
       'form.regionText': this.composeRegionText(region),
       'form.birthPlace': this.composeBirthPlace(region)
+    });
+  },
+
+  onGroupChange(event) {
+    const groupIndex = Number(event.detail.value);
+    const group = this.data.groupOptions[groupIndex] || this.data.groupOptions[0];
+    this.setData({
+      groupIndex,
+      'form.group': group
     });
   },
 
@@ -180,6 +188,8 @@ Page({
     const record = {
       type: '八字',
       title: result.title,
+      group: readingInput.group || '练习',
+      category: readingInput.group || '练习',
       summary: [result.professional.chartSummary.oneLine, triggerText, result.aiText].filter(Boolean).join(' '),
       payload: reading
     };
