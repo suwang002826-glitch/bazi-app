@@ -142,10 +142,6 @@ Page({
 
   generateReading() {
     if (this.data.isGenerating) return;
-    if (!this.data.form.name.trim()) {
-      wx.showToast({ title: '请先填写姓名', icon: 'none' });
-      return;
-    }
     const longitude = Number(this.data.form.longitude);
     if (!Number.isFinite(longitude) || longitude < 73 || longitude > 135) {
       wx.showToast({ title: '经度请填 73-135 之间', icon: 'none' });
@@ -153,10 +149,14 @@ Page({
     }
 
     this.setData({ isGenerating: true });
-    const readingInput = this.buildReadingInput();
+    const readingInput = {
+      ...this.buildReadingInput(),
+      name: this.data.form.name.trim() || '未命名'
+    };
     let result;
     try {
       result = buildBaziProfile(readingInput);
+      result.gender = readingInput.gender || '未填';
     } catch (error) {
       const lunarBetaError = this.getLunarBetaError(error);
       this.setData({
@@ -177,12 +177,25 @@ Page({
     const triggerText = result.flowTriggerSummary && result.flowTriggerSummary.summary
       ? `流运触发：${result.flowTriggerSummary.summary}`
       : '';
+    const record = {
+      type: '八字',
+      title: result.title,
+      summary: [result.professional.chartSummary.oneLine, triggerText, result.aiText].filter(Boolean).join(' '),
+      payload: reading
+    };
+    app.addHistory(record);
     if (this.data.saveCase) {
-      app.addHistory({
-        type: '八字',
-        title: result.title,
-        summary: [result.professional.chartSummary.oneLine, triggerText, result.aiText].filter(Boolean).join(' '),
-        payload: reading
+      app.addCase({
+        sourceId: Date.now(),
+        ...record,
+        createdAt: app.formatDateTime(new Date()),
+        tag: '命盘',
+        status: '待验证',
+        verifiedAt: '',
+        accurate: '',
+        inaccurate: '',
+        userFeedback: '',
+        note: '自动归档命例，可用于后续复盘与校验。'
       });
     }
     wx.navigateTo({

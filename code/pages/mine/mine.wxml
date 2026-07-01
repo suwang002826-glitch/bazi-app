@@ -14,8 +14,8 @@
         <text>{{history.length}}</text>
       </view>
       <view>
-        <text>归档</text>
-        <text>本机</text>
+        <text>命例</text>
+        <text>{{cases.length}}</text>
       </view>
       <view>
         <text>版本</text>
@@ -32,30 +32,6 @@
       <view class="muted">保存八字排盘记录，用于复盘准确度、整理反馈和后续校验。</view>
     </view>
     <view class="entry-arrow">›</view>
-  </view>
-
-  <view class="section">
-    <view class="section-kicker">历史记录</view>
-    <view class="section-title">最近排盘</view>
-    <block wx:if="{{history.length}}">
-      <view
-        class="history-row tappable-row"
-        hover-class="tap-active"
-        wx:for="{{history}}"
-        wx:key="id"
-        bindtap="openHistoryRecord"
-        data-id="{{item.id}}"
-      >
-        <view class="history-content">
-          <view class="history-title">{{item.title}}</view>
-          <view class="muted">{{item.type}} · {{item.createdAt}}</view>
-          <view class="muted history-summary">{{item.summary}}</view>
-        </view>
-        <view class="entry-arrow small-arrow">›</view>
-      </view>
-      <button class="secondary clear-btn" bindtap="clearHistory">清空本机记录</button>
-    </block>
-    <view wx:else class="empty-text">暂无八字排盘记录。完成一次排盘后，这里会形成本机时间线。</view>
   </view>
 
   <view class="section">

@@ -8,11 +8,15 @@ Page({
       note: '档案信息仅保存在本机，用于测试版功能验证。'
     },
     history: [],
+    cases: [],
     disclaimer: app.globalData.disclaimer
   },
 
   onShow() {
-    this.setData({ history: wx.getStorageSync('readingHistory') || [] });
+    this.setData({
+      history: wx.getStorageSync('readingHistory') || [],
+      cases: (wx.getStorageSync('caseArchive') || []).filter((item) => item.type === '八字' || item.type === '鍏瓧')
+    });
   },
 
   goCases() {

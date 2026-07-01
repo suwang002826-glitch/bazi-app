@@ -22,7 +22,7 @@
           <text class="entry-label">姓名</text>
           <text class="entry-hint">用于命例归档</text>
         </view>
-        <input class="entry-input" placeholder="请输入姓名（必填）" value="{{form.name}}" bindinput="onNameInput" />
+        <input class="entry-input" placeholder="不填则为未命名" value="{{form.name}}" bindinput="onNameInput" />
       </view>
 
       <view class="entry-row segmented-row">
