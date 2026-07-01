@@ -333,6 +333,51 @@ function getLunarInputText(input) {
   return `${input.lunarYear}年${input.isLeapMonth ? '闰' : ''}${month}${day}`;
 }
 
+function formatLunarDay(value) {
+  const day = Number(value);
+  if (Number.isInteger(day) && day >= 1 && day <= 30) {
+    return LUNAR_DAY_LABELS[day - 1];
+  }
+  return value || '';
+}
+
+function getSolarDerivedLunarText(result) {
+  const parsed = parseSolarDate(result && result.solarTime);
+  const hourBranch = result && result.pillars && result.pillars[3] && result.pillars[3].branch;
+  const hourText = hourBranch ? ` ${hourBranch}时` : '';
+  if (!parsed) return '按阳历校准生成';
+
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    try {
+      const formatter = new Intl.DateTimeFormat('zh-u-ca-chinese', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      const parts = formatter.formatToParts(parsed.date).reduce((map, item) => {
+        map[item.type] = item.value;
+        return map;
+      }, {});
+      const yearName = parts.yearName ? `${parts.yearName}年` : '';
+      const lunarYear = parts.relatedYear && !yearName ? `${parts.relatedYear}年` : '';
+      const month = parts.month || '';
+      const day = formatLunarDay(parts.day);
+      if (month && day) return `${yearName || lunarYear}${month}${day}${hourText}`;
+    } catch (error) {
+      // Fall through to pillar-based display when the runtime lacks Chinese calendar support.
+    }
+  }
+
+  const yearPillar = result && result.pillars && result.pillars[0] && result.pillars[0].value;
+  const monthBranch = result && result.pillars && result.pillars[1] && result.pillars[1].branch;
+  return `${yearPillar || parsed.year}年 ${monthBranch || parsed.month}月令参考${hourText}`;
+}
+
+function getDisplayLunarText(input, result) {
+  if (input && input.calendarType === 'lunar') return getLunarInputText(input);
+  return getSolarDerivedLunarText(result);
+}
+
 function getWesternZodiac(solarTime) {
   const parsed = parseSolarDate(solarTime);
   if (!parsed) return '未校验';
@@ -398,7 +443,7 @@ function buildBasicInfo(result) {
   const zodiacSeal = getZodiacSeal(yearPillar);
   const monthHidden = monthPillar.hiddenStems && monthPillar.hiddenStems[0];
   const currentInput = result.sourceInput || result.input || {};
-  const lunarText = getLunarInputText(currentInput);
+  const lunarText = getDisplayLunarText(currentInput, result);
 
   return {
     name: result.displayName || '未命名',
@@ -416,7 +461,7 @@ function buildBasicInfo(result) {
       { label: '阳历', value: result.solarTime || '未记录' },
       { label: '真太阳时', value: result.adjustedSolarTime || result.solarTime || '未校准' },
       { label: '出生地区', value: `${result.birthPlace || '未填写'} · 东经 ${result.longitude || '--'}°` },
-      { label: '人元司令', value: monthHidden ? `${monthPillar.branch}月以${monthHidden.stem}${monthHidden.tenGod}为主气` : '按月令藏干取主气' },
+      { label: '人元司令', value: monthHidden ? monthHidden.stem : '未定' },
       { label: '节气校验', value: sectionHint || '按节气换月与真太阳时口径校验。' },
       { label: '起运节令', value: result.luck && result.luck.boundary ? result.luck.boundary : '按出生后前后节令折算' },
       { label: '星座', value: getWesternZodiac(result.solarTime) },

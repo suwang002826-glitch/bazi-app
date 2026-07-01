@@ -149,11 +149,11 @@
 }
 
 .profile-time:first-of-type {
-  color: #d4d8d6;
+  color: #aab5b3;
 }
 
 .profile-lunar {
-  color: rgba(232, 201, 138, .88);
+  color: #aab5b3;
 }
 
 .profile-side {
