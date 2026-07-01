@@ -1,7 +1,8 @@
-const lunarConversions2023 = require('../../data-packs/lunar/lunar-conversions-2023.json');
-const lunarManifest = require('../../data-packs/lunar/manifest.json');
+const lunarConversions2023 = require('../../data-packs/lunar/lunar-conversions-2023');
+const lunarManifest = require('../../data-packs/lunar/manifest');
 
 const lunarPackModules = {
+  'lunar-conversions-2023.js': lunarConversions2023,
   'lunar-conversions-2023.json': lunarConversions2023
 };
 

@@ -1,0 +1,31 @@
+module.exports = {
+  dataPackId: 'lunar-conversions-2023',
+  calendarDataVersion: 'lunar-data-pack@2026.07.01',
+  source: 'data-pack:lunar-conversions-2023',
+  status: 'acceptance-seed',
+  coverage: {
+    years: [2023],
+    scope: 'acceptance samples only',
+    completeLunarCalendar: false
+  },
+  records: [
+    {
+      caseId: 'BZI-005',
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 15,
+      isLeapMonth: false,
+      solarDate: '2023-09-29',
+      sourceNote: 'Acceptance sample: lunar 2023-08-15'
+    },
+    {
+      caseId: 'BZI-006',
+      lunarYear: 2023,
+      lunarMonth: 2,
+      lunarDay: 10,
+      isLeapMonth: true,
+      solarDate: '2023-03-31',
+      sourceNote: 'Acceptance sample: leap lunar 2023-02-10'
+    }
+  ]
+};
