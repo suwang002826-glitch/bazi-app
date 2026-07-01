@@ -11,6 +11,10 @@ function writeJson(filePath, value) {
   fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 }
 
+function writeText(filePath, value) {
+  fs.writeFileSync(filePath, value, 'utf8');
+}
+
 function createTempRepository(manifest, packs) {
   const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lunar-data-pack-test-'));
   const lunarDir = path.join(rootDir, 'code', 'data-packs', 'lunar');
@@ -299,5 +303,64 @@ const validProvenanceRoot = createTempRepository(
 );
 
 assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: validProvenanceRoot }).errors, []);
+
+const commonJsRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-commonjs',
+        path: 'pack-commonjs.js',
+        years: [2023],
+        completeLunarCalendar: false
+      }
+    ],
+    warnings: []
+  },
+  {}
+);
+const commonJsRecords = [
+  {
+    caseId: 'BZI-CJS',
+    lunarYear: 2023,
+    lunarMonth: 1,
+    lunarDay: 1,
+    isLeapMonth: false,
+    solarDate: '2023-01-22',
+    sourceNote: 'commonjs fixture'
+  }
+];
+writeText(
+  path.join(commonJsRoot, 'code', 'data-packs', 'lunar', 'pack-commonjs.js'),
+  `module.exports = ${JSON.stringify({
+    dataPackId: 'pack-commonjs',
+    calendarDataVersion: 'lunar-data-pack@test',
+    source: 'test:pack-commonjs',
+    status: 'test-fixture',
+    coverage: {
+      years: [2023],
+      scope: 'test',
+      completeLunarCalendar: false
+    },
+    authoritySource: 'test-fixture',
+    sourceLedger: [
+      {
+        sourceName: 'fixture',
+        sourceVersion: 'v1',
+        retrievedAt: '2026-07-01T00:00:00+08:00',
+        note: 'commonjs validation fixture'
+      }
+    ],
+    generatedAt: '2026-07-01T00:00:00+08:00',
+    generatedBy: 'validate-lunar-data-pack.test',
+    recordsChecksum: {
+      algorithm: 'sha256',
+      value: checksumRecords(commonJsRecords)
+    },
+    records: commonJsRecords
+  }, null, 2)};\n`
+);
+assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: commonJsRoot }).errors, []);
 
 console.log('PASS lunar data-pack schema validation');
