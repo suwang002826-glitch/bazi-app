@@ -1,0 +1,81 @@
+{
+  "ledgerId": "lunar-human-review-ledger-2023-hko-draft",
+  "status": "pending-human-review",
+  "sourceMatrixId": "lunar-review-matrix-2023-hko-draft",
+  "sourceDraftDataPackId": "lunar-conversions-2023-full-draft",
+  "runtimeApproval": false,
+  "sampleReviews": [
+    {
+      "caseId": "HKO-2023-0001",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "公历年初跨农历年样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0022",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "春节样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0081",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "闰二月初一样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0090",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "BZI-006 闰二月初十样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0109",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "闰二月廿九样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0173",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "端午样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0234",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "七夕样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0272",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "BZI-005 中秋样本等待人工复核"
+    },
+    {
+      "caseId": "HKO-2023-0365",
+      "reviewStatus": "pending-human-review",
+      "reviewer": "unassigned",
+      "reviewedAt": "pending",
+      "conclusion": "pending",
+      "evidenceNote": "公历年末样本等待人工复核"
+    }
+  ]
+}
