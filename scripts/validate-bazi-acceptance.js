@@ -27,6 +27,9 @@ const {
 const {
   validateLunarLimitedRuntimeCandidateRepository
 } = require('./validate-lunar-limited-runtime-candidate');
+const {
+  validateLunarLimitedPreviewGateRepository
+} = require('./validate-lunar-limited-preview-gate');
 
 const acceptanceCases = [
   {
@@ -266,6 +269,19 @@ function assertLimitedRuntimeCandidate() {
   console.log(`PASS LIMITED RUNTIME CANDIDATE ${candidateResult.summary.recordCount} records`);
 }
 
+function assertLimitedPreviewGate() {
+  const gateResult = validateLunarLimitedPreviewGateRepository({
+    rootDir: path.join(__dirname, '..')
+  });
+  assert.deepStrictEqual(gateResult.errors, []);
+  assert.strictEqual(gateResult.summary.status, 'preflight-required');
+  assert.strictEqual(gateResult.summary.previewEntryAllowed, false);
+  assert.strictEqual(gateResult.summary.manifestRegistrationAllowed, false);
+  assert.strictEqual(gateResult.summary.runtimeEnabled, false);
+  assert.strictEqual(gateResult.summary.uiWarningRequired, true);
+  console.log(`PASS LIMITED PREVIEW GATE ${gateResult.summary.outOfCoverageErrorCode}`);
+}
+
 function assertUnsupportedLunarInputs() {
   unsupportedLunarCases.forEach((item) => {
     assert.throws(
@@ -307,6 +323,7 @@ function run() {
   assertRuntimeApprovalReview();
   assertLimitedRuntimeScope();
   assertLimitedRuntimeCandidate();
+  assertLimitedPreviewGate();
   assertUnsupportedLunarInputs();
   assertImplicitLunarInputs();
 
@@ -391,3 +408,4 @@ require('./validate-lunar-runtime-approval-review.test');
 require('./validate-lunar-limited-runtime-scope.test');
 require('./generate-lunar-limited-runtime-candidate.test');
 require('./validate-lunar-limited-runtime-candidate.test');
+require('./validate-lunar-limited-preview-gate.test');
