@@ -48,7 +48,10 @@
               <text class="pillar-stem">{{item.stem}}</text>
               <text class="pillar-branch">{{item.branch}}</text>
             </view>
-            <view class="pillar-meta">`r`n              <text>{{item.hidden}}</text>`r`n              <text>{{item.subStar}}</text>`r`n            </view>
+            <view class="pillar-meta">
+              <text>{{item.hidden}}</text>
+              <text>{{item.subStar}}</text>
+            </view>
           </view>
         </view>
 
@@ -402,5 +405,6 @@
     </view>
   </view>
 </view>
+
 
 
