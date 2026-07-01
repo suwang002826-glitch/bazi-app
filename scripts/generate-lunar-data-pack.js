@@ -211,6 +211,25 @@ function validateOutputPolicy(outputPolicy, errors) {
   });
 }
 
+function validateSourceReviewBoundary(sourceReviewBoundary, errors) {
+  if (!sourceReviewBoundary || typeof sourceReviewBoundary !== 'object') {
+    errors.push('sourceReviewBoundary must be an object');
+    return;
+  }
+
+  if (sourceReviewBoundary.sourceIndependence !== 'same-provider-multi-format') {
+    errors.push('sourceReviewBoundary.sourceIndependence must be same-provider-multi-format');
+  }
+
+  if (sourceReviewBoundary.independentReviewRequired !== true) {
+    errors.push('sourceReviewBoundary.independentReviewRequired must be true');
+  }
+
+  if (sourceReviewBoundary.independentReviewStatus !== 'pending') {
+    errors.push('sourceReviewBoundary.independentReviewStatus must be pending');
+  }
+}
+
 function validateSourceCountAgainstReviewPolicy(manifest, errors) {
   if (!Array.isArray(manifest.sources) || !manifest.reviewPolicy) return;
   const minimumSourceCount = manifest.reviewPolicy.minimumSourceCount;
@@ -242,6 +261,7 @@ function validateSourceManifest(manifest) {
   validateGenerator(manifest.generator, errors);
   validateReviewPolicy(manifest.reviewPolicy, errors);
   validateOutputPolicy(manifest.outputPolicy, errors);
+  validateSourceReviewBoundary(manifest.sourceReviewBoundary, errors);
   validateSourceCountAgainstReviewPolicy(manifest, errors);
 
   return { errors };

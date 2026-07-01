@@ -18,6 +18,7 @@
 - `outputPolicy.requiresRecordsChecksum` 必须是 `true`。
 - `outputPolicy.requiresRuntimeMirrors` 必须是 `true`。
 - `outputPolicy.requiresManualReviewBeforeRuntime` 必须是 `true`。
+- 如果来源是同一机构的多格式文件，必须声明 `sourceReviewBoundary.sourceIndependence: "same-provider-multi-format"`，并保持 `independentReviewRequired: true`、`independentReviewStatus: "pending"`。
 
 ## 校验命令
 

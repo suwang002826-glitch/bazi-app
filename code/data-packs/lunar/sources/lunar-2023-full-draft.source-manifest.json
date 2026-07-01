@@ -67,5 +67,11 @@
     "requiresRecordsChecksum": true,
     "requiresRuntimeMirrors": true,
     "requiresManualReviewBeforeRuntime": true
+  },
+  "sourceReviewBoundary": {
+    "sourceIndependence": "same-provider-multi-format",
+    "independentReviewRequired": true,
+    "independentReviewStatus": "pending",
+    "note": "HKO CSV and TXT are pinned authority artifacts from the same provider. They are sufficient for source pinning, but independent review remains required before runtime use."
   }
 }

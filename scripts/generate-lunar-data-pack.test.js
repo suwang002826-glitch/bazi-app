@@ -81,6 +81,11 @@ function createValidManifest(overrides = {}) {
       requiresRuntimeMirrors: true,
       requiresManualReviewBeforeRuntime: true
     },
+    sourceReviewBoundary: {
+      sourceIndependence: 'same-provider-multi-format',
+      independentReviewRequired: true,
+      independentReviewStatus: 'pending'
+    },
     ...overrides
   };
 }
@@ -145,6 +150,11 @@ const invalidResult = validateSourceManifest(createValidManifest({
     requiresRecordsChecksum: false,
     requiresRuntimeMirrors: false,
     requiresManualReviewBeforeRuntime: false
+  },
+  sourceReviewBoundary: {
+    sourceIndependence: 'independent-authority-sources',
+    independentReviewRequired: false,
+    independentReviewStatus: 'approved'
   }
 }));
 assertHasError(invalidResult.errors, 'manifestKind must be source-scaffold');
@@ -169,6 +179,9 @@ assertHasError(invalidResult.errors, 'reviewPolicy.runtimeEnabled must be false'
 assertHasError(invalidResult.errors, 'outputPolicy.requiresRecordsChecksum must be true');
 assertHasError(invalidResult.errors, 'outputPolicy.requiresRuntimeMirrors must be true');
 assertHasError(invalidResult.errors, 'outputPolicy.requiresManualReviewBeforeRuntime must be true');
+assertHasError(invalidResult.errors, 'sourceReviewBoundary.sourceIndependence must be same-provider-multi-format');
+assertHasError(invalidResult.errors, 'sourceReviewBoundary.independentReviewRequired must be true');
+assertHasError(invalidResult.errors, 'sourceReviewBoundary.independentReviewStatus must be pending');
 
 const tooFewPolicySourcesResult = validateSourceManifest(createValidManifest({
   reviewPolicy: {
