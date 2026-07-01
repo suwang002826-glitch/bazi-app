@@ -1,24 +1,22 @@
 <view class="page cases-page">
   <view class="case-library-head">
-    <view class="library-tabs">
-      <view class="library-tab active">命例档案</view>
-      <view class="library-tab muted-tab">名人库</view>
-    </view>
-    <view class="library-menu">•••</view>
+    <view class="library-title">命例档案</view>
   </view>
 
   <view class="case-search">
     <text class="search-icon">⌕</text>
     <input placeholder="请输入搜索的内容" value="{{query}}" bindinput="onSearchInput" />
-    <view class="filter-entry">筛选</view>
+    <view class="filter-entry" bindtap="openFilterSheet">筛选</view>
   </view>
 
   <view class="case-category-row">
-    <text class="active">全部</text>
-    <text>练习</text>
-    <text>亲友</text>
-    <text>客户</text>
-    <text>复盘</text>
+    <text
+      class="{{activeCategory === item ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="*this"
+      bindtap="onCategoryTap"
+      data-category="{{item}}"
+    >{{item}}</text>
   </view>
 
   <block wx:if="{{cases.length}}">
@@ -26,11 +24,9 @@
       class="case-list-row"
       wx:for="{{cases}}"
       wx:key="id"
-      bindtap="openCase"
-      data-id="{{item.id}}"
       hover-class="tap-active"
     >
-      <view class="case-left">
+      <view class="case-left" bindtap="openCase" data-id="{{item.id}}">
         <view class="case-name-line">
           <text class="case-display-name">{{item.displayName}}</text>
           <text class="case-gender">{{item.gender}}</text>
@@ -38,7 +34,7 @@
         <view class="case-date">阳历{{item.solarDate}}</view>
         <view class="case-archive-time">{{item.archivedAt}}</view>
       </view>
-      <view class="case-pillars">
+      <view class="case-pillars" bindtap="openCase" data-id="{{item.id}}">
         <view class="pillar-char-row" wx:for="{{item.pillarRows}}" wx:for-item="row" wx:key="*this">
           <text
             class="pillar-char {{char.className}}"
@@ -48,9 +44,11 @@
           >{{char.char}}</text>
         </view>
       </view>
-      <view class="case-seal-wrap">
+      <view class="case-actions">
         <view class="case-seal">{{item.sealText}}</view>
         <text wx:if="{{item.indexLetter}}" class="case-index-letter">{{item.indexLetter}}</text>
+        <view class="case-action-btn view-btn" catchtap="openCase" data-id="{{item.id}}">看</view>
+        <view class="case-action-btn delete-btn" catchtap="deleteCase" data-id="{{item.id}}">删</view>
       </view>
     </view>
   </block>
