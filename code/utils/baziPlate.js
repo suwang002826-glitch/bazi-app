@@ -238,7 +238,11 @@ function createBaziPlate(result) {
     },
     {
       label: '藏干',
-      cells: pillars.map((pillar) => createTextCell((pillar.hiddenStems || []).map((item) => `${item.stem}${item.element}`)))
+      cells: pillars.map((pillar) => createRichCell((pillar.hiddenStems || []).map((item) => ({
+        stem: item.stem,
+        tenGod: item.tenGod,
+        className: getElementClass(item.element)
+      }))))
     },
     {
       label: '副星',

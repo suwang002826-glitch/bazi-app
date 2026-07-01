@@ -1,6 +1,14 @@
 const app = getApp();
 const { createProfessionalDetail } = require('../../utils/baziPlate');
 
+const BASIC_ELEMENT_CLASS = {
+  木: 'wood',
+  火: 'fire',
+  土: 'earth',
+  金: 'metal',
+  水: 'water'
+};
+
 const SPIRIT_INFO = {
   天乙贵人: { figure: '乙', title: '天乙贵人', category: '贵人', meaning: '主逢凶有解、遇事得助，是四柱神煞中常用于观察助力与转圜空间的贵曜。', advice: '宜主动求教、借力专业人士；不可因见贵人而轻忽现实准备。' },
   太极贵人: { figure: '太', title: '太极贵人', category: '贵人', meaning: '多主悟性、清静、好学与对玄学、哲理、宗教文化的亲近倾向。', advice: '适合深学一门、静心复盘，把感悟落成行动。' },
@@ -109,7 +117,17 @@ function hiddenItemsFromCell(cell) {
   ].filter(Boolean);
 }
 
-function buildSongPlate(baziPlate) {
+function hiddenItemsFromResult(result, index) {
+  const pillar = result && result.pillars && result.pillars[index];
+  if (!pillar || !pillar.hiddenStems) return [];
+  return pillar.hiddenStems.map((item) => ({
+    stem: item.stem || '—',
+    tenGod: item.tenGod || '',
+    className: BASIC_ELEMENT_CLASS[item.element] || 'plain'
+  }));
+}
+
+function buildSongPlate(baziPlate, result) {
   if (!baziPlate) return null;
   const rows = baziPlate.rows || [];
   const columns = baziPlate.columns || [];
@@ -130,6 +148,8 @@ function buildSongPlate(baziPlate) {
     const stemCell = rowMap.stem.cells[index] || {};
     const branchCell = rowMap.branch.cells[index] || {};
     const hiddenCell = rowMap.hidden.cells[index] || {};
+    const hiddenItems = hiddenItemsFromCell(hiddenCell);
+    const fallbackHiddenItems = hiddenItemsFromResult(result, index);
     const subStar = cellToText(rowMap.subStar.cells[index]) || '无';
     const spirits = cellToText(rowMap.spirits.cells[index]);
     return {
@@ -140,7 +160,7 @@ function buildSongPlate(baziPlate) {
       branch: cellToText(branchCell),
       branchClass: branchCell.className || 'plain',
       hidden: cellToText(hiddenCell) || '无',
-      hiddenItems: hiddenItemsFromCell(hiddenCell),
+      hiddenItems: hiddenItems.length ? hiddenItems : fallbackHiddenItems,
       subStar,
       subStarLines: splitCellLines(subStar),
       stage: cellToText(rowMap.stage.cells[index]),
@@ -193,6 +213,7 @@ function decorateProfessionalDetail(detail) {
     ].filter(Boolean).join(' '),
     cells: (row.cells || []).map((cell) => ({
       ...cell,
+      lines: cell.hasRichLines ? [] : (cell.lines || []),
       displayClassName: [
         cell.className || 'plain',
         cell.large ? 'large-cell' : '',
@@ -236,7 +257,7 @@ Page({
       this.setData({
         result,
         baziPlate: reading.baziPlate,
-        songPlate: buildSongPlate(reading.baziPlate),
+        songPlate: buildSongPlate(reading.baziPlate, result),
         professionalDetail,
         selectedLuckIndex: professionalDetail.selectedLuckIndex,
         selectedYearIndex: professionalDetail.selectedYearIndex,
