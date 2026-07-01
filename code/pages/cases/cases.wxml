@@ -21,34 +21,42 @@
 
   <block wx:if="{{cases.length}}">
     <view
-      class="case-list-row"
+      class="case-swipe-row {{openedDeleteId === item.id ? 'show-delete' : ''}}"
       wx:for="{{cases}}"
       wx:key="id"
-      hover-class="tap-active"
     >
-      <view class="case-left" bindtap="openCase" data-id="{{item.id}}">
-        <view class="case-name-line">
-          <text class="case-display-name">{{item.displayName}}</text>
-          <text class="case-gender">{{item.gender}}</text>
+      <view class="case-delete-panel" catchtap="deleteCase" data-id="{{item.id}}">删除</view>
+      <view
+        class="case-list-row"
+        bindtap="openCase"
+        bindtouchstart="onCaseTouchStart"
+        bindtouchmove="onCaseTouchMove"
+        bindtouchend="onCaseTouchEnd"
+        data-id="{{item.id}}"
+        hover-class="tap-active"
+      >
+        <view class="case-left">
+          <view class="case-name-line">
+            <text class="case-display-name">{{item.displayName}}</text>
+            <text class="case-gender">{{item.gender}}</text>
+          </view>
+          <view class="case-date">阳历{{item.solarDate}}</view>
+          <view class="case-archive-time">{{item.archivedAt}}</view>
         </view>
-        <view class="case-date">阳历{{item.solarDate}}</view>
-        <view class="case-archive-time">{{item.archivedAt}}</view>
-      </view>
-      <view class="case-pillars" bindtap="openCase" data-id="{{item.id}}">
-        <view class="pillar-char-row" wx:for="{{item.pillarRows}}" wx:for-item="row" wx:key="*this">
-          <text
-            class="pillar-char {{char.className}}"
-            wx:for="{{row}}"
-            wx:for-item="char"
-            wx:key="char"
-          >{{char.char}}</text>
+        <view class="case-pillars">
+          <view class="pillar-char-row" wx:for="{{item.pillarRows}}" wx:for-item="row" wx:key="*this">
+            <text
+              class="pillar-char {{char.className}}"
+              wx:for="{{row}}"
+              wx:for-item="char"
+              wx:key="char"
+            >{{char.char}}</text>
+          </view>
         </view>
-      </view>
-      <view class="case-actions">
-        <view class="case-seal">{{item.sealText}}</view>
-        <text wx:if="{{item.indexLetter}}" class="case-index-letter">{{item.indexLetter}}</text>
-        <view class="case-action-btn view-btn" catchtap="openCase" data-id="{{item.id}}">看</view>
-        <view class="case-action-btn delete-btn" catchtap="deleteCase" data-id="{{item.id}}">删</view>
+        <view class="zodiac-seal {{item.zodiacSeal.className}}">
+          <view class="zodiac-animal">{{item.zodiacSeal.animal}}</view>
+          <view class="zodiac-branch">{{item.zodiacSeal.branch}}</view>
+        </view>
       </view>
     </view>
   </block>

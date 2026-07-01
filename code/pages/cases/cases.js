@@ -16,6 +16,21 @@ const BRANCH_ELEMENTS = {
   子: 'water', 亥: 'water'
 };
 
+const ZODIAC_BY_BRANCH = {
+  子: '鼠',
+  丑: '牛',
+  寅: '虎',
+  卯: '兔',
+  辰: '龙',
+  巳: '蛇',
+  午: '马',
+  未: '羊',
+  申: '猴',
+  酉: '鸡',
+  戌: '狗',
+  亥: '猪'
+};
+
 function isBaziRecord(item) {
   if (!item) return false;
   return item.type === '八字' || item.type === '鍏瓧';
@@ -48,6 +63,20 @@ function buildPillarRows(result) {
   ];
 }
 
+function getYearBranch(result) {
+  const yearPillar = result && result.pillars && result.pillars[0] ? result.pillars[0].value : '';
+  return yearPillar && yearPillar[1] ? yearPillar[1] : '子';
+}
+
+function buildZodiacSeal(result) {
+  const branch = getYearBranch(result);
+  return {
+    branch,
+    animal: ZODIAC_BY_BRANCH[branch] || '鼠',
+    className: BRANCH_ELEMENTS[branch] || 'water'
+  };
+}
+
 function decorateRecord(item, index) {
   const result = item.payload && item.payload.result ? item.payload.result : null;
   const name = result && result.displayName ? result.displayName : stripTitle(item.title);
@@ -57,8 +86,7 @@ function decorateRecord(item, index) {
     gender: result && result.gender ? result.gender : '未填',
     solarDate: result ? splitDateLine(result.solarTime) : (item.createdAt || item.archivedAt || '时间待校验'),
     pillarRows: buildPillarRows(result),
-    sealText: name.slice(0, 1) || '命',
-    indexLetter: /^[A-Za-z]/.test(name) ? name[0].toUpperCase() : (index === 0 ? 'A' : '')
+    zodiacSeal: buildZodiacSeal(result)
   };
 }
 
@@ -69,6 +97,10 @@ Page({
     query: '',
     categories: ['全部', '练习', '亲友', '客户', '复盘'],
     activeCategory: '全部',
+    openedDeleteId: null,
+    touchStartX: 0,
+    touchStartY: 0,
+    touchMoved: false,
     emptyText: '暂无八字命例。完成一次八字排盘后，会自动记录在命例档案中。'
   },
 
@@ -129,6 +161,40 @@ Page({
     });
   },
 
+  onCaseTouchStart(event) {
+    const touch = event.touches && event.touches[0];
+    if (!touch) return;
+    this.setData({
+      touchStartX: touch.clientX,
+      touchStartY: touch.clientY,
+      touchMoved: false
+    });
+  },
+
+  onCaseTouchMove(event) {
+    const touch = event.touches && event.touches[0];
+    if (!touch) return;
+    const dx = touch.clientX - this.data.touchStartX;
+    const dy = touch.clientY - this.data.touchStartY;
+    if (Math.abs(dx) > 14 && Math.abs(dx) > Math.abs(dy)) {
+      this.setData({ touchMoved: true });
+    }
+  },
+
+  onCaseTouchEnd(event) {
+    const touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+    const id = Number(event.currentTarget.dataset.id);
+    const dx = touch.clientX - this.data.touchStartX;
+    if (dx < -42) {
+      this.setData({ openedDeleteId: id, touchMoved: true });
+      return;
+    }
+    if (dx > 42) {
+      this.setData({ openedDeleteId: null, touchMoved: true });
+    }
+  },
+
   findRecordById(id) {
     return this.data.allCases.find((item) => Number(item.id) === id)
       || this.data.cases.find((item) => Number(item.id) === id);
@@ -147,6 +213,14 @@ Page({
 
   openCase(event) {
     const id = Number(event.currentTarget.dataset.id);
+    if (this.data.touchMoved) {
+      this.setData({ touchMoved: false });
+      return;
+    }
+    if (this.data.openedDeleteId && this.data.openedDeleteId !== id) {
+      this.setData({ openedDeleteId: null });
+      return;
+    }
     const record = this.findRecordById(id);
     const payload = this.resolvePayload(record);
     if (!record || !payload) {
@@ -155,6 +229,7 @@ Page({
     }
     app.globalData.currentBaziReading = payload;
     wx.setStorageSync('currentBaziReading', payload);
+    this.setData({ openedDeleteId: null });
     wx.navigateTo({ url: '/pages/bazi-result/bazi-result' });
   },
 
@@ -175,7 +250,8 @@ Page({
         wx.setStorageSync('caseArchive', archive);
         this.setData({
           allCases: archive,
-          cases: this.filterAndDecorate(archive, this.data.query, this.data.activeCategory)
+          cases: this.filterAndDecorate(archive, this.data.query, this.data.activeCategory),
+          openedDeleteId: null
         });
       }
     });
