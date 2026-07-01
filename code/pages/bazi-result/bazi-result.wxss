@@ -556,19 +556,37 @@
   word-break: break-all;
 }
 
-.hidden-stem-line {
-  display: flex;
+.hidden-rich-cell {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: 4rpx;
+  gap: 6rpx 10rpx;
+}
+
+.hidden-rich-cell .hidden-stem-line {
+  width: auto;
+}
+
+.hidden-stem-line {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3rpx;
+  min-width: 38rpx;
   width: 100%;
-  margin: 3rpx 0;
+  margin: 2rpx 0;
   color: #d6dbd9;
   font-size: 24rpx;
-  line-height: 1.35;
+  line-height: 1.1;
 }
 
 .hidden-stem {
   font-weight: 900;
+  font-size: 25rpx;
+  line-height: 1.1;
 }
 
 .hidden-stem.wood {
@@ -592,7 +610,11 @@
 }
 
 .hidden-god {
-  color: #d8dddd;
+  color: rgba(242, 240, 228, .76);
+  font-size: 19rpx;
+  font-weight: 800;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .luck-scroll,

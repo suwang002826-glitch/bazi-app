@@ -1,14 +1,14 @@
-<view class="page bazi-result-page">
+﻿<view class="page bazi-result-page">
   <view class="result-topbar">
-    <view class="back-button" bindtap="goBack">‹</view>
-    <view class="result-title">八字排盘</view>
+    <view class="back-button" bindtap="goBack">鈥?/view>
+    <view class="result-title">鍏瓧鎺掔洏</view>
     <view class="more-button"></view>
   </view>
 
   <view wx:if="{{!result}}" class="empty-state">
-    <view class="empty-title">暂无排盘</view>
-    <view class="empty-copy">请先填写出生信息，再生成八字排盘。</view>
-    <button bindtap="goBack">返回填写</button>
+    <view class="empty-title">鏆傛棤鎺掔洏</view>
+    <view class="empty-copy">璇峰厛濉啓鍑虹敓淇℃伅锛屽啀鐢熸垚鍏瓧鎺掔洏銆?/view>
+    <button bindtap="goBack">杩斿洖濉啓</button>
   </view>
 
   <view wx:else class="result-shell">
@@ -16,13 +16,13 @@
       <view class="profile-seal">{{result.dayMaster.stem}}</view>
       <view class="profile-main">
         <view class="profile-name">{{result.displayName || result.title}}</view>
-        <view class="profile-time">阳历：{{result.solarTime}}</view>
-        <view class="profile-time">校准：{{result.adjustedSolarTime}}</view>
-        <view class="profile-place">{{result.birthPlace}} · 东经 {{result.longitude}}°</view>
+        <view class="profile-time">闃冲巻锛歿{result.solarTime}}</view>
+        <view class="profile-time">鏍″噯锛歿{result.adjustedSolarTime}}</view>
+        <view class="profile-place">{{result.birthPlace}} 路 涓滅粡 {{result.longitude}}掳</view>
       </view>
       <view class="profile-side">
         <view class="profile-status">{{result.professional.strength.status}}</view>
-        <view class="profile-archive" bindtap="archiveCurrentCase" hover-class="tap-soft">存档</view>
+        <view class="profile-archive" bindtap="archiveCurrentCase" hover-class="tap-soft">瀛樻。</view>
       </view>
     </view>
 
@@ -36,10 +36,10 @@
       >{{item}}</view>
     </view>
 
-    <view wx:if="{{activeResultTab === '基本命盘'}}">
+    <view wx:if="{{activeResultTab === '鍩烘湰鍛界洏'}}">
       <view class="song-overview">
-        <view class="overview-title">四柱命盘</view>
-        <view class="overview-copy">以年、月、日、时分列呈现，先看结构，再看细项。</view>
+        <view class="overview-title">鍥涙煴鍛界洏</view>
+        <view class="overview-copy">浠ュ勾銆佹湀銆佹棩銆佹椂鍒嗗垪鍛堢幇锛屽厛鐪嬬粨鏋勶紝鍐嶇湅缁嗛」銆?/view>
         <view class="pillar-grid">
           <view class="pillar-card" wx:for="{{songPlate.pillars}}" wx:key="label">
             <view class="pillar-label">{{item.label}}</view>
@@ -48,10 +48,7 @@
               <text class="pillar-stem">{{item.stem}}</text>
               <text class="pillar-branch">{{item.branch}}</text>
             </view>
-            <view class="pillar-meta">
-              <text>藏干 {{item.hidden}}</text>
-              <text>副星 {{item.subStar}}</text>
-            </view>
+            <view class="pillar-meta">`r`n              <text>{{item.hidden}}</text>`r`n              <text>{{item.subStar}}</text>`r`n            </view>
           </view>
         </view>
 
@@ -65,10 +62,10 @@
         </view>
 
         <view class="spirit-ribbon">
-          <view class="detail-label">神煞</view>
+          <view class="detail-label">绁炵厼</view>
           <view class="spirit-values">
             <view class="spirit-basic-line" wx:for="{{songPlate.pillars}}" wx:key="label">
-              <text class="spirit-basic-label">{{item.label}}：</text>
+              <text class="spirit-basic-label">{{item.label}}锛?/text>
               <view class="spirit-chip-row" wx:if="{{item.spiritItems.length}}">
                 <text
                   class="spirit-name-chip"
@@ -79,7 +76,7 @@
                   data-name="{{spirit.name}}"
                 >{{spirit.name}}</text>
               </view>
-              <text wx:else class="spirit-empty">未见常用神煞入柱</text>
+              <text wx:else class="spirit-empty">鏈甯哥敤绁炵厼鍏ユ煴</text>
             </view>
           </view>
         </view>
@@ -88,10 +85,10 @@
       <view class="five-element-ratio">
         <view class="ratio-head">
           <view>
-            <view class="ratio-kicker">五行比例</view>
-            <view class="ratio-title">命盘五行分布</view>
+            <view class="ratio-kicker">浜旇姣斾緥</view>
+            <view class="ratio-title">鍛界洏浜旇鍒嗗竷</view>
           </view>
-          <view class="ratio-daymaster">日主 {{result.dayMaster.text}}</view>
+          <view class="ratio-daymaster">鏃ヤ富 {{result.dayMaster.text}}</view>
         </view>
         <view class="ratio-row" wx:for="{{result.distribution}}" wx:key="name">
           <view class="ratio-name">{{item.name}}</view>
@@ -104,7 +101,7 @@
 
     </view>
 
-    <view wx:elif="{{activeResultTab === '专业细盘'}}">
+    <view wx:elif="{{activeResultTab === '涓撲笟缁嗙洏'}}">
       <view class="pro-summary">
         <view class="summary-main">{{result.professional.chartSummary.oneLine}}</view>
         <view class="summary-tags">
@@ -116,7 +113,7 @@
       <scroll-view class="pro-table-scroll" scroll-x>
         <view class="pro-table" style="width: {{professionalDetail.tableWidth}}rpx;">
           <view class="pro-row pro-head-row">
-            <view class="pro-label">日期</view>
+            <view class="pro-label">鏃ユ湡</view>
             <view class="pro-head-cell" wx:for="{{professionalDetail.columns}}" wx:for-item="col" wx:key="label">{{col.label}}</view>
           </view>
           <view
@@ -127,26 +124,26 @@
           >
             <view class="pro-label">{{row.label}}</view>
             <view
-              class="pro-cell {{cell.large ? 'large-cell' : ''}} {{cell.className}}"
+              class="pro-cell {{cell.large ? 'large-cell' : ''}} {{cell.className}} {{cell.hasRichLines ? 'hidden-rich-cell' : ''}}"
               wx:for="{{row.cells}}"
               wx:for-item="cell"
               wx:for-index="cellIndex"
               wx:key="cellIndex"
             >
               <block wx:if="{{cell.hasRichLines}}">
-                <view wx:if="{{cell.hidden1Show}}" class="hidden-stem-line">
+                <view wx:if="{{cell.hidden1Show}}" class="hidden-stem-line hidden-line-1">
                   <text class="hidden-stem {{cell.hidden1Class}}">{{cell.hidden1Stem}}</text>
                   <text class="hidden-god">{{cell.hidden1God}}</text>
                 </view>
-                <view wx:if="{{cell.hidden2Show}}" class="hidden-stem-line">
+                <view wx:if="{{cell.hidden2Show}}" class="hidden-stem-line hidden-line-2">
                   <text class="hidden-stem {{cell.hidden2Class}}">{{cell.hidden2Stem}}</text>
                   <text class="hidden-god">{{cell.hidden2God}}</text>
                 </view>
-                <view wx:if="{{cell.hidden3Show}}" class="hidden-stem-line">
+                <view wx:if="{{cell.hidden3Show}}" class="hidden-stem-line hidden-line-3">
                   <text class="hidden-stem {{cell.hidden3Class}}">{{cell.hidden3Stem}}</text>
                   <text class="hidden-god">{{cell.hidden3God}}</text>
                 </view>
-                <text wx:if="{{!cell.hidden1Show}}" class="cell-main">—</text>
+                <text wx:if="{{!cell.hidden1Show}}" class="cell-main">鈥?/text>
               </block>
               <block wx:elif="{{cell.lines.length}}">
                 <text class="cell-line" wx:for="{{cell.lines}}" wx:for-item="line" wx:key="*this">{{line}}</text>
@@ -161,17 +158,17 @@
       </scroll-view>
 
       <view class="current-flow-card">
-        <view class="current-flow-kicker">当前查看</view>
+        <view class="current-flow-kicker">褰撳墠鏌ョ湅</view>
         <view class="current-flow-title">
-          {{professionalDetail.activeLuck.yearRange}} {{professionalDetail.activeLuck.value}}大运 · {{professionalDetail.selectedFlowYear.year}} {{professionalDetail.selectedFlowYear.value}}流年 · {{professionalDetail.selectedMonth.monthTitle}} {{professionalDetail.selectedMonth.value}}流月
+          {{professionalDetail.activeLuck.yearRange}} {{professionalDetail.activeLuck.value}}澶ц繍 路 {{professionalDetail.selectedFlowYear.year}} {{professionalDetail.selectedFlowYear.value}}娴佸勾 路 {{professionalDetail.selectedMonth.monthTitle}} {{professionalDetail.selectedMonth.value}}娴佹湀
         </view>
-        <view class="current-flow-hint">左右滑动查看完整大运、流年、流月</view>
+        <view class="current-flow-hint">宸﹀彸婊戝姩鏌ョ湅瀹屾暣澶ц繍銆佹祦骞淬€佹祦鏈?/view>
       </view>
 
       <view class="flow-block with-fade">
         <view class="side-label">
-          <text>大</text>
-          <text>运</text>
+          <text>澶?/text>
+          <text>杩?/text>
         </view>
         <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
           <view class="luck-strip" style="width: {{professionalDetail.luckStripWidth}}rpx; min-width: {{professionalDetail.luckStripWidth}}rpx;">
@@ -192,12 +189,12 @@
 
       <view class="flow-block with-fade">
         <view class="flow-side">
-          <view class="flow-side-top">始于</view>
+          <view class="flow-side-top">濮嬩簬</view>
           <view class="side-label">
-            <text>流</text>
-            <text>年</text>
+            <text>娴?/text>
+            <text>骞?/text>
           </view>
-          <view class="flow-side-bottom">止于</view>
+          <view class="flow-side-bottom">姝簬</view>
         </view>
         <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
           <view class="flow-year-table" style="width: {{professionalDetail.flowYearStripWidth}}rpx; min-width: {{professionalDetail.flowYearStripWidth}}rpx;">
@@ -230,8 +227,8 @@
 
       <view class="flow-block with-fade">
         <view class="side-label">
-          <text>流</text>
-          <text>月</text>
+          <text>娴?/text>
+          <text>鏈?/text>
         </view>
         <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
           <view class="month-strip" style="width: {{professionalDetail.flowMonthStripWidth}}rpx; min-width: {{professionalDetail.flowMonthStripWidth}}rpx;">
@@ -252,9 +249,9 @@
       </view>
 
       <view class="selected-flow-card" wx:if="{{professionalDetail.selectedMonth}}">
-        <view class="selected-flow-title">{{professionalDetail.selectedMonth.label}} · {{professionalDetail.selectedMonth.value}} · {{professionalDetail.selectedMonth.tenGod}}</view>
+        <view class="selected-flow-title">{{professionalDetail.selectedMonth.label}} 路 {{professionalDetail.selectedMonth.value}} 路 {{professionalDetail.selectedMonth.tenGod}}</view>
         <view class="selected-flow-line">{{professionalDetail.selectedMonth.influenceSummary}}</view>
-        <view class="selected-flow-line">合冲刑害：{{professionalDetail.selectedMonth.interactionSummary}}</view>
+        <view class="selected-flow-line">鍚堝啿鍒戝锛歿{professionalDetail.selectedMonth.interactionSummary}}</view>
       </view>
 
       <view class="element-state-row">
@@ -262,17 +259,17 @@
       </view>
 
       <view class="action-row">
-        <button class="ghost-action" bindtap="openGanzhiDiagram">干支关系 ›</button>
-        <button class="ghost-action small" bindtap="openAiCommand">白话解析 ›</button>
+        <button class="ghost-action" bindtap="openGanzhiDiagram">骞叉敮鍏崇郴 鈥?/button>
+        <button class="ghost-action small" bindtap="openAiCommand">鐧借瘽瑙ｆ瀽 鈥?/button>
       </view>
 
       <view class="relation-panel">
         <view class="relation-line" wx:for="{{professionalDetail.relationLines}}" wx:key="label">
-          <text>{{item.label}}：</text>{{item.text}}
+          <text>{{item.label}}锛?/text>{{item.text}}
         </view>
       </view>
 
-      <view class="spirit-section-title">四柱神煞</view>
+      <view class="spirit-section-title">鍥涙煴绁炵厼</view>
       <view class="spirit-list">
         <view class="spirit-line" wx:for="{{professionalDetail.pillarSpirits}}" wx:key="value">
           <text class="spirit-pill">{{item.value}}</text>
@@ -286,11 +283,11 @@
               data-name="{{name}}"
             >{{name}}</text>
           </view>
-          <text wx:else class="spirit-empty">未见常用神煞入柱</text>
+          <text wx:else class="spirit-empty">鏈甯哥敤绁炵厼鍏ユ煴</text>
         </view>
       </view>
 
-      <view class="spirit-section-title">大运神煞</view>
+      <view class="spirit-section-title">澶ц繍绁炵厼</view>
       <view class="spirit-list">
         <view class="spirit-line" wx:for="{{professionalDetail.luckSpirits}}" wx:key="value">
           <text class="spirit-pill {{item.active ? 'active' : ''}}">{{item.value}}</text>
@@ -307,61 +304,61 @@
         </view>
       </view>
 
-      <view class="sub-heading">格局与旺衰</view>
+      <view class="sub-heading">鏍煎眬涓庢椇琛?/view>
       <view class="profile-card featured-profile">
         <view class="profile-title">{{result.professional.pattern.name}}</view>
         <view class="muted">{{result.professional.pattern.basis}}</view>
-        <view class="strength-line">旺衰 {{result.professional.strength.status}} · 扶身 {{result.professional.strength.ratio}}%</view>
+        <view class="strength-line">鏃鸿“ {{result.professional.strength.status}} 路 鎵惰韩 {{result.professional.strength.ratio}}%</view>
         <view class="muted basis-line" wx:for="{{result.professional.strength.basis}}" wx:key="*this">{{item}}</view>
       </view>
 
-      <view class="sub-heading">喜用神参考</view>
+      <view class="sub-heading">鍠滅敤绁炲弬鑰?/view>
       <view class="profile-card useful-card">
         <view>
-          <view class="profile-title">喜用 {{result.professional.usefulGod.usefulText}}</view>
+          <view class="profile-title">鍠滅敤 {{result.professional.usefulGod.usefulText}}</view>
           <view class="muted">{{result.professional.usefulGod.basis}}</view>
         </view>
-        <view class="avoid-block">忌 {{result.professional.usefulGod.avoidText}}</view>
+        <view class="avoid-block">蹇?{{result.professional.usefulGod.avoidText}}</view>
       </view>
 
-      <view class="sub-heading">胎元、命宫与身宫</view>
+      <view class="sub-heading">鑳庡厓銆佸懡瀹笌韬</view>
       <view class="profile-card">
-        <view class="profile-title">胎元 {{result.detailProfile.fetalOrigin.value}} · {{result.detailProfile.fetalOrigin.nayin}}</view>
+        <view class="profile-title">鑳庡厓 {{result.detailProfile.fetalOrigin.value}} 路 {{result.detailProfile.fetalOrigin.nayin}}</view>
         <view class="muted">{{result.detailProfile.fetalOrigin.basis}}</view>
-        <view class="muted detail-note">命宫 {{result.detailProfile.palaceProfile.life.value}} · 身宫 {{result.detailProfile.palaceProfile.body.value}}</view>
+        <view class="muted detail-note">鍛藉 {{result.detailProfile.palaceProfile.life.value}} 路 韬 {{result.detailProfile.palaceProfile.body.value}}</view>
       </view>
     </view>
 
     <view wx:else>
       <view class="focus-card quick-focus-card">
-        <view class="sub-heading compact-heading">先看这三点</view>
+        <view class="sub-heading compact-heading">鍏堢湅杩欎笁鐐?/view>
         <view class="focus-line">
           <text class="focus-index">1</text>
           <text>{{result.professional.chartSummary.oneLine}}</text>
         </view>
         <view class="focus-line">
           <text class="focus-index">2</text>
-          <text>喜用参考 {{result.professional.usefulGod.usefulText}}，忌 {{result.professional.usefulGod.avoidText}}。这是趋势提示，不是绝对定论。</text>
+          <text>鍠滅敤鍙傝€?{{result.professional.usefulGod.usefulText}}锛屽繉 {{result.professional.usefulGod.avoidText}}銆傝繖鏄秼鍔挎彁绀猴紝涓嶆槸缁濆瀹氳銆?/text>
         </view>
         <view class="focus-line">
           <text class="focus-index">3</text>
-          <text>{{result.flowTriggerSummary.summary || '当前流运未见高优先级触发点，适合先看大运与原局结构。'}}</text>
+          <text>{{result.flowTriggerSummary.summary || '褰撳墠娴佽繍鏈楂樹紭鍏堢骇瑙﹀彂鐐癸紝閫傚悎鍏堢湅澶ц繍涓庡師灞€缁撴瀯銆?}}</text>
         </view>
       </view>
 
-      <view class="sub-heading">三层解读</view>
+      <view class="sub-heading">涓夊眰瑙ｈ</view>
       <view class="layer-card" wx:for="{{result.interpretationLayers}}" wx:key="title">
         <view class="layer-title">{{item.title}}</view>
         <view class="layer-row">
-          <text class="layer-label">命理原文</text>
+          <text class="layer-label">鍛界悊鍘熸枃</text>
           <text>{{item.original}}</text>
         </view>
         <view class="layer-row">
-          <text class="layer-label">白话解释</text>
+          <text class="layer-label">鐧借瘽瑙ｉ噴</text>
           <text>{{item.plain}}</text>
         </view>
         <view class="layer-row">
-          <text class="layer-label">修身建议</text>
+          <text class="layer-label">淇韩寤鸿</text>
           <text>{{item.action}}</text>
         </view>
       </view>
@@ -381,27 +378,29 @@
       <view class="spirit-modal-head">
         <view class="spirit-figure-card">
           <view class="spirit-figure-symbol">{{spiritModal.figure}}</view>
-          <view class="spirit-figure-caption">星曜符牌</view>
+          <view class="spirit-figure-caption">鏄熸洔绗︾墝</view>
         </view>
         <view class="spirit-modal-title-block">
           <view class="spirit-modal-kicker">{{spiritModal.category}}</view>
           <view class="spirit-modal-title">{{spiritModal.title}}</view>
-          <view class="spirit-modal-source">传统子平神煞 · 测试版释义</view>
+          <view class="spirit-modal-source">浼犵粺瀛愬钩绁炵厼 路 娴嬭瘯鐗堥噴涔?/view>
         </view>
       </view>
       <view class="spirit-modal-section">
-        <view class="spirit-modal-label">含义</view>
+        <view class="spirit-modal-label">鍚箟</view>
         <view class="spirit-modal-copy">{{spiritModal.meaning}}</view>
       </view>
       <view class="spirit-modal-section">
-        <view class="spirit-modal-label">命盘依据</view>
+        <view class="spirit-modal-label">鍛界洏渚濇嵁</view>
         <view class="spirit-modal-copy">{{spiritModal.basis}}</view>
       </view>
       <view class="spirit-modal-section">
-        <view class="spirit-modal-label">使用提醒</view>
+        <view class="spirit-modal-label">浣跨敤鎻愰啋</view>
         <view class="spirit-modal-copy">{{spiritModal.advice}}</view>
       </view>
-      <button class="spirit-modal-close" bindtap="closeSpiritInfo">知道了</button>
+      <button class="spirit-modal-close" bindtap="closeSpiritInfo">鐭ラ亾浜?/button>
     </view>
   </view>
 </view>
+
+
