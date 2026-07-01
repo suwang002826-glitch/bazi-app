@@ -81,6 +81,12 @@ node scripts/validate-lunar-data-pack.js
 - `generatedAt` 和 `sourceLedger[].retrievedAt` 是否为 ISO 时间。
 - `generatedBy` 是否存在。
 - `recordsChecksum.algorithm` 是否为 `sha256`，且 `recordsChecksum.value` 是否匹配当前 `records` 内容。
+- 当数据包 `coverage.completeLunarCalendar` 为 `true` 时，必须额外检查：
+  - `sourceLedger` 至少包含两个独立来源。
+  - 每条 `sourceLedger` 记录必须包含 `sourceUrl` 和 `rawSourceChecksum`。
+  - `rawSourceChecksum.algorithm` 必须为 `sha256`，`rawSourceChecksum.value` 必须为 64 位 sha256 十六进制摘要。
+  - `generator` 必须包含 `name`、`version` 和 `inputChecksum`。
+  - `reviewLedger` 必须为非空数组，每条记录必须包含复核人、复核时间、复核范围和备注。
 
 当前脚本只负责结构体检，不负责证明数据来源权威。完整年份包上线前，还需要补来源记录、交叉复核和验收样例。
 
@@ -102,4 +108,5 @@ node scripts/validate-lunar-data-pack.js
 - 新增农历/闰月样例时，先补 data-pack 记录，再补验收脚本。
 - 未经复核的记录必须标记为 seed 或 draft，不能宣传为完整权威数据。
 - 当 data-pack 升级为完整年份数据时，必须更新 `coverage.completeLunarCalendar` 和版本号。
+- 完整年份包必须先通过来源台账门禁，不能只有 `recordsChecksum`，也不能只有单一来源。
 - data-pack 外的农历日期不能静默回退为公历输入，必须明确报错。

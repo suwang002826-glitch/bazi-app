@@ -309,6 +309,161 @@ const validProvenanceRoot = createTempRepository(
 
 assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: validProvenanceRoot }).errors, []);
 
+const fullSourceRecords = [
+  {
+    caseId: 'BZI-FULL-SOURCE',
+    lunarYear: 2023,
+    lunarMonth: 1,
+    lunarDay: 1,
+    isLeapMonth: false,
+    solarDate: '2023-01-22',
+    sourceNote: 'full source control fixture'
+  }
+];
+const missingFullSourceControlsRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-full-source-controls',
+        path: 'pack-full-source-controls.json',
+        years: [2023],
+        completeLunarCalendar: true
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-full-source-controls.json': {
+      dataPackId: 'pack-full-source-controls',
+      calendarDataVersion: 'lunar-data-pack@test',
+      source: 'test:pack-full-source-controls',
+      status: 'official-full',
+      coverage: {
+        years: [2023],
+        scope: 'full lunar calendar year',
+        completeLunarCalendar: true
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture primary',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-01T00:00:00+08:00',
+          note: 'primary source without required raw checksum'
+        }
+      ],
+      generatedAt: '2026-07-01T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(fullSourceRecords)
+      },
+      records: fullSourceRecords
+    }
+  }
+);
+const missingFullSourceControlsResult = validateLunarDataPackRepository({ rootDir: missingFullSourceControlsRoot });
+assertHasError(
+  missingFullSourceControlsResult.errors,
+  'pack-full-source-controls: complete lunar calendar packs require at least 2 sourceLedger entries'
+);
+assertHasError(
+  missingFullSourceControlsResult.errors,
+  'pack-full-source-controls.sourceLedger[0]: missing sourceUrl'
+);
+assertHasError(
+  missingFullSourceControlsResult.errors,
+  'pack-full-source-controls.sourceLedger[0]: rawSourceChecksum must be an object'
+);
+assertHasError(
+  missingFullSourceControlsResult.errors,
+  'pack-full-source-controls: generator must be an object'
+);
+assertHasError(
+  missingFullSourceControlsResult.errors,
+  'pack-full-source-controls: reviewLedger must be a non-empty array'
+);
+
+const validFullSourceControlsRoot = createTempRepository(
+  {
+    calendarDataVersion: 'lunar-data-pack@test',
+    status: 'test-fixture',
+    packs: [
+      {
+        dataPackId: 'pack-full-source-controls-valid',
+        path: 'pack-full-source-controls-valid.json',
+        years: [2023],
+        completeLunarCalendar: true
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-full-source-controls-valid.json': {
+      dataPackId: 'pack-full-source-controls-valid',
+      calendarDataVersion: 'lunar-data-pack@test',
+      source: 'test:pack-full-source-controls-valid',
+      status: 'official-full',
+      coverage: {
+        years: [2023],
+        scope: 'full lunar calendar year',
+        completeLunarCalendar: true
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture primary',
+          sourceVersion: 'v1',
+          sourceUrl: 'https://example.invalid/primary.pdf',
+          rawSourceChecksum: {
+            algorithm: 'sha256',
+            value: 'a'.repeat(64)
+          },
+          retrievedAt: '2026-07-01T00:00:00+08:00',
+          note: 'primary source fixture'
+        },
+        {
+          sourceName: 'fixture secondary',
+          sourceVersion: 'v1',
+          sourceUrl: 'https://example.invalid/secondary.pdf',
+          rawSourceChecksum: {
+            algorithm: 'sha256',
+            value: 'b'.repeat(64)
+          },
+          retrievedAt: '2026-07-01T00:00:00+08:00',
+          note: 'secondary source fixture'
+        }
+      ],
+      generatedAt: '2026-07-01T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      generator: {
+        name: 'lunar-data-pack-generator',
+        version: 'test-v1',
+        inputChecksum: {
+          algorithm: 'sha256',
+          value: 'c'.repeat(64)
+        }
+      },
+      reviewLedger: [
+        {
+          reviewedBy: 'test-reviewer',
+          reviewedAt: '2026-07-01T00:00:00+08:00',
+          scope: 'fixture full pack source controls',
+          note: 'validates source controls for complete lunar packs'
+        }
+      ],
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(fullSourceRecords)
+      },
+      records: fullSourceRecords
+    }
+  }
+);
+assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: validFullSourceControlsRoot }).errors, []);
+
 const commonJsRoot = createTempRepository(
   {
     calendarDataVersion: 'lunar-data-pack@test',
