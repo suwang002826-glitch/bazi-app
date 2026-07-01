@@ -1,4 +1,5 @@
 const assert = require('assert');
+const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -6,11 +7,16 @@ const { execFileSync } = require('child_process');
 
 const {
   createDryRunSummary,
+  createRawSourceDryRunSummaries,
   validateSourceManifest
 } = require('./generate-lunar-data-pack');
 
 function checksum(value) {
   return value.repeat(64);
+}
+
+function sha256(value) {
+  return crypto.createHash('sha256').update(value, 'utf8').digest('hex');
 }
 
 function createSource(overrides = {}) {
@@ -204,6 +210,74 @@ const samplePath = path.join(
 const sampleManifest = JSON.parse(fs.readFileSync(samplePath, 'utf8'));
 assert.deepStrictEqual(validateSourceManifest(sampleManifest).errors, []);
 
+const hkoCsvFixture = [
+  'Gregorian Date,Chinese year (Gan-Zhi),Chinese year (Zodiac),Lunar month,Lunar Date',
+  '21-Mar-23,癸卯年,兔,二月,三十',
+  '22-Mar-23,癸卯年,兔,閏二月,初一',
+  '31-Mar-23,癸卯年,兔,閏二月,初十',
+  '29-Sep-23,癸卯年,兔,八月,十五'
+].join('\n');
+
+const hkoCsvManifest = createValidManifest({
+  sources: [
+    createSource({
+      sourceId: 'fixture-hko-csv',
+      resourceFormat: 'CSV',
+      sourceUrl: 'https://example.invalid/hko-2023.csv',
+      byteLength: Buffer.byteLength(hkoCsvFixture, 'utf8'),
+      rawSourceChecksum: {
+        algorithm: 'sha256',
+        value: sha256(hkoCsvFixture)
+      }
+    }),
+    createSource({
+      sourceId: 'fixture-hko-txt',
+      sourceRole: 'cross-check-text',
+      resourceFormat: 'TXT',
+      sourceUrl: 'https://example.invalid/hko-2023.txt',
+      byteLength: 2345,
+      rawSourceChecksum: {
+        algorithm: 'sha256',
+        value: checksum('b')
+      }
+    })
+  ]
+});
+
+const rawSourceSummaries = createRawSourceDryRunSummaries(hkoCsvManifest, {
+  'fixture-hko-csv': hkoCsvFixture
+});
+assert.deepStrictEqual(rawSourceSummaries.errors, []);
+assert.strictEqual(rawSourceSummaries.summaries.length, 1);
+assert.deepStrictEqual(rawSourceSummaries.summaries[0], {
+  sourceId: 'fixture-hko-csv',
+  resourceFormat: 'CSV',
+  recordCount: 4,
+  firstSolarDate: '2023-03-21',
+  lastSolarDate: '2023-09-29',
+  leapMonths: [
+    {
+      lunarYearGanZhi: '癸卯年',
+      lunarMonth: 2,
+      lunarMonthName: '閏二月',
+      firstSolarDate: '2023-03-22',
+      lastSolarDate: '2023-03-31',
+      dayCount: 2
+    }
+  ],
+  recordsChecksumCandidate: {
+    algorithm: 'sha256',
+    value: rawSourceSummaries.summaries[0].recordsChecksumCandidate.value
+  },
+  writesPack: false
+});
+assert(/^[0-9a-f]{64}$/.test(rawSourceSummaries.summaries[0].recordsChecksumCandidate.value));
+
+const mismatchRawSourceSummaries = createRawSourceDryRunSummaries(hkoCsvManifest, {
+  'fixture-hko-csv': `${hkoCsvFixture}\n30-Sep-23,癸卯年,兔,八月,十六`
+});
+assertHasError(mismatchRawSourceSummaries.errors, 'fixture-hko-csv raw source checksum mismatch');
+
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lunar-source-manifest-test-'));
 const tempManifestPath = path.join(tempDir, 'source-manifest.json');
 fs.writeFileSync(tempManifestPath, `${JSON.stringify(createValidManifest(), null, 2)}\n`, 'utf8');
@@ -217,5 +291,26 @@ assert(cliOutput.includes('sources: 2'));
 assert(cliOutput.includes('writesPack: false'));
 assert(cliOutput.includes('runtimeEnabled: false'));
 assert(cliOutput.includes('targetRuntimeEnabled: false'));
+
+const tempCsvManifestPath = path.join(tempDir, 'hko-source-manifest.json');
+const tempCsvPath = path.join(tempDir, 'hko-2023.csv');
+fs.writeFileSync(tempCsvManifestPath, `${JSON.stringify(hkoCsvManifest, null, 2)}\n`, 'utf8');
+fs.writeFileSync(tempCsvPath, hkoCsvFixture, 'utf8');
+const csvCliOutput = execFileSync(
+  process.execPath,
+  [
+    path.join(__dirname, 'generate-lunar-data-pack.js'),
+    '--check',
+    '--source',
+    tempCsvManifestPath,
+    '--raw-source',
+    `fixture-hko-csv=${tempCsvPath}`
+  ],
+  { encoding: 'utf8' }
+);
+assert(csvCliOutput.includes('rawSource[fixture-hko-csv] records: 4'));
+assert(csvCliOutput.includes('rawSource[fixture-hko-csv] dateRange: 2023-03-21..2023-09-29'));
+assert(csvCliOutput.includes('rawSource[fixture-hko-csv] leapMonths: 閏二月(2)'));
+assert(csvCliOutput.includes('rawSource[fixture-hko-csv] writesPack: false'));
 
 console.log('PASS lunar data-pack generator source manifest validation');
