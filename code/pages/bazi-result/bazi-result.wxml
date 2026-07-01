@@ -16,8 +16,8 @@
       <view class="profile-seal">{{result.dayMaster.stem}}</view>
       <view class="profile-main">
         <view class="profile-name">{{result.displayName || result.title}}</view>
-        <view class="profile-time">闃冲巻锛歿{result.solarTime}}</view>
-        <view class="profile-time">鏍″噯锛歿{result.adjustedSolarTime}}</view>
+        <view class="profile-time">阳历：{{result.solarTime}}</view>
+        <view class="profile-time">校准：{{result.adjustedSolarTime}}</view>
         <view class="profile-place">{{result.birthPlace}} 路 涓滅粡 {{result.longitude}}掳</view>
       </view>
       <view class="profile-side">
@@ -254,7 +254,7 @@
       <view class="selected-flow-card" wx:if="{{professionalDetail.selectedMonth}}">
         <view class="selected-flow-title">{{professionalDetail.selectedMonth.label}} 路 {{professionalDetail.selectedMonth.value}} 路 {{professionalDetail.selectedMonth.tenGod}}</view>
         <view class="selected-flow-line">{{professionalDetail.selectedMonth.influenceSummary}}</view>
-        <view class="selected-flow-line">鍚堝啿鍒戝锛歿{professionalDetail.selectedMonth.interactionSummary}}</view>
+        <view class="selected-flow-line">合冲刑害：{{professionalDetail.selectedMonth.interactionSummary}}</view>
       </view>
 
       <view class="element-state-row">
