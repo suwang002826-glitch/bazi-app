@@ -128,6 +128,20 @@ function validateGenerator(generator, errors) {
   }
 }
 
+function validateScaffoldRuntimeBoundary(manifest, errors) {
+  if (manifest.manifestKind !== 'source-scaffold') {
+    errors.push('manifestKind must be source-scaffold');
+  }
+
+  if (manifest.writesPack !== false) {
+    errors.push('writesPack must be false for dry-run source manifests');
+  }
+
+  if (manifest.targetRuntimeEnabled !== false) {
+    errors.push('targetRuntimeEnabled must be false for scaffold source manifests');
+  }
+}
+
 function validateReviewPolicy(reviewPolicy, errors) {
   if (!reviewPolicy || typeof reviewPolicy !== 'object') {
     errors.push('reviewPolicy must be an object');
@@ -145,6 +159,23 @@ function validateReviewPolicy(reviewPolicy, errors) {
   if (reviewPolicy.runtimeEnabled !== false) {
     errors.push('reviewPolicy.runtimeEnabled must be false');
   }
+}
+
+function validateOutputPolicy(outputPolicy, errors) {
+  if (!outputPolicy || typeof outputPolicy !== 'object') {
+    errors.push('outputPolicy must be an object');
+    return;
+  }
+
+  [
+    'requiresRecordsChecksum',
+    'requiresRuntimeMirrors',
+    'requiresManualReviewBeforeRuntime'
+  ].forEach((field) => {
+    if (outputPolicy[field] !== true) {
+      errors.push(`outputPolicy.${field} must be true`);
+    }
+  });
 }
 
 function validateSourceCountAgainstReviewPolicy(manifest, errors) {
@@ -172,10 +203,12 @@ function validateSourceManifest(manifest) {
     errors.push('status must be draft while the generator is dry-run only');
   }
 
+  validateScaffoldRuntimeBoundary(manifest, errors);
   validateCoverage(manifest.coverage, errors);
   validateSources(manifest.sources, errors);
   validateGenerator(manifest.generator, errors);
   validateReviewPolicy(manifest.reviewPolicy, errors);
+  validateOutputPolicy(manifest.outputPolicy, errors);
   validateSourceCountAgainstReviewPolicy(manifest, errors);
 
   return { errors };
@@ -191,7 +224,13 @@ function createDryRunSummary(manifest) {
       : [],
     completeLunarCalendar: Boolean(manifest.coverage && manifest.coverage.completeLunarCalendar),
     sourceCount: Array.isArray(manifest.sources) ? manifest.sources.length : 0,
+    manifestKind: manifest.manifestKind,
+    writesPack: manifest.writesPack,
     runtimeEnabled: manifest.reviewPolicy ? manifest.reviewPolicy.runtimeEnabled : undefined,
+    targetRuntimeEnabled: manifest.targetRuntimeEnabled,
+    recordsChecksumRequired: manifest.outputPolicy
+      ? manifest.outputPolicy.requiresRecordsChecksum
+      : undefined,
     generatorMode: manifest.generator ? manifest.generator.mode : undefined
   };
 }
@@ -258,7 +297,11 @@ function runCli(argv = process.argv.slice(2)) {
   console.log(`  years: ${summary.years.join(', ')}`);
   console.log(`  completeLunarCalendar: ${summary.completeLunarCalendar}`);
   console.log(`  sources: ${summary.sourceCount}`);
+  console.log(`  manifestKind: ${summary.manifestKind}`);
+  console.log(`  writesPack: ${summary.writesPack}`);
   console.log(`  runtimeEnabled: ${summary.runtimeEnabled}`);
+  console.log(`  targetRuntimeEnabled: ${summary.targetRuntimeEnabled}`);
+  console.log(`  recordsChecksumRequired: ${summary.recordsChecksumRequired}`);
   console.log(`  generatorMode: ${summary.generatorMode}`);
 }
 

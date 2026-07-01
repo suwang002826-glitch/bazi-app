@@ -33,9 +33,12 @@ function createSource(overrides = {}) {
 function createValidManifest(overrides = {}) {
   return {
     sourceManifestVersion: 'lunar-source-manifest@2026.07.01',
+    manifestKind: 'source-scaffold',
     targetDataPackId: 'lunar-conversions-2023-full-draft',
     targetCalendarDataVersion: 'lunar-data-pack@2026.07.01-full-draft.1',
     status: 'draft',
+    writesPack: false,
+    targetRuntimeEnabled: false,
     coverage: {
       years: [2023],
       scope: 'complete lunar year source-control dry run',
@@ -64,6 +67,11 @@ function createValidManifest(overrides = {}) {
       requiresManualReview: true,
       runtimeEnabled: false
     },
+    outputPolicy: {
+      requiresRecordsChecksum: true,
+      requiresRuntimeMirrors: true,
+      requiresManualReviewBeforeRuntime: true
+    },
     ...overrides
   };
 }
@@ -86,12 +94,19 @@ assert.deepStrictEqual(summary, {
   years: [2023],
   completeLunarCalendar: true,
   sourceCount: 2,
+  manifestKind: 'source-scaffold',
+  writesPack: false,
   runtimeEnabled: false,
+  targetRuntimeEnabled: false,
+  recordsChecksumRequired: true,
   generatorMode: 'dry-run'
 });
 
 const invalidResult = validateSourceManifest(createValidManifest({
+  manifestKind: 'runtime-data-pack',
   status: 'official-full',
+  writesPack: true,
+  targetRuntimeEnabled: true,
   sources: [
     createSource({
       sourceId: '',
@@ -110,9 +125,17 @@ const invalidResult = validateSourceManifest(createValidManifest({
     minimumSourceCount: 2,
     requiresManualReview: false,
     runtimeEnabled: true
+  },
+  outputPolicy: {
+    requiresRecordsChecksum: false,
+    requiresRuntimeMirrors: false,
+    requiresManualReviewBeforeRuntime: false
   }
 }));
+assertHasError(invalidResult.errors, 'manifestKind must be source-scaffold');
 assertHasError(invalidResult.errors, 'status must be draft while the generator is dry-run only');
+assertHasError(invalidResult.errors, 'writesPack must be false for dry-run source manifests');
+assertHasError(invalidResult.errors, 'targetRuntimeEnabled must be false for scaffold source manifests');
 assertHasError(invalidResult.errors, 'coverage.years must contain only integers');
 assertHasError(invalidResult.errors, 'coverage.completeLunarCalendar must be true');
 assertHasError(invalidResult.errors, 'sources must contain at least 2 entries');
@@ -122,6 +145,9 @@ assertHasError(invalidResult.errors, 'sources[0]: rawSourceChecksum.algorithm mu
 assertHasError(invalidResult.errors, 'sources[0]: rawSourceChecksum.value must be a sha256 hex digest');
 assertHasError(invalidResult.errors, 'reviewPolicy.requiresManualReview must be true');
 assertHasError(invalidResult.errors, 'reviewPolicy.runtimeEnabled must be false');
+assertHasError(invalidResult.errors, 'outputPolicy.requiresRecordsChecksum must be true');
+assertHasError(invalidResult.errors, 'outputPolicy.requiresRuntimeMirrors must be true');
+assertHasError(invalidResult.errors, 'outputPolicy.requiresManualReviewBeforeRuntime must be true');
 
 const tooFewPolicySourcesResult = validateSourceManifest(createValidManifest({
   reviewPolicy: {
@@ -154,6 +180,8 @@ const cliOutput = execFileSync(
 );
 assert(cliOutput.includes('PASS lunar source manifest lunar-conversions-2023-full-draft'));
 assert(cliOutput.includes('sources: 2'));
+assert(cliOutput.includes('writesPack: false'));
 assert(cliOutput.includes('runtimeEnabled: false'));
+assert(cliOutput.includes('targetRuntimeEnabled: false'));
 
 console.log('PASS lunar data-pack generator source manifest validation');

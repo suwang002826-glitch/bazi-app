@@ -1,8 +1,11 @@
 {
   "sourceManifestVersion": "lunar-source-manifest@2026.07.01",
+  "manifestKind": "source-scaffold",
   "targetDataPackId": "lunar-conversions-2023-full-draft",
   "targetCalendarDataVersion": "lunar-data-pack@2026.07.01-full-draft.1",
   "status": "draft",
+  "writesPack": false,
+  "targetRuntimeEnabled": false,
   "coverage": {
     "years": [
       2023
@@ -47,5 +50,10 @@
     "minimumSourceCount": 2,
     "requiresManualReview": true,
     "runtimeEnabled": false
+  },
+  "outputPolicy": {
+    "requiresRecordsChecksum": true,
+    "requiresRuntimeMirrors": true,
+    "requiresManualReviewBeforeRuntime": true
   }
 }

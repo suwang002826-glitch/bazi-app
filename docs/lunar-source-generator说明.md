@@ -7,11 +7,17 @@
 ## 当前边界
 
 - 只校验来源清单，不生成运行时 records。
+- 来源清单必须声明 `manifestKind: "source-scaffold"`。
 - 只允许 `status: "draft"`。
+- `writesPack` 必须是 `false`。
+- `targetRuntimeEnabled` 必须是 `false`。
 - 至少需要两份来源记录。
 - 每份来源都必须有 `sourceUrl` 和 `rawSourceChecksum`。
 - `rawSourceChecksum.algorithm` 必须是 `sha256`。
 - `reviewPolicy.runtimeEnabled` 必须是 `false`。
+- `outputPolicy.requiresRecordsChecksum` 必须是 `true`。
+- `outputPolicy.requiresRuntimeMirrors` 必须是 `true`。
+- `outputPolicy.requiresManualReviewBeforeRuntime` 必须是 `true`。
 
 ## 校验命令
 
