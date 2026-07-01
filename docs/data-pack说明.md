@@ -24,6 +24,20 @@
 - 多来源差异比对。
 - 真太阳时、节气时刻、大运起运等非农历转换问题。
 
+## 完整年份包接入计划
+
+完整 2023 年份包的接入边界见 `docs/lunar-full-year-data-pack-plan.md`。
+
+进入 full 包接入前，必须先确认：
+
+- 权威来源或生成来源。
+- `lunar-conversions-2023-full.json` 的 `calendarDataVersion`。
+- `coverage.completeLunarCalendar` 是否可以标记为 `true`。
+- seed 包是否从 `manifest.packs` 移除，避免和 full 包 active 覆盖同一农历日期。
+- 新增验收样例的第二来源复核结果。
+
+full 包接入时，`calendarAdapter` 仍只消费 `lunarDataPack` 的结果或结构化错误，不允许回到代码白名单。
+
 ## 数据记录要求
 
 每条转换记录至少包含：
@@ -101,5 +115,6 @@ node scripts/validate-lunar-data-pack.js
 - 不再往 `calendarAdapter` 里新增农历白名单。
 - 新增农历/闰月样例时，先补 data-pack 记录，再补验收脚本。
 - 未经复核的记录必须标记为 seed 或 draft，不能宣传为完整权威数据。
-- 当 data-pack 升级为完整年份数据时，必须更新 `coverage.completeLunarCalendar` 和版本号。
+- 当 data-pack 升级为完整年份数据时，必须更新 `coverage.completeLunarCalendar`、`calendarDataVersion` 和 `recordsChecksum`。
+- seed 包与 full 包不能同时在 `manifest.packs` 中 active 覆盖同一农历日期。
 - data-pack 外的农历日期不能静默回退为公历输入，必须明确报错。
