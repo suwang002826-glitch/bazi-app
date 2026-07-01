@@ -1,0 +1,74 @@
+{
+  "gateId": "lunar-limited-preview-gate-2023-hko",
+  "status": "preflight-required",
+  "relatedIssue": "#45",
+  "sourceScopeId": "lunar-limited-runtime-scope-2023-hko",
+  "sourceCandidateDataPackId": "lunar-conversions-2023-hko-limited-candidate",
+  "previewEntryAllowed": false,
+  "manifestRegistrationAllowed": false,
+  "runtimeEnabled": false,
+  "completeLunarCalendar": false,
+  "uiWarning": {
+    "required": true,
+    "copy": "当前仅为 2023 年 HKO / 香港天文台农历数据预览，非完整农历历法能力；超出 2023 年范围的农历输入不会计算。",
+    "mustMention": [
+      "2023",
+      "HKO",
+      "非完整"
+    ],
+    "requiredPlacements": [
+      "lunar-input-panel",
+      "before-generate-button",
+      "result-conversion-summary"
+    ]
+  },
+  "outOfCoverageError": {
+    "required": true,
+    "code": "LUNAR_DATE_OUTSIDE_LIMITED_RUNTIME_SCOPE",
+    "message": "当前受限农历预览仅支持 2023-01-01 至 2023-12-31 的 HKO 数据。",
+    "requiredFields": [
+      "inputDate",
+      "supportedStartDate",
+      "supportedEndDate",
+      "completeLunarCalendar",
+      "calendarDataVersion"
+    ],
+    "examples": [
+      {
+        "inputDate": "2022-12-31",
+        "supportedStartDate": "2023-01-01",
+        "supportedEndDate": "2023-12-31",
+        "completeLunarCalendar": false,
+        "calendarDataVersion": "lunar-data-pack@2026.07.01-hko-2023-limited.candidate.1"
+      },
+      {
+        "inputDate": "2024-01-01",
+        "supportedStartDate": "2023-01-01",
+        "supportedEndDate": "2023-12-31",
+        "completeLunarCalendar": false,
+        "calendarDataVersion": "lunar-data-pack@2026.07.01-hko-2023-limited.candidate.1"
+      }
+    ]
+  },
+  "releasePreconditions": {
+    "uiWarningImplemented": false,
+    "structuredOutOfCoverageErrorImplemented": false,
+    "previewEntryReviewed": false,
+    "manifestRegistrationReviewed": false
+  },
+  "blocksPreviewUnless": [
+    "uiWarningImplemented",
+    "structuredOutOfCoverageErrorImplemented",
+    "previewEntryReviewed"
+  ],
+  "blocksManifestRegistrationUnless": [
+    "uiWarningImplemented",
+    "structuredOutOfCoverageErrorImplemented",
+    "manifestRegistrationReviewed"
+  ],
+  "notes": [
+    "This gate does not enable lunar preview.",
+    "This gate exists to prevent exposing the candidate pack before warning copy and out-of-coverage behavior are reviewed.",
+    "The candidate pack remains outside runtime manifest registration."
+  ]
+}
