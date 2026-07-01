@@ -30,6 +30,9 @@ const {
 const {
   validateLunarLimitedPreviewGateRepository
 } = require('./validate-lunar-limited-preview-gate');
+const {
+  validateLunarAuthoritySourceIntakeRepository
+} = require('./validate-lunar-authority-source-intake');
 
 const acceptanceCases = [
   {
@@ -282,6 +285,18 @@ function assertLimitedPreviewGate() {
   console.log(`PASS LIMITED PREVIEW GATE ${gateResult.summary.outOfCoverageErrorCode}`);
 }
 
+function assertAuthoritySourceIntake() {
+  const intakeResult = validateLunarAuthoritySourceIntakeRepository({
+    rootDir: path.join(__dirname, '..')
+  });
+  assert.deepStrictEqual(intakeResult.errors, []);
+  assert.strictEqual(intakeResult.summary.status, 'template');
+  assert.ok(intakeResult.summary.minimumRequiredFields.includes('isLeapMonth'));
+  assert.ok(intakeResult.summary.preferredFormats.includes('csv'));
+  assert.strictEqual(intakeResult.summary.rejectsScreenshotOnly, true);
+  console.log(`PASS AUTHORITY SOURCE INTAKE ${intakeResult.summary.templateId}`);
+}
+
 function assertUnsupportedLunarInputs() {
   unsupportedLunarCases.forEach((item) => {
     assert.throws(
@@ -324,6 +339,7 @@ function run() {
   assertLimitedRuntimeScope();
   assertLimitedRuntimeCandidate();
   assertLimitedPreviewGate();
+  assertAuthoritySourceIntake();
   assertUnsupportedLunarInputs();
   assertImplicitLunarInputs();
 
@@ -409,3 +425,4 @@ require('./validate-lunar-limited-runtime-scope.test');
 require('./generate-lunar-limited-runtime-candidate.test');
 require('./validate-lunar-limited-runtime-candidate.test');
 require('./validate-lunar-limited-preview-gate.test');
+require('./validate-lunar-authority-source-intake.test');

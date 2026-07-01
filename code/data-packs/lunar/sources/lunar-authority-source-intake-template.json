@@ -1,0 +1,92 @@
+{
+  "templateId": "lunar-authority-source-intake-template",
+  "status": "template",
+  "relatedIssue": "#47",
+  "purpose": "Define acceptable source material for expanding lunar calendar data beyond the current HKO 2023 candidate pack.",
+  "sourceTiers": [
+    {
+      "tier": 1,
+      "name": "official-machine-readable-data",
+      "acceptableAsPrimary": true,
+      "examples": [
+        "official CSV",
+        "official TXT",
+        "official structured table"
+      ],
+      "notes": "Best source type because it can be checksummed, imported, and revalidated automatically."
+    },
+    {
+      "tier": 2,
+      "name": "official-pdf-or-published-almanac",
+      "acceptableAsPrimary": true,
+      "requiresManualExtraction": true,
+      "notes": "Can be a primary source only when publisher, edition, page, and extraction trail are recorded."
+    },
+    {
+      "tier": 3,
+      "name": "professional-software-export",
+      "acceptableAsPrimary": false,
+      "acceptableAsCrossCheck": true,
+      "notes": "Requires software name, version, settings, export date, and sample screenshots."
+    },
+    {
+      "tier": 4,
+      "name": "ordinary-webpage-or-screenshot",
+      "acceptableAsPrimary": false,
+      "acceptableAsCrossCheck": true,
+      "notes": "May help find discrepancies but cannot be the only source for runtime data."
+    }
+  ],
+  "preferredFormats": [
+    "csv",
+    "xlsx",
+    "txt",
+    "json",
+    "pdf",
+    "printed-book-photo"
+  ],
+  "minimumRequiredFields": [
+    "gregorianDate",
+    "lunarYear",
+    "lunarMonth",
+    "lunarDay",
+    "isLeapMonth",
+    "sourceName",
+    "sourceRowOrPage"
+  ],
+  "optionalHighValueFields": [
+    "solarTermName",
+    "solarTermTime",
+    "timeZone",
+    "calendarRuleDescription",
+    "publisherEdition",
+    "checksum"
+  ],
+  "requiredProvenanceFields": [
+    "sourceName",
+    "publisherOrProvider",
+    "publicationYear",
+    "editionOrVersion",
+    "retrievedOrPhotographedAt",
+    "sourceUrlOrPhysicalLocation",
+    "operator"
+  ],
+  "rejectionRules": {
+    "screenshotOnly": true,
+    "missingProvider": true,
+    "missingDateMapping": true,
+    "ambiguousLeapMonth": true,
+    "cannotStoreSourceTrail": true
+  },
+  "importDecision": {
+    "mayCreateDraftPack": true,
+    "mayCreateRuntimeCandidate": false,
+    "mayRegisterRuntimeManifest": false,
+    "requiresIndependentReviewBeforeRuntime": true
+  },
+  "notesForUser": [
+    "The best material is a CSV, Excel, TXT, or official table covering many dates.",
+    "If the source is a book, provide the cover, copyright page, edition, and clear page photos.",
+    "If the source is software, provide software name, version, settings, and exported table."
+  ]
+}
