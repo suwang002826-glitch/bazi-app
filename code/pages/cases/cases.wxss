@@ -280,25 +280,25 @@
   width: 86rpx;
   height: 86rpx;
   overflow: hidden;
-  border: 2rpx solid rgba(217, 191, 113, .52);
+  border: 0;
   border-radius: 50%;
   background:
-    linear-gradient(180deg, rgba(217, 191, 113, .22), rgba(7, 8, 14, .88)),
+    radial-gradient(circle at 48% 42%, rgba(217, 191, 113, .14), rgba(7, 8, 14, .78) 66%),
+    linear-gradient(180deg, rgba(217, 191, 113, .10), rgba(7, 8, 14, .88)),
     #0a0b13;
   color: #d9bf71;
   box-shadow:
-    inset 0 0 0 1rpx rgba(242, 240, 228, .10),
+    inset 0 0 18rpx rgba(217, 191, 113, .08),
     0 10rpx 18rpx rgba(0, 0, 0, .40);
 }
 
 .zodiac-seal::after {
   position: absolute;
-  inset: 6rpx;
-  border: 1rpx solid rgba(217, 191, 113, .22);
+  inset: 0;
+  border: 0;
   border-radius: 50%;
   background:
-    linear-gradient(180deg, rgba(242, 240, 228, .12), transparent 30%, rgba(0, 0, 0, .10)),
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, .08), transparent);
+    linear-gradient(180deg, rgba(242, 240, 228, .06), transparent 34%, rgba(0, 0, 0, .08));
   content: "";
   pointer-events: none;
 }
@@ -306,8 +306,8 @@
 .zodiac-image {
   position: relative;
   z-index: 1;
-  width: 108%;
-  height: 108%;
+  width: 104%;
+  height: 104%;
   opacity: .98;
 }
 
