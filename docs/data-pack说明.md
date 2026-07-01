@@ -43,6 +43,11 @@
 - `source`
 - `status`
 - `coverage`
+- `authoritySource`
+- `sourceLedger`
+- `generatedAt`
+- `generatedBy`
+- `recordsChecksum`
 - `records`
 
 ## data-pack 体检脚本
@@ -71,6 +76,11 @@ node scripts/validate-lunar-data-pack.js
 - 数据包 `coverage.completeLunarCalendar` 是否明确写成布尔值。
 - 每条记录的 `lunarYear` 是否落在该包声明的 `coverage.years` 内。
 - `manifest.packs[].dataPackId` 是否重复。
+- `authoritySource` 是否存在。
+- `sourceLedger` 是否为非空数组，且每条来源记录包含 `sourceName`、`sourceVersion`、`retrievedAt`、`note`。
+- `generatedAt` 和 `sourceLedger[].retrievedAt` 是否为 ISO 时间。
+- `generatedBy` 是否存在。
+- `recordsChecksum.algorithm` 是否为 `sha256`，且 `recordsChecksum.value` 是否匹配当前 `records` 内容。
 
 当前脚本只负责结构体检，不负责证明数据来源权威。完整年份包上线前，还需要补来源记录、交叉复核和验收样例。
 
