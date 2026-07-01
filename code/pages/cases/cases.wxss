@@ -103,9 +103,13 @@
 .case-swipe-row {
   position: relative;
   overflow: hidden;
-  margin: 0 -2rpx;
-  border-bottom: 1rpx solid rgba(242, 240, 228, .08);
+  margin: 18rpx 0;
+  border: 1rpx solid rgba(217, 191, 113, .12);
+  border-radius: 20rpx;
   background: #07080e;
+  box-shadow:
+    0 16rpx 28rpx rgba(0, 0, 0, .28),
+    0 1rpx 0 rgba(242, 240, 228, .035);
 }
 
 .case-delete-panel {
@@ -117,8 +121,9 @@
   align-items: center;
   justify-content: center;
   width: 124rpx;
+  border-radius: 0 20rpx 20rpx 0;
   background:
-    linear-gradient(180deg, rgba(160, 50, 45, .92), rgba(106, 31, 31, .96));
+    linear-gradient(180deg, #8f2f2d, #541c1f);
   color: #f2f0e4;
   font-size: 27rpx;
   font-weight: 900;
@@ -133,11 +138,37 @@
   gap: 14rpx;
   align-items: center;
   min-height: 174rpx;
-  margin-right: -4rpx;
-  padding: 22rpx 8rpx 22rpx 2rpx;
+  margin-right: -8rpx;
+  padding: 24rpx 20rpx 24rpx 18rpx;
+  border-radius: 20rpx;
   background:
-    linear-gradient(180deg, #07080e 0%, #080916 48%, #07080e 100%);
-  transition: transform .18s ease;
+    radial-gradient(circle at 14% 0%, rgba(217, 191, 113, .12), transparent 34%),
+    linear-gradient(135deg, rgba(34, 37, 89, .76), rgba(7, 8, 14, .98) 45%, rgba(10, 16, 20, .98)),
+    #07080e;
+  box-shadow:
+    inset 0 1rpx 0 rgba(242, 240, 228, .095),
+    inset 0 -1rpx 0 rgba(0, 0, 0, .42);
+  transition: transform .22s ease-out, filter .18s ease-out;
+}
+
+.case-list-row::before {
+  position: absolute;
+  left: 18rpx;
+  right: 18rpx;
+  top: 0;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(217, 191, 113, .30), transparent);
+  content: "";
+}
+
+.case-list-row::after {
+  position: absolute;
+  right: 92rpx;
+  top: 24rpx;
+  bottom: 24rpx;
+  width: 1rpx;
+  background: linear-gradient(180deg, transparent, rgba(217, 191, 113, .13), transparent);
+  content: "";
 }
 
 .show-delete .case-list-row {
@@ -146,7 +177,7 @@
 
 .tap-active {
   opacity: .72;
-  transform: scale(.995);
+  filter: brightness(1.08);
 }
 
 .case-left {
@@ -163,7 +194,7 @@
 .case-display-name {
   max-width: 270rpx;
   overflow: hidden;
-  color: #f2f0e4;
+  color: #f7f4e9;
   font-size: 35rpx;
   font-weight: 900;
   line-height: 1.25;
@@ -180,7 +211,7 @@
 .case-date {
   margin-top: 18rpx;
   overflow: hidden;
-  color: rgba(242, 240, 228, .56);
+  color: rgba(242, 240, 228, .68);
   font-size: 28rpx;
   font-weight: 800;
   line-height: 1.25;
@@ -190,13 +221,15 @@
 
 .case-archive-time {
   margin-top: 10rpx;
-  color: rgba(242, 240, 228, .34);
+  color: rgba(217, 191, 113, .42);
   font-size: 21rpx;
   font-weight: 800;
 }
 
 .case-pillars {
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .pillar-char-row {
@@ -243,16 +276,17 @@
   justify-self: end;
   width: 72rpx;
   height: 72rpx;
-  border: 2rpx solid rgba(217, 191, 113, .54);
+  border: 2rpx solid rgba(217, 191, 113, .66);
   border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 38%, rgba(217, 191, 113, .22), rgba(7, 8, 14, .72) 58%),
-    conic-gradient(from 45deg, rgba(217, 191, 113, .34), rgba(217, 191, 113, .05), rgba(217, 191, 113, .34)),
+    radial-gradient(circle at 50% 36%, rgba(217, 191, 113, .28), rgba(7, 8, 14, .84) 60%),
+    conic-gradient(from 20deg, rgba(217, 191, 113, .42), rgba(217, 191, 113, .05), rgba(217, 191, 113, .36), rgba(217, 191, 113, .08), rgba(217, 191, 113, .42)),
     #07080e;
   color: #d9bf71;
   box-shadow:
-    inset 0 0 0 6rpx rgba(217, 191, 113, .055),
-    0 4rpx 12rpx rgba(0, 0, 0, .24);
+    inset 0 0 0 6rpx rgba(217, 191, 113, .07),
+    inset 0 8rpx 14rpx rgba(242, 240, 228, .055),
+    0 6rpx 14rpx rgba(0, 0, 0, .34);
 }
 
 .zodiac-seal::after {
