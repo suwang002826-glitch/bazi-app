@@ -9,6 +9,15 @@ function isIsoDateTime(value) {
   return !Number.isNaN(new Date(text).getTime());
 }
 
+function isHttpUrl(value) {
+  try {
+    const url = new URL(String(value || ''));
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (error) {
+    return false;
+  }
+}
+
 function validateRequiredText(label, value, errors) {
   if (!value || typeof value !== 'string') {
     errors.push(`${label}: missing ${label.split('.').pop()}`);
@@ -70,9 +79,14 @@ function validateSource(source, index, errors) {
   const label = `sources[${index}]`;
   [
     'sourceId',
+    'sourceRole',
     'sourceType',
     'sourceName',
     'sourceVersion',
+    'dataProvider',
+    'datasetName',
+    'resourceFormat',
+    'landingPageUrl',
     'sourceUrl',
     'retrievedAt',
     'note'
@@ -81,6 +95,25 @@ function validateSource(source, index, errors) {
       errors.push(`${label}: missing ${field}`);
     }
   });
+
+  if (source && source.resourceFormat) {
+    const format = String(source.resourceFormat).toUpperCase();
+    if (!['CSV', 'TXT', 'PDF', 'JSON', 'HTML'].includes(format)) {
+      errors.push(`${label}: resourceFormat must be CSV, TXT, PDF, JSON, or HTML`);
+    }
+  }
+
+  if (source && source.landingPageUrl && !isHttpUrl(source.landingPageUrl)) {
+    errors.push(`${label}: landingPageUrl must be an http(s) URL`);
+  }
+
+  if (source && source.sourceUrl && !isHttpUrl(source.sourceUrl)) {
+    errors.push(`${label}: sourceUrl must be an http(s) URL`);
+  }
+
+  if (!source || !Number.isInteger(source.byteLength) || source.byteLength <= 0) {
+    errors.push(`${label}: byteLength must be a positive integer`);
+  }
 
   if (source && source.retrievedAt && !isIsoDateTime(source.retrievedAt)) {
     errors.push(`${label}: retrievedAt must be ISO datetime`);
@@ -178,6 +211,25 @@ function validateOutputPolicy(outputPolicy, errors) {
   });
 }
 
+function validateSourceReviewBoundary(sourceReviewBoundary, errors) {
+  if (!sourceReviewBoundary || typeof sourceReviewBoundary !== 'object') {
+    errors.push('sourceReviewBoundary must be an object');
+    return;
+  }
+
+  if (sourceReviewBoundary.sourceIndependence !== 'same-provider-multi-format') {
+    errors.push('sourceReviewBoundary.sourceIndependence must be same-provider-multi-format');
+  }
+
+  if (sourceReviewBoundary.independentReviewRequired !== true) {
+    errors.push('sourceReviewBoundary.independentReviewRequired must be true');
+  }
+
+  if (sourceReviewBoundary.independentReviewStatus !== 'pending') {
+    errors.push('sourceReviewBoundary.independentReviewStatus must be pending');
+  }
+}
+
 function validateSourceCountAgainstReviewPolicy(manifest, errors) {
   if (!Array.isArray(manifest.sources) || !manifest.reviewPolicy) return;
   const minimumSourceCount = manifest.reviewPolicy.minimumSourceCount;
@@ -209,6 +261,7 @@ function validateSourceManifest(manifest) {
   validateGenerator(manifest.generator, errors);
   validateReviewPolicy(manifest.reviewPolicy, errors);
   validateOutputPolicy(manifest.outputPolicy, errors);
+  validateSourceReviewBoundary(manifest.sourceReviewBoundary, errors);
   validateSourceCountAgainstReviewPolicy(manifest, errors);
 
   return { errors };
