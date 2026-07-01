@@ -1,19 +1,31 @@
 const app = getApp();
 
 const STEM_ELEMENTS = {
-  甲: 'wood', 乙: 'wood',
-  丙: 'fire', 丁: 'fire',
-  戊: 'earth', 己: 'earth',
-  庚: 'metal', 辛: 'metal',
-  壬: 'water', 癸: 'water'
+  甲: 'wood',
+  乙: 'wood',
+  丙: 'fire',
+  丁: 'fire',
+  戊: 'earth',
+  己: 'earth',
+  庚: 'metal',
+  辛: 'metal',
+  壬: 'water',
+  癸: 'water'
 };
 
 const BRANCH_ELEMENTS = {
-  寅: 'wood', 卯: 'wood',
-  巳: 'fire', 午: 'fire',
-  辰: 'earth', 戌: 'earth', 丑: 'earth', 未: 'earth',
-  申: 'metal', 酉: 'metal',
-  子: 'water', 亥: 'water'
+  寅: 'wood',
+  卯: 'wood',
+  巳: 'fire',
+  午: 'fire',
+  辰: 'earth',
+  戌: 'earth',
+  丑: 'earth',
+  未: 'earth',
+  申: 'metal',
+  酉: 'metal',
+  子: 'water',
+  亥: 'water'
 };
 
 const ZODIAC_BY_BRANCH = {
@@ -46,9 +58,19 @@ const ZODIAC_ICON_BY_BRANCH = {
   亥: 'hai'
 };
 
+const ZODIAC_CDN_BASE = '';
+
+function getZodiacIconSrc(iconKey) {
+  if (ZODIAC_CDN_BASE) {
+    return `${ZODIAC_CDN_BASE.replace(/\/$/, '')}/${iconKey}.png`;
+  }
+  return `/assets/zodiac/${iconKey}.png`;
+}
+
 function isBaziRecord(item) {
   if (!item) return false;
-  return item.type === '八字' || item.type === '鍏瓧';
+  if (item.payload && item.payload.result) return true;
+  return item.type === '八字' || item.type === 'bazi';
 }
 
 function stripTitle(title) {
@@ -89,17 +111,17 @@ function buildZodiacSeal(result) {
   return {
     branch,
     animal: ZODIAC_BY_BRANCH[branch] || '鼠',
-    icon: `/assets/zodiac/${iconKey}.png`,
+    icon: getZodiacIconSrc(iconKey),
     className: BRANCH_ELEMENTS[branch] || 'water'
   };
 }
 
-function decorateRecord(item, index) {
+function decorateRecord(item) {
   const result = item.payload && item.payload.result ? item.payload.result : null;
   const name = result && result.displayName ? result.displayName : stripTitle(item.title);
   return {
     ...item,
-    displayName: name,
+    displayName: name || '未命名',
     gender: result && result.gender ? result.gender : '未填',
     solarDate: result ? splitDateLine(result.solarTime) : (item.createdAt || item.archivedAt || '时间待校验'),
     pillarRows: buildPillarRows(result),
@@ -129,7 +151,8 @@ Page({
     const archive = (wx.getStorageSync('caseArchive') || []).filter(isBaziRecord);
     this.setData({
       allCases: archive,
-      cases: this.filterAndDecorate(archive, this.data.query, this.data.activeCategory)
+      cases: this.filterAndDecorate(archive, this.data.query, this.data.activeCategory),
+      openedDeleteId: null
     });
   },
 
@@ -144,7 +167,8 @@ Page({
       .filter((item) => {
         if (!query) return true;
         const result = item.payload && item.payload.result ? item.payload.result : {};
-        return [item.title, result.displayName, result.solarTime].some((value) => String(value || '').includes(query));
+        return [item.title, result.displayName, result.solarTime, item.note]
+          .some((value) => String(value || '').includes(query));
       });
     return filtered.map(decorateRecord);
   },
@@ -161,6 +185,7 @@ Page({
     const category = event.currentTarget.dataset.category;
     this.setData({
       activeCategory: category,
+      openedDeleteId: null,
       cases: this.filterAndDecorate(this.data.allCases, this.data.query, category)
     });
   },
@@ -172,6 +197,7 @@ Page({
         const category = this.data.categories[res.tapIndex] || '全部';
         this.setData({
           activeCategory: category,
+          openedDeleteId: null,
           cases: this.filterAndDecorate(this.data.allCases, this.data.query, category)
         });
       }

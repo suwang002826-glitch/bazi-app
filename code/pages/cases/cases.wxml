@@ -5,7 +5,7 @@
 
   <view class="case-search">
     <text class="search-icon">⌕</text>
-    <input placeholder="请输入搜索的内容" value="{{query}}" bindinput="onSearchInput" />
+    <input placeholder="搜索姓名、时间或备注" value="{{query}}" bindinput="onSearchInput" />
     <view class="filter-entry" bindtap="openFilterSheet">筛选</view>
   </view>
 
@@ -40,23 +40,23 @@
             <text class="case-display-name">{{item.displayName}}</text>
             <text class="case-gender">{{item.gender}}</text>
           </view>
-          <view class="case-date">阳历{{item.solarDate}}</view>
+          <view class="case-date">阳历 {{item.solarDate}}</view>
           <view class="case-archive-time">{{item.archivedAt}}</view>
         </view>
+
         <view class="case-pillars">
           <view class="pillar-char-row" wx:for="{{item.pillarRows}}" wx:for-item="row" wx:key="*this">
             <text
               class="pillar-char {{char.className}}"
               wx:for="{{row}}"
               wx:for-item="char"
-              wx:key="char"
+              wx:key="index"
             >{{char.char}}</text>
           </view>
         </view>
+
         <view class="zodiac-seal {{item.zodiacSeal.className}}">
           <image class="zodiac-image" src="{{item.zodiacSeal.icon}}" mode="aspectFit" />
-          <view class="zodiac-animal">{{item.zodiacSeal.animal}}</view>
-          <view class="zodiac-branch">{{item.zodiacSeal.branch}}</view>
         </view>
       </view>
     </view>
