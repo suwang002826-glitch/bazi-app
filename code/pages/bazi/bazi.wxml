@@ -16,103 +16,117 @@
       <view class="form-badge">真太阳时校正</view>
     </view>
 
-    <view class="entry-row name-row">
-      <text class="entry-label">姓名</text>
-      <input class="entry-input" placeholder="请输入姓名（必填）" value="{{form.name}}" bindinput="onNameInput" />
-    </view>
-
-    <view class="entry-row segmented-row">
-      <view class="segmented-control">
-        <view
-          class="segment {{form.gender === item ? 'active' : ''}}"
-          wx:for="{{genderOptions}}"
-          wx:key="*this"
-          bindtap="onGenderTap"
-          data-gender="{{item}}"
-        >{{item}}</view>
-      </view>
-
-      <view class="segmented-control calendar-control">
-        <view
-          class="segment {{activeCalendarMode === item ? 'active' : ''}}"
-          wx:for="{{calendarModes}}"
-          wx:key="*this"
-          bindtap="onCalendarModeTap"
-          data-mode="{{item}}"
-        >{{item}}</view>
-      </view>
-    </view>
-
-    <view wx:if="{{activeCalendarMode !== '农历'}}" class="entry-row picker-row">
-      <view>
-        <text class="entry-label">出生时间</text>
-        <text class="entry-hint">必填</text>
-      </view>
-      <view class="picker-value dual-picker">
-        <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
-          <view>{{form.birthDate}}</view>
-        </picker>
-        <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
-          <view>{{form.birthTime}}</view>
-        </picker>
-      </view>
-    </view>
-
-    <view wx:else class="lunar-beta-panel">
-      <view class="lunar-beta-head">
+    <view class="instrument-panel">
+      <view class="entry-row name-row">
         <view>
-          <view class="lunar-beta-title">农历排盘测试版</view>
-          <view class="lunar-beta-text">只支持已验证日期；未覆盖时不会计算。</view>
+          <text class="entry-label">姓名</text>
+          <text class="entry-hint">用于命例归档</text>
         </view>
-        <view class="lunar-beta-tag">Beta</view>
+        <input class="entry-input" placeholder="请输入姓名（必填）" value="{{form.name}}" bindinput="onNameInput" />
       </view>
-      <view class="lunar-input-grid">
-        <view class="lunar-input-item">
-          <text>农历年</text>
-          <input type="number" value="{{form.lunarYear}}" bindinput="onLunarYearInput" />
-        </view>
-        <view class="lunar-input-item">
-          <text>农历月</text>
-          <input type="number" value="{{form.lunarMonth}}" bindinput="onLunarMonthInput" />
-        </view>
-        <view class="lunar-input-item">
-          <text>农历日</text>
-          <input type="number" value="{{form.lunarDay}}" bindinput="onLunarDayInput" />
-        </view>
-      </view>
-      <view class="lunar-beta-footer">
-        <view class="option-switch">
-          <text>闰月</text>
-          <switch checked="{{form.isLeapMonth}}" bindchange="onLeapMonthSwitch" color="#e8c98a" />
-        </view>
-        <view class="lunar-beta-sample">已验证：2023年八月十五、2023年闰二月初十</view>
-      </view>
-      <view wx:if="{{lunarBetaError}}" class="lunar-beta-error">{{lunarBetaError}}</view>
-    </view>
 
-    <view wx:if="{{activeCalendarMode === '农历'}}" class="entry-row picker-row">
-      <view>
-        <text class="entry-label">出生时辰</text>
-        <text class="entry-hint">必填</text>
+      <view class="entry-row segmented-row">
+        <view class="field-stack">
+          <text class="entry-label">性别</text>
+          <view class="segmented-control">
+            <view
+              class="segment {{form.gender === item ? 'active' : ''}}"
+              wx:for="{{genderOptions}}"
+              wx:key="*this"
+              bindtap="onGenderTap"
+              data-gender="{{item}}"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="field-stack">
+          <text class="entry-label">历法</text>
+          <view class="segmented-control calendar-control">
+            <view
+              class="segment {{activeCalendarMode === item ? 'active' : ''}}"
+              wx:for="{{calendarModes}}"
+              wx:key="*this"
+              bindtap="onCalendarModeTap"
+              data-mode="{{item}}"
+            >{{item}}</view>
+          </view>
+        </view>
       </view>
-      <view class="picker-value dual-picker">
-        <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
-          <view>{{form.birthTime}}</view>
+
+      <view wx:if="{{activeCalendarMode !== '农历'}}" class="entry-row picker-row">
+        <view>
+          <text class="entry-label">出生时间</text>
+          <text class="entry-hint">必填，影响时柱</text>
+        </view>
+        <view class="picker-value dual-picker">
+          <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
+            <view>{{form.birthDate}}</view>
+          </picker>
+          <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
+            <view>{{form.birthTime}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view wx:else class="lunar-beta-panel">
+        <view class="lunar-beta-head">
+          <view>
+            <view class="lunar-beta-title">农历排盘测试版</view>
+            <view class="lunar-beta-text">只支持已验证日期；未覆盖时不会计算。</view>
+          </view>
+          <view class="lunar-beta-tag">Beta</view>
+        </view>
+        <view class="lunar-input-grid">
+          <view class="lunar-input-item">
+            <text>农历年</text>
+            <input type="number" value="{{form.lunarYear}}" bindinput="onLunarYearInput" />
+          </view>
+          <view class="lunar-input-item">
+            <text>农历月</text>
+            <input type="number" value="{{form.lunarMonth}}" bindinput="onLunarMonthInput" />
+          </view>
+          <view class="lunar-input-item">
+            <text>农历日</text>
+            <input type="number" value="{{form.lunarDay}}" bindinput="onLunarDayInput" />
+          </view>
+        </view>
+        <view class="lunar-beta-footer">
+          <view class="option-switch">
+            <text>闰月</text>
+            <switch checked="{{form.isLeapMonth}}" bindchange="onLeapMonthSwitch" color="#e8c98a" />
+          </view>
+          <view class="lunar-beta-sample">已验证：2023年八月十五、2023年闰二月初十</view>
+        </view>
+        <view wx:if="{{lunarBetaError}}" class="lunar-beta-error">{{lunarBetaError}}</view>
+      </view>
+
+      <view wx:if="{{activeCalendarMode === '农历'}}" class="entry-row picker-row">
+        <view>
+          <text class="entry-label">出生时辰</text>
+          <text class="entry-hint">必填，影响时柱</text>
+        </view>
+        <view class="picker-value dual-picker">
+          <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
+            <view>{{form.birthTime}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="entry-row picker-row">
+        <view>
+          <text class="entry-label">出生地点</text>
+          <text class="entry-hint">用于真太阳时</text>
+        </view>
+        <picker mode="region" value="{{form.region}}" bindchange="onRegionChange">
+          <view class="picker-value">{{form.regionText}}</view>
         </picker>
+        <text class="row-symbol">›</text>
       </view>
-    </view>
 
-    <view class="entry-row picker-row">
-      <text class="entry-label">出生地点</text>
-      <picker mode="region" value="{{form.region}}" bindchange="onRegionChange">
-        <view class="picker-value">{{form.regionText}}</view>
-      </picker>
-      <text class="row-symbol">›</text>
-    </view>
-
-    <view class="entry-row picker-row">
-      <text class="entry-label">分组</text>
-      <view class="picker-value">全部</view>
+      <view class="entry-row picker-row">
+        <text class="entry-label">分组</text>
+        <view class="picker-value">全部</view>
+      </view>
     </view>
 
     <view class="solar-row">

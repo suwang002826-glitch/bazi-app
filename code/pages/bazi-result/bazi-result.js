@@ -1,6 +1,42 @@
 const app = getApp();
 const { createProfessionalDetail } = require('../../utils/baziPlate');
 
+const SPIRIT_INFO = {
+  天乙贵人: { figure: '乙', title: '天乙贵人', category: '贵人', meaning: '主逢凶有解、遇事得助，是四柱神煞中常用于观察助力与转圜空间的贵曜。', advice: '宜主动求教、借力专业人士；不可因见贵人而轻忽现实准备。' },
+  太极贵人: { figure: '太', title: '太极贵人', category: '贵人', meaning: '多主悟性、清静、好学与对玄学、哲理、宗教文化的亲近倾向。', advice: '适合深学一门、静心复盘，把感悟落成行动。' },
+  文昌贵人: { figure: '昌', title: '文昌贵人', category: '文教', meaning: '主文章、学习、表达、考试与文书能力，常看学业、写作、策划与表达灵感。', advice: '宜读书、写作、准备资料；忌浮躁求快。' },
+  词馆: { figure: '词', title: '词馆', category: '文教', meaning: '偏重语言、文字、名誉与表达修饰，常与文职、传播、策划相关。', advice: '宜打磨表达，重要文字多校对。' },
+  学堂: { figure: '学', title: '学堂', category: '文教', meaning: '主学习环境、师承、训练与知识积累，适合观察求学和专业技能养成。', advice: '宜系统学习，不宜三心二意。' },
+  德秀贵人: { figure: '德', title: '德秀贵人', category: '贵人', meaning: '重德行、气质、清秀与修养，常作人格气象与名誉参考。', advice: '宜以德服人，少争口舌。' },
+  福星贵人: { figure: '福', title: '福星贵人', category: '贵人', meaning: '主福厚、缓和与生活助缘，常看顺遂度与人情助力。', advice: '宜珍惜善缘，主动回馈。' },
+  国印贵人: { figure: '印', title: '国印贵人', category: '贵人', meaning: '与制度、文书、资质、印信、组织认可相关，常看证照和正式身份。', advice: '宜守规则、重凭证、重流程。' },
+  天厨贵人: { figure: '厨', title: '天厨贵人', category: '贵人', meaning: '与饮食、享用、供养、口福及资源补给有关，也可看生活照料。', advice: '宜养身节食，避免贪享伤身。' },
+  天官贵人: { figure: '官', title: '天官贵人', category: '贵人', meaning: '偏向名位、职分、上级助力与正式机会。', advice: '宜重责任与信用，少投机。' },
+  天福贵人: { figure: '福', title: '天福贵人', category: '贵人', meaning: '主福泽、和缓、得助与生活中的缓冲力量。', advice: '宜积善修身，福不离德。' },
+  桃花: { figure: '花', title: '桃花', category: '情缘', meaning: '主吸引力、人缘、审美、情感流动，也可对应社交曝光。', advice: '宜正向经营人际，忌感情牵扯不清。' },
+  咸池: { figure: '池', title: '咸池', category: '情缘', meaning: '古法常与桃花同看，偏重欲望、情绪、声色与人际牵动。', advice: '宜清醒自持，重要关系保持边界。' },
+  红鸾: { figure: '鸾', title: '红鸾', category: '婚缘', meaning: '主喜庆、姻缘、情感机会与关系推进。', advice: '宜真诚沟通，不宜以冲动代替承诺。' },
+  天喜: { figure: '喜', title: '天喜', category: '婚缘', meaning: '主喜事、人情往来与关系中的愉悦气象。', advice: '宜顺势增进关系，也要看现实条件。' },
+  驿马: { figure: '马', title: '驿马', category: '行移', meaning: '主动象、奔波、迁移、出差、变动与远方机会。', advice: '宜提前规划路线与节奏，忌仓促远行。' },
+  华盖: { figure: '盖', title: '华盖', category: '才艺', meaning: '主孤高、艺术、宗教玄学、独立思考，也有清冷自守之象。', advice: '宜深造修心，少陷入孤僻。' },
+  将星: { figure: '将', title: '将星', category: '权柄', meaning: '主统筹、掌控、号令与承担责任的能力。', advice: '宜承担正事，忌刚愎自用。' },
+  亡神: { figure: '亡', title: '亡神', category: '杂曜', meaning: '多主心神耗散、遗失、隐忧和注意力偏离，需结合格局判断。', advice: '宜收心、核对、保管重要物品。' },
+  劫煞: { figure: '劫', title: '劫煞', category: '刑耗', meaning: '主竞争、损耗、突发阻力与资源被分夺的倾向。', advice: '宜留备份、控风险，慎作担保。' },
+  灾煞: { figure: '灾', title: '灾煞', category: '刑耗', meaning: '偏向风险、阻滞和意外消耗，需看岁运触发程度。', advice: '宜稳行，不宜冒险。' },
+  丧门: { figure: '慎', title: '丧门', category: '慎忌', meaning: '古法多作慎忌星看，提示情绪低落、家宅事务或耗神之事。', advice: '宜关照家人身心，避免传播焦虑。' },
+  孤辰: { figure: '孤', title: '孤辰', category: '孤曜', meaning: '主独处、独立、关系疏离感，也可化为专注研究。', advice: '宜独立思考，也要保留沟通。' },
+  寡宿: { figure: '寡', title: '寡宿', category: '孤曜', meaning: '多看情感疏离、独守与内敛之象，需结合夫妻宫和岁运。', advice: '宜主动表达，不把沉默当稳定。' },
+  元辰: { figure: '元', title: '元辰', category: '杂曜', meaning: '多作复杂气机和暗处牵动参考，常提示心绪与旧事牵连。', advice: '宜断旧账、理清边界。' },
+  魁罡: { figure: '魁', title: '魁罡', category: '特殊格曜', meaning: '主刚烈、决断、气势强，成则担当，偏则过刚。', advice: '宜以规则约束锋芒。' },
+  阴差阳错: { figure: '错', title: '阴差阳错', category: '婚缘', meaning: '古法常用于婚缘与关系错位参考，不宜单独断吉凶。', advice: '关系中宜把话说清，少让误会累积。' },
+  十恶大败: { figure: '败', title: '十恶大败', category: '慎忌', meaning: '传统慎忌神煞之一，多提示资源、财务或承载力要谨慎看。', advice: '宜保守理财，重大事项看全局。' },
+  孤鸾: { figure: '鸾', title: '孤鸾', category: '婚缘', meaning: '多用于情感与婚缘孤克倾向参考，需结合全盘综合判断。', advice: '宜修沟通与包容，不可单凭此星定论。' },
+  天赦: { figure: '赦', title: '天赦', category: '德曜', meaning: '主宽解、赦免、缓和，常作转圜与修正机会参考。', advice: '宜改过修正，把握补救窗口。' },
+  三奇贵人: { figure: '奇', title: '三奇贵人', category: '贵人', meaning: '主奇才、机缘、特殊组合和突破力，仍需格局配合。', advice: '宜走专业路线，不宜猎奇浮夸。' },
+  太岁: { figure: '岁', title: '太岁', category: '岁君', meaning: '太岁为岁君，传统中代表当年岁气与时令主宰，术数里常看流年气机。', advice: '宜敬时守分，重大事择稳妥路径。' },
+  空亡: { figure: '空', title: '空亡', category: '旬空', meaning: '提示某些象意暂虚、落空或待时而发，不等于完全没有。', advice: '宜复核时间与条件，少急断。' }
+};
+
 function normalizeResult(result) {
   if (!result) return result;
   const title = result.title || '';
@@ -26,6 +62,22 @@ function cellToText(cell) {
     ].filter(Boolean).join('、');
   }
   return '';
+}
+
+function splitSpiritNames(text) {
+  return String(text || '')
+    .split(/[、，,\s　]+/)
+    .map((item) => item.trim())
+    .filter((item) => item && item !== '—' && item !== '未见常用神煞入柱');
+}
+
+function toSpiritItem(name) {
+  const info = SPIRIT_INFO[name] || {};
+  return {
+    name,
+    figure: info.figure || name.slice(0, 1),
+    category: info.category || '神煞'
+  };
 }
 
 function findRow(rows, label) {
@@ -62,6 +114,10 @@ function buildSongPlate(baziPlate) {
       nayin: cellToText(rowMap.nayin.cells[index]),
       spirits: cellToText(rowMap.spirits.cells[index])
     }));
+  pillars.forEach((pillar) => {
+    pillar.spiritItems = splitSpiritNames(pillar.spirits).map(toSpiritItem);
+    pillar.spirits = pillar.spirits || '—';
+  });
 
   return {
     pillars,
@@ -86,7 +142,10 @@ Page({
     selectedLuckIndex: 0,
     selectedYearIndex: 0,
     selectedYearOffset: 0,
-    selectedMonthIndex: 0
+    selectedMonthIndex: 0,
+    spiritModal: {
+      visible: false
+    }
   },
 
   onLoad() {
@@ -194,6 +253,31 @@ Page({
       confirmText: '知道了'
     });
   },
+
+  openSpiritInfo(event) {
+    const name = event.currentTarget.dataset.name;
+    if (!name) return;
+    const hit = (this.data.result && this.data.result.professional && this.data.result.professional.spirits || [])
+      .find((item) => item.name === name);
+    const preset = SPIRIT_INFO[name] || {};
+    const modal = {
+      visible: true,
+      name,
+      title: preset.title || name,
+      figure: preset.figure || name.slice(0, 1),
+      category: preset.category || (hit && hit.category) || '神煞',
+      meaning: preset.meaning || '此神煞为传统子平术数中的辅助观察项，需结合四柱格局、旺衰、喜忌与岁运综合判断。',
+      advice: preset.advice || '建议只作辅助参考，不宜脱离原局强弱和现实条件单独断事。',
+      basis: hit && hit.basis ? hit.basis : '当前命盘命中此神煞，测试版展示其通用含义。'
+    };
+    this.setData({ spiritModal: modal });
+  },
+
+  closeSpiritInfo() {
+    this.setData({ 'spiritModal.visible': false });
+  },
+
+  noop() {},
 
   archiveCurrentCase() {
     if (!this.data.result) return;

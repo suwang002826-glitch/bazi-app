@@ -106,7 +106,20 @@
         <view class="spirit-ribbon">
           <view class="detail-label">神煞</view>
           <view class="spirit-values">
-            <text wx:for="{{songPlate.pillars}}" wx:key="label">{{item.label}}：{{item.spirits}}</text>
+            <view class="spirit-basic-line" wx:for="{{songPlate.pillars}}" wx:key="label">
+              <text class="spirit-basic-label">{{item.label}}：</text>
+              <view class="spirit-chip-row" wx:if="{{item.spiritItems.length}}">
+                <text
+                  class="spirit-name-chip"
+                  wx:for="{{item.spiritItems}}"
+                  wx:for-item="spirit"
+                  wx:key="name"
+                  bindtap="openSpiritInfo"
+                  data-name="{{spirit.name}}"
+                >{{spirit.name}}</text>
+              </view>
+              <text wx:else class="spirit-empty">未见常用神煞入柱</text>
+            </view>
           </view>
         </view>
       </view>
@@ -285,7 +298,17 @@
       <view class="spirit-list">
         <view class="spirit-line" wx:for="{{professionalDetail.pillarSpirits}}" wx:key="value">
           <text class="spirit-pill">{{item.value}}</text>
-          <text class="spirit-names">{{item.namesText}}</text>
+          <view class="spirit-names" wx:if="{{item.names.length}}">
+            <text
+              class="spirit-name-chip"
+              wx:for="{{item.names}}"
+              wx:for-item="name"
+              wx:key="*this"
+              bindtap="openSpiritInfo"
+              data-name="{{name}}"
+            >{{name}}</text>
+          </view>
+          <text wx:else class="spirit-empty">未见常用神煞入柱</text>
         </view>
       </view>
 
@@ -293,7 +316,16 @@
       <view class="spirit-list">
         <view class="spirit-line" wx:for="{{professionalDetail.luckSpirits}}" wx:key="value">
           <text class="spirit-pill {{item.active ? 'active' : ''}}">{{item.value}}</text>
-          <text class="spirit-names">{{item.namesText}}</text>
+          <view class="spirit-names">
+            <text
+              class="spirit-name-chip"
+              wx:for="{{item.names}}"
+              wx:for-item="name"
+              wx:key="*this"
+              bindtap="openSpiritInfo"
+              data-name="{{name}}"
+            >{{name}}</text>
+          </view>
         </view>
       </view>
 
@@ -363,6 +395,35 @@
         </view>
         <view class="result-line muted">{{result.aiText}}</view>
       </view>
+    </view>
+  </view>
+
+  <view wx:if="{{spiritModal.visible}}" class="spirit-modal-mask" catchtap="closeSpiritInfo">
+    <view class="spirit-modal" catchtap="noop">
+      <view class="spirit-modal-head">
+        <view class="spirit-figure-card">
+          <view class="spirit-figure-symbol">{{spiritModal.figure}}</view>
+          <view class="spirit-figure-caption">星曜符牌</view>
+        </view>
+        <view class="spirit-modal-title-block">
+          <view class="spirit-modal-kicker">{{spiritModal.category}}</view>
+          <view class="spirit-modal-title">{{spiritModal.title}}</view>
+          <view class="spirit-modal-source">传统子平神煞 · 测试版释义</view>
+        </view>
+      </view>
+      <view class="spirit-modal-section">
+        <view class="spirit-modal-label">含义</view>
+        <view class="spirit-modal-copy">{{spiritModal.meaning}}</view>
+      </view>
+      <view class="spirit-modal-section">
+        <view class="spirit-modal-label">命盘依据</view>
+        <view class="spirit-modal-copy">{{spiritModal.basis}}</view>
+      </view>
+      <view class="spirit-modal-section">
+        <view class="spirit-modal-label">使用提醒</view>
+        <view class="spirit-modal-copy">{{spiritModal.advice}}</view>
+      </view>
+      <button class="spirit-modal-close" bindtap="closeSpiritInfo">知道了</button>
     </view>
   </view>
 </view>

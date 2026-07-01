@@ -54,7 +54,19 @@
 
       <view class="analysis-lunar">{{analysis.lunarLine}}</view>
 
-      <view class="analysis-meta">
+      <view class="insight-grid">
+        <view class="insight-card {{item.tone}}-insight" wx:for="{{analysis.sections}}" wx:key="key">
+          <view class="insight-top">
+            <view class="insight-title">{{item.title}}</view>
+            <view class="insight-tag">{{item.tag}}</view>
+          </view>
+          <view class="insight-primary">{{item.primary}}</view>
+          <view class="insight-secondary">{{item.secondary}}</view>
+          <view class="insight-note">{{item.note}}</view>
+        </view>
+      </view>
+
+      <view class="analysis-meta compact-meta">
         <view>
           <text>建除</text>
           <text>{{analysis.duty}}</text>
@@ -72,22 +84,6 @@
           <text>{{analysis.hourText}}</text>
         </view>
       </view>
-
-      <view class="almanac-block good-block">
-        <view class="almanac-badge">宜</view>
-        <view class="almanac-tags">
-          <text wx:for="{{analysis.good}}" wx:key="*this">{{item}}</text>
-        </view>
-      </view>
-
-      <view class="almanac-block avoid-block">
-        <view class="almanac-badge">忌</view>
-        <view class="almanac-tags">
-          <text wx:for="{{analysis.avoid}}" wx:key="*this">{{item}}</text>
-        </view>
-      </view>
-
-      <view class="analysis-advice">{{analysis.advice}}</view>
     </view>
 
     <view class="bazi-entry-card" bindtap="goBazi" hover-class="entry-card-active">
