@@ -179,6 +179,35 @@ function buildSongPlate(baziPlate) {
   };
 }
 
+function decorateProfessionalDetail(detail) {
+  if (!detail) return detail;
+  const rows = (detail.rows || []).map((row) => ({
+    ...row,
+    className: [
+      row.className || '',
+      row.strong ? 'strong-row' : '',
+      row.highlight ? 'spirit-row' : '',
+      row.label === '藏干' ? 'hidden-row' : '',
+      row.label === '天干' ? 'stem-row' : '',
+      row.label === '地支' ? 'branch-row' : ''
+    ].filter(Boolean).join(' '),
+    cells: (row.cells || []).map((cell) => ({
+      ...cell,
+      displayClassName: [
+        cell.className || 'plain',
+        cell.large ? 'large-cell' : '',
+        cell.hasRichLines ? 'hidden-rich-cell' : ''
+      ].filter(Boolean).join(' ')
+    }))
+  }));
+
+  return {
+    ...detail,
+    tableWidth: (detail.columns || []).length * 124 + 104,
+    rows
+  };
+}
+
 Page({
   data: {
     result: null,
@@ -203,7 +232,7 @@ Page({
     const reading = app.globalData.currentBaziReading || wx.getStorageSync('currentBaziReading');
     if (reading && reading.result && reading.baziPlate) {
       const result = normalizeResult(reading.result);
-      const professionalDetail = createProfessionalDetail(result);
+      const professionalDetail = decorateProfessionalDetail(createProfessionalDetail(result));
       this.setData({
         result,
         baziPlate: reading.baziPlate,
@@ -236,7 +265,7 @@ Page({
       monthIndex: this.data.selectedMonthIndex,
       ...patch
     };
-    const professionalDetail = createProfessionalDetail(this.data.result, next);
+    const professionalDetail = decorateProfessionalDetail(createProfessionalDetail(this.data.result, next));
     this.setData({
       professionalDetail,
       selectedLuckIndex: professionalDetail.selectedLuckIndex,

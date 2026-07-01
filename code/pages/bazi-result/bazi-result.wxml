@@ -82,14 +82,6 @@
     </view>
 
     <view wx:if="{{isProTab}}">
-      <view class="pro-summary">
-        <view class="summary-main">{{result.professional.chartSummary.oneLine}}</view>
-        <view class="summary-tags">
-          <text class="summary-tag" wx:for="{{result.professional.chartSummary.tags}}" wx:key="*this">{{item}}</text>
-        </view>
-        <view class="summary-note">{{result.professional.chartSummary.caution}}</view>
-      </view>
-
       <scroll-view class="pro-table-scroll" scroll-x="true">
         <view class="pro-table" style="width: {{professionalDetail.tableWidth}}rpx;">
           <view class="pro-row pro-head-row">
@@ -98,7 +90,7 @@
           </view>
           <view class="pro-row {{row.className}}" wx:for="{{professionalDetail.rows}}" wx:for-item="row" wx:key="label">
             <view class="pro-label">{{row.label}}</view>
-            <view class="pro-cell {{cell.className}}" wx:for="{{row.cells}}" wx:for-item="cell" wx:for-index="cellIndex" wx:key="cellIndex">
+            <view class="pro-cell {{cell.displayClassName}}" wx:for="{{row.cells}}" wx:for-item="cell" wx:for-index="cellIndex" wx:key="cellIndex">
               <view wx:if="{{cell.hasRichLines}}" class="hidden-rich-wrap">
                 <view wx:if="{{cell.hidden1Show}}" class="hidden-stem-line">
                   <text class="hidden-stem {{cell.hidden1Class}}">{{cell.hidden1Stem}}</text>

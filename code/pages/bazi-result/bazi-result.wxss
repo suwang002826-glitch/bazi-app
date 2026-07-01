@@ -2002,3 +2002,205 @@
   font-weight: 900;
   line-height: 1.25;
 }
+
+/* Professional plate restored to the compact dark tabular style. */
+.bazi-result-page .pro-table-scroll {
+  width: auto;
+  margin: 18rpx 12rpx 24rpx;
+  overflow: hidden;
+  border: 1rpx solid rgba(217, 191, 113, .10);
+  border-radius: 14rpx;
+  background: #090b10;
+  box-shadow:
+    inset 0 1rpx 0 rgba(242, 240, 228, .045),
+    0 16rpx 34rpx rgba(0, 0, 0, .28);
+}
+
+.bazi-result-page .pro-table {
+  min-width: 100%;
+  background: #0b0d12;
+}
+
+.bazi-result-page .pro-row {
+  display: grid;
+  grid-template-columns: 104rpx repeat(6, 124rpx);
+  min-height: 82rpx;
+  border-bottom: 1rpx solid rgba(242, 240, 228, .055);
+}
+
+.bazi-result-page .pro-row:last-child {
+  border-bottom: 0;
+}
+
+.bazi-result-page .pro-head-row {
+  min-height: 76rpx;
+  background: #151619;
+}
+
+.bazi-result-page .pro-label,
+.bazi-result-page .pro-head-cell,
+.bazi-result-page .pro-cell {
+  min-width: 0;
+  border-left: 1rpx solid rgba(242, 240, 228, .025);
+}
+
+.bazi-result-page .pro-label {
+  border-left: 0;
+  background: #121416;
+  color: rgba(242, 240, 228, .30);
+  font-size: 28rpx;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.bazi-result-page .pro-head-cell {
+  color: rgba(242, 240, 228, .54);
+  font-size: 28rpx;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.bazi-result-page .pro-cell {
+  justify-content: center;
+  min-height: 82rpx;
+  padding: 16rpx 8rpx;
+  color: rgba(242, 240, 228, .76);
+  font-size: 27rpx;
+  font-weight: 800;
+  line-height: 1.42;
+}
+
+.bazi-result-page .pro-row.strong-row {
+  min-height: 118rpx;
+  background: #101214;
+}
+
+.bazi-result-page .pro-row.stem-row {
+  background: #101214;
+}
+
+.bazi-result-page .pro-row.branch-row {
+  background: #141414;
+}
+
+.bazi-result-page .pro-row.hidden-row {
+  min-height: 142rpx;
+  background: #101214;
+}
+
+.bazi-result-page .pro-cell.large-cell {
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.bazi-result-page .pro-cell.large-cell .cell-main {
+  font-size: 58rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.bazi-result-page .pro-cell.large-cell .element-icon {
+  margin-top: 0;
+  font-size: 22rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.bazi-result-page .pro-cell .cell-line {
+  display: block;
+  width: 100%;
+  color: inherit;
+  font-size: 26rpx;
+  font-weight: 800;
+  line-height: 1.58;
+  text-align: center;
+  white-space: normal;
+}
+
+.bazi-result-page .pro-cell.hidden-rich-cell {
+  align-items: center;
+  justify-content: center;
+}
+
+.bazi-result-page .pro-cell .hidden-rich-wrap {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  width: 100%;
+}
+
+.bazi-result-page .pro-cell .hidden-stem-line {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6rpx;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+  line-height: 1.18;
+}
+
+.bazi-result-page .pro-cell .hidden-stem {
+  font-size: 27rpx;
+  font-weight: 900;
+  line-height: 1.18;
+}
+
+.bazi-result-page .pro-cell .hidden-god {
+  color: rgba(242, 240, 228, .72);
+  font-size: 21rpx;
+  font-weight: 800;
+  line-height: 1.18;
+  white-space: nowrap;
+}
+
+.bazi-result-page .pro-row.spirit-row {
+  min-height: 180rpx;
+  background: #0f1116;
+}
+
+.bazi-result-page .pro-row.spirit-row .pro-cell,
+.bazi-result-page .pro-row.spirit-row .cell-line,
+.bazi-result-page .pro-row.spirit-row .cell-main {
+  align-items: flex-start;
+  justify-content: flex-start;
+  color: #d9bf71;
+  font-size: 25rpx;
+  font-weight: 900;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.bazi-result-page .pro-cell.wood .cell-main,
+.bazi-result-page .pro-cell.wood .element-icon,
+.bazi-result-page .pro-cell .hidden-stem.wood {
+  color: #27d18f;
+}
+
+.bazi-result-page .pro-cell.fire .cell-main,
+.bazi-result-page .pro-cell.fire .element-icon,
+.bazi-result-page .pro-cell .hidden-stem.fire {
+  color: #ff5c62;
+}
+
+.bazi-result-page .pro-cell.earth .cell-main,
+.bazi-result-page .pro-cell.earth .element-icon,
+.bazi-result-page .pro-cell .hidden-stem.earth {
+  color: #c7893d;
+}
+
+.bazi-result-page .pro-cell.metal .cell-main,
+.bazi-result-page .pro-cell.metal .element-icon,
+.bazi-result-page .pro-cell .hidden-stem.metal {
+  color: #e2c94e;
+}
+
+.bazi-result-page .pro-cell.water .cell-main,
+.bazi-result-page .pro-cell.water .element-icon,
+.bazi-result-page .pro-cell .hidden-stem.water {
+  color: #2ea9ff;
+}
