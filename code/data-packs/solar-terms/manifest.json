@@ -1,0 +1,27 @@
+{
+  "calendarDataVersion": "hko-solar-term-data-pack@2026.07.03-preview",
+  "status": "hko-candidate-preview-not-runtime-approved",
+  "runtimeEnabled": false,
+  "runtimeEnabledPackIds": [],
+  "primaryAuthority": "Hong Kong Observatory",
+  "primarySourceId": "HKO-SOLAR-TERMS-OFFICIAL-XML",
+  "policy": {
+    "runtimeRule": "Only packs explicitly promoted to approved-for-runtime may be loaded by bazi calculation code.",
+    "precisionRule": "Hong Kong Observatory XML provides minute-level Hong Kong Time. User screenshots with seconds are cross-check evidence only and must remain within one minute of the HKO official XML values.",
+    "timezoneRule": "HKO Hong Kong Time is UTC+08:00 and can be normalized to Beijing time for mainland bazi calculation without clock offset.",
+    "pmoRule": "Purple Mountain Observatory remains an optional cross-check source when public machine-readable or archived extracts are available."
+  },
+  "packs": [
+    {
+      "id": "hko-solar-terms-2024-2026-candidate",
+      "path": "candidates/hko-solar-terms-2024-2026-candidate.json",
+      "status": "candidate-preview-not-runtime-approved",
+      "coveredYears": [2024, 2025, 2026],
+      "termCount": 72,
+      "runtimeEnabled": false
+    }
+  ],
+  "blockers": [
+    "stable-runtime-approval-not-granted"
+  ]
+}
