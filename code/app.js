@@ -6,6 +6,8 @@ App({
       enabled: true,
       baseUrl: 'http://127.0.0.1:8787',
       calculatePath: '/bazi/calculate',
+      healthPath: '/health',
+      coveragePath: '/bazi/calendar/coverage',
       timeout: 15000,
       provider: 'backend-local'
     },
