@@ -1,0 +1,1234 @@
+{
+  "dataPackId": "hko-lunar-conversions-1901-2100",
+  "calendarDataVersion": "hko-lunar-text-pack@1901-2100.runtime-preview.1",
+  "source": "HKO_TEXT_TABLE_1901_2100",
+  "status": "backend-runtime-preview",
+  "coverage": {
+    "gregorianYears": [
+      1901,
+      2100
+    ],
+    "completeGregorianCalendar": true,
+    "completeLunarCalendar": false,
+    "records": 73049,
+    "scope": "HKO Gregorian-Lunar calendar text tables for Gregorian years 1901-2100"
+  },
+  "authoritySource": "Hong Kong Observatory Gregorian-Lunar Calendar Conversion Table text files",
+  "sourceLedger": [
+    {
+      "year": 1901,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1901e.txt",
+      "sha256": "9423a8ebe9d5a606619ac6d1bb2a83bddbc5c2a4a061dc08837a484dcb9cb415",
+      "byteLength": 26122
+    },
+    {
+      "year": 1902,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1902e.txt",
+      "sha256": "d7e6affc85b0a29181c79dc89a78b965c5cfb2032ae24998ecf1710b6967597c",
+      "byteLength": 26121
+    },
+    {
+      "year": 1903,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1903e.txt",
+      "sha256": "36c125b3d6cb2b3e18c9cce765f7e817fa52ebaf8c04fedbc242df61d336638d",
+      "byteLength": 26119
+    },
+    {
+      "year": 1904,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1904e.txt",
+      "sha256": "ffe0a2d9d7fc6a6a4cd6a4e973db635f6fc6e95e3ab135d2987420e1a5e14297",
+      "byteLength": 26197
+    },
+    {
+      "year": 1905,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1905e.txt",
+      "sha256": "a1eabfb16544df574f7781b18789b060a2cdc9462c4eae2266d08cdcb152cc11",
+      "byteLength": 26122
+    },
+    {
+      "year": 1906,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1906e.txt",
+      "sha256": "f2e4f976ad94c5ac8332562f059d1aafd97b48771fe22130dc83be7b13419314",
+      "byteLength": 26121
+    },
+    {
+      "year": 1907,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1907e.txt",
+      "sha256": "bb2ab9ba3a5fbff9bce70185105026034492a9d88a838e363805851b8ed71816",
+      "byteLength": 26121
+    },
+    {
+      "year": 1908,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1908e.txt",
+      "sha256": "b876337236622187d3e752a22e049d271bcf80d3afec0094a3dca6c5e0cc8f60",
+      "byteLength": 26196
+    },
+    {
+      "year": 1909,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1909e.txt",
+      "sha256": "f9cfab1ee638e86618a289c73ef1e422cb044b11fb65e55c34900daf7e89d729",
+      "byteLength": 26125
+    },
+    {
+      "year": 1910,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1910e.txt",
+      "sha256": "b48c75521db4b7b7ad8bf0b598106dc7ad3bf95db00250a3a36c310b3ea82297",
+      "byteLength": 26122
+    },
+    {
+      "year": 1911,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1911e.txt",
+      "sha256": "48caebdb8d107fbb2690cc8ee7f5d5fb352228c220ecbfb31ce693a653b81141",
+      "byteLength": 26122
+    },
+    {
+      "year": 1912,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1912e.txt",
+      "sha256": "687b3b8ccc76fac41b8fd116f4f12d05f0dd620a4ee2783a9b873e477192f91c",
+      "byteLength": 26194
+    },
+    {
+      "year": 1913,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1913e.txt",
+      "sha256": "fc95990948ac76c54a16268893b798782c6c46a7921bd7471ebe2ac2526e667b",
+      "byteLength": 26122
+    },
+    {
+      "year": 1914,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1914e.txt",
+      "sha256": "ea22aa4b0d91cb84de10a1277ddc655408ff3570a7ea24bf758d95c33645e407",
+      "byteLength": 26107
+    },
+    {
+      "year": 1915,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1915e.txt",
+      "sha256": "b2ecc3de2efe4e67ca16c0d76ba89ee782fc00c43934fd9111300ebb7080f83b",
+      "byteLength": 26121
+    },
+    {
+      "year": 1916,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1916e.txt",
+      "sha256": "7408a1aa4572d47aeb7d35e307c83896c1411a9796c1b938bb04b01fe31d7a11",
+      "byteLength": 26195
+    },
+    {
+      "year": 1917,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1917e.txt",
+      "sha256": "7f5a8bd404e224d43598680fc33478de36f1d28432d52d5c14453cf80b557fb7",
+      "byteLength": 26121
+    },
+    {
+      "year": 1918,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1918e.txt",
+      "sha256": "e3d83bfe16d69f9497bdf0c8dde2e1862cb8a4efb0fc5dff94ebd9277d9df5e5",
+      "byteLength": 26122
+    },
+    {
+      "year": 1919,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1919e.txt",
+      "sha256": "8cea3deec5d785826ed1b8042e905228db3f48541d14d036a724855aa1bece8f",
+      "byteLength": 26122
+    },
+    {
+      "year": 1920,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1920e.txt",
+      "sha256": "5e144f3876107f8b6fda99402014592234e857bacddafba38e2372a5c4470b67",
+      "byteLength": 26184
+    },
+    {
+      "year": 1921,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1921e.txt",
+      "sha256": "fc5e5c7a781443566d458b9f7aea6d497711faf801276b79327850c98073a15d",
+      "byteLength": 26126
+    },
+    {
+      "year": 1922,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1922e.txt",
+      "sha256": "c091ecba166186eb118969b07e5b1e3de903c0d9c8fb245fdeca17f44b41f9a4",
+      "byteLength": 26121
+    },
+    {
+      "year": 1923,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1923e.txt",
+      "sha256": "dd950656051b0b2f085df1604aa24556e39dd06609728444ef031addec75497f",
+      "byteLength": 26122
+    },
+    {
+      "year": 1924,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1924e.txt",
+      "sha256": "e518be2e502cc0b0d8e13eb34ad049726c40a98b40c444c8fe4cfb01e36993eb",
+      "byteLength": 26194
+    },
+    {
+      "year": 1925,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1925e.txt",
+      "sha256": "3d6d887ed35014061d98bd33e7b5d82d98b5b9bcb1f38cb0acda3bb1bd664a96",
+      "byteLength": 26121
+    },
+    {
+      "year": 1926,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1926e.txt",
+      "sha256": "2a0be7b31a0347d30779659e93971e0405935746789e4fdd05d5ded33d65dfed",
+      "byteLength": 26125
+    },
+    {
+      "year": 1927,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1927e.txt",
+      "sha256": "be740f88cbb74fc7055ce1355efa75607a82a3f2aaae3b05cff7c528c1f28192",
+      "byteLength": 26126
+    },
+    {
+      "year": 1928,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1928e.txt",
+      "sha256": "0137ae43c70b4b698e825f1ea33c0770ce59a2e5d3175bd197da23de683800b9",
+      "byteLength": 26196
+    },
+    {
+      "year": 1929,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1929e.txt",
+      "sha256": "cc0f77e262b9145d88306d196c1872f3a4de88fffe4ef7aa3c5eb2dd0af0a928",
+      "byteLength": 26122
+    },
+    {
+      "year": 1930,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1930e.txt",
+      "sha256": "c8b75ae43133c265884f67a94f3f595c7c212d398f5c98d0994a16b1af31edee",
+      "byteLength": 26121
+    },
+    {
+      "year": 1931,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1931e.txt",
+      "sha256": "b82d20b60fec2dad23f3c6bd82636cb6b6f7073520eda2b4d8d79ee816558f96",
+      "byteLength": 26123
+    },
+    {
+      "year": 1932,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1932e.txt",
+      "sha256": "58473f1fea1db52b9973904751cd5d40c61f6cd093da3fe5cb4e7dd2f6419159",
+      "byteLength": 26197
+    },
+    {
+      "year": 1933,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1933e.txt",
+      "sha256": "8c35d0592b4469bfb4a06ec8e165838b435813b88e38f26a73989bf5ac97096a",
+      "byteLength": 26126
+    },
+    {
+      "year": 1934,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1934e.txt",
+      "sha256": "cc3e087f0c418078507efa98f562e0304db4330cbf02a1ddaf96f9c9249080bf",
+      "byteLength": 26121
+    },
+    {
+      "year": 1935,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1935e.txt",
+      "sha256": "1d19b0057eee8158129d9a533daf20e4721ac1acc67cc486d33c348d0df7cb90",
+      "byteLength": 26122
+    },
+    {
+      "year": 1936,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1936e.txt",
+      "sha256": "9ac8f66139ef7619ecea5ad555c82fd4e8b46c7107cda7a05ca973d42e9f1546",
+      "byteLength": 26192
+    },
+    {
+      "year": 1937,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1937e.txt",
+      "sha256": "cc48924e2ea812a05b19ba816e89321cd5d1c5b88dc8ce3f4007a38ff4ca0b37",
+      "byteLength": 26123
+    },
+    {
+      "year": 1938,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1938e.txt",
+      "sha256": "04ee219ffdad36f9084cba31ec838e18ccac3d6fb118300a2375ec6dac36a111",
+      "byteLength": 26123
+    },
+    {
+      "year": 1939,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1939e.txt",
+      "sha256": "aa5b601c7a7bb6fcf1cb7df483930b42b9b1207dd3e102e368de1df4d8477ec7",
+      "byteLength": 26121
+    },
+    {
+      "year": 1940,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1940e.txt",
+      "sha256": "99539af7489d7f816166011da7e44f11cca9561bb41519d972f5c0f762662488",
+      "byteLength": 26198
+    },
+    {
+      "year": 1941,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1941e.txt",
+      "sha256": "b36484e79fc6d1d6b0d9f30b82a91fe8543b85f0bd41216d7a49e330e2b472a5",
+      "byteLength": 26627
+    },
+    {
+      "year": 1942,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1942e.txt",
+      "sha256": "72630e9bb76592934ac3d541fe21cf0a920fd31837a76dbc8b62ef4c2b72f309",
+      "byteLength": 26261
+    },
+    {
+      "year": 1943,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1943e.txt",
+      "sha256": "93ff1cf5d047f579e8f9cfcc532f870e216402a639cd1428a2f339bc34afa6c2",
+      "byteLength": 26261
+    },
+    {
+      "year": 1944,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1944e.txt",
+      "sha256": "53f367b97131020dc35e3e4022cd19b3abc9f3dc51b871504e0e97dee02166f3",
+      "byteLength": 26335
+    },
+    {
+      "year": 1945,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1945e.txt",
+      "sha256": "a537734c02f9547815ebc1dd74169cfd3ba17a804afba07c64d5b3bc14767b4a",
+      "byteLength": 26263
+    },
+    {
+      "year": 1946,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1946e.txt",
+      "sha256": "51e33adea0cc34739a30af89bf306d7efe1ff9b4fc7f3dce319489c91e8eb4dd",
+      "byteLength": 26258
+    },
+    {
+      "year": 1947,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1947e.txt",
+      "sha256": "8583dacc14b7df8af2d6568033203ad70c58507b5124fed1c443bda10382e771",
+      "byteLength": 26629
+    },
+    {
+      "year": 1948,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1948e.txt",
+      "sha256": "0337faa7bbfcae01bfe7981792a91d9ed5909d97497548c5dfcc896b8be59413",
+      "byteLength": 26326
+    },
+    {
+      "year": 1949,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1949e.txt",
+      "sha256": "c008c7cababa7d940984ed634517d79d0c1cef938cd7330d2cc86a9fb8d83264",
+      "byteLength": 26256
+    },
+    {
+      "year": 1950,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1950e.txt",
+      "sha256": "b1c705b4d3630b1d97a343c80a9c55586739a53fd37c04a93e225edfee9177fb",
+      "byteLength": 26260
+    },
+    {
+      "year": 1951,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1951e.txt",
+      "sha256": "fa8c352f51dc2aefff124db4ddf2ab5857d856005bcbc84aab797b9b78a52686",
+      "byteLength": 26260
+    },
+    {
+      "year": 1952,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1952e.txt",
+      "sha256": "6f7b43f69ccccddb47e5e6f8f910e963ecd57935538c2f44e8c4e4aea721207e",
+      "byteLength": 26702
+    },
+    {
+      "year": 1953,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1953e.txt",
+      "sha256": "8ea67ebad7bd6f84d9dfc018cbc0eb3b4586b042fa2ae4dfc52a8339e2ddf1ef",
+      "byteLength": 26258
+    },
+    {
+      "year": 1954,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1954e.txt",
+      "sha256": "b665b714d36162c5082d5f10712a00515303e7cca8ccd0eb362f30258ea899dd",
+      "byteLength": 26259
+    },
+    {
+      "year": 1955,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1955e.txt",
+      "sha256": "338e6fbb68de064a2fb8f12374808ee2bc12c0e80d7a2e4394d396ed0a3dc599",
+      "byteLength": 26258
+    },
+    {
+      "year": 1956,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1956e.txt",
+      "sha256": "fd8cad1ae4c131c434b4bdb04fb82609b76a9c0bbac4cacd6bdb14ac000ff213",
+      "byteLength": 26334
+    },
+    {
+      "year": 1957,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1957e.txt",
+      "sha256": "b3dee6ee652e11119affdd127d001d4fc67b1ada535d901190d81888e2e758b2",
+      "byteLength": 26263
+    },
+    {
+      "year": 1958,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1958e.txt",
+      "sha256": "702030421aba600333ae18ed7da48fb7ffdd78b32fcdfc3e8bde2c44af4a1e6e",
+      "byteLength": 26256
+    },
+    {
+      "year": 1959,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1959e.txt",
+      "sha256": "05b517d733ffb2b6b8df7647df0298f0290ed5b7cbb33d66945774032be1c415",
+      "byteLength": 26257
+    },
+    {
+      "year": 1960,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1960e.txt",
+      "sha256": "160063a88318b604d3d1b31b58b2248c7959759e2e90751e3e0fa95fc2cc906d",
+      "byteLength": 26325
+    },
+    {
+      "year": 1961,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1961e.txt",
+      "sha256": "09fad3e69ff5f2a3f95899980b98dd73896f5fede30b900c1583617acb534d30",
+      "byteLength": 26258
+    },
+    {
+      "year": 1962,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1962e.txt",
+      "sha256": "db356ff31f5b918049549918fe6b99fdf6ea31860dd4532849cfb6c6f74c9dc4",
+      "byteLength": 26255
+    },
+    {
+      "year": 1963,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1963e.txt",
+      "sha256": "72c7541e86d4f0a9f092d5c2c7d6906927624869f1808a1030db361a33ec7b83",
+      "byteLength": 26261
+    },
+    {
+      "year": 1964,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1964e.txt",
+      "sha256": "5dd06d1a84ac4018d83cc90707ec003fbd607cf254d928fa757ecc22030c605a",
+      "byteLength": 26333
+    },
+    {
+      "year": 1965,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1965e.txt",
+      "sha256": "3a6686dce2cce1581ba85ab7b055931879c01be7c036bf55904cf0e3b6066980",
+      "byteLength": 26258
+    },
+    {
+      "year": 1966,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1966e.txt",
+      "sha256": "c9460c7e78bcdd0e84ed4481a402e51a3a7a04d4ff135e1f759fe232bd60efed",
+      "byteLength": 26255
+    },
+    {
+      "year": 1967,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1967e.txt",
+      "sha256": "5de41a47833df1875c53ee6e5630317060cf5d80cda053ad43545550af3070cd",
+      "byteLength": 26254
+    },
+    {
+      "year": 1968,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1968e.txt",
+      "sha256": "4d2ce64626f55b4ab1db58abaf08c6b40a09dd260d64c0d98ecc7937ba85ad05",
+      "byteLength": 26332
+    },
+    {
+      "year": 1969,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1969e.txt",
+      "sha256": "2457f8e84761ac6e0db788c6ff1128a58243b95199ccacda84580440901a82a7",
+      "byteLength": 26261
+    },
+    {
+      "year": 1970,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1970e.txt",
+      "sha256": "33fbc2a15d06470a156735e3403826aba9b9e0bb47b3ace04cab1f2a1ac037b3",
+      "byteLength": 26258
+    },
+    {
+      "year": 1971,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1971e.txt",
+      "sha256": "f7d182dbc74c398b7b6dbf8a9e218f2201599ab805addd63a3ac4d3cefd907e0",
+      "byteLength": 26258
+    },
+    {
+      "year": 1972,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1972e.txt",
+      "sha256": "5e546054d13a0aa8dd96c9230e5ce964b26686a052daef3bbaa202f850824aeb",
+      "byteLength": 26330
+    },
+    {
+      "year": 1973,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1973e.txt",
+      "sha256": "d7cd65dffaaa9dabeb03be1e69c61a0734cc78169b758b6922fe120507ebc7d8",
+      "byteLength": 26280
+    },
+    {
+      "year": 1974,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1974e.txt",
+      "sha256": "928689d9d1e77ec8aef721be146e57c105f50fa184abf8bf3ca2fade77847d8e",
+      "byteLength": 26256
+    },
+    {
+      "year": 1975,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1975e.txt",
+      "sha256": "3f5201616ae779c5e335516e2319ed0d67fa3a2cd12b42aaa543df6c916cb220",
+      "byteLength": 26255
+    },
+    {
+      "year": 1976,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1976e.txt",
+      "sha256": "708876f4801c9256dc6fb3fcf7644a311fde6d920791476598d63334f20d2d7c",
+      "byteLength": 26334
+    },
+    {
+      "year": 1977,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1977e.txt",
+      "sha256": "8d9e2e80f0c7b33c7ad829d2811f8b095b6056fa869d9a9552fb129618a1e1b5",
+      "byteLength": 26119
+    },
+    {
+      "year": 1978,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1978e.txt",
+      "sha256": "9f55d0165b87b83c06a418a1bf0e64df75db40813a42a8b533ce6a8470525847",
+      "byteLength": 26122
+    },
+    {
+      "year": 1979,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1979e.txt",
+      "sha256": "66c73eb57400b627e3e37cabd2b84be3e6dfb2d86ff163fa842b4826f3d5f8ec",
+      "byteLength": 26256
+    },
+    {
+      "year": 1980,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1980e.txt",
+      "sha256": "423d0388a70a8d548893527c99ad69037fa2a5e8bfcacbc7e44554cb781942db",
+      "byteLength": 26198
+    },
+    {
+      "year": 1981,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1981e.txt",
+      "sha256": "967c448eb2885b023aef5c31858b261c4d5dc734248a22cc4348a5df409841c9",
+      "byteLength": 26126
+    },
+    {
+      "year": 1982,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1982e.txt",
+      "sha256": "a40a1aae450fc90bc5cc38d1577fb4575e09670cf9bc5732e6e2a02e571c35b8",
+      "byteLength": 26121
+    },
+    {
+      "year": 1983,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1983e.txt",
+      "sha256": "ed53b94625af2962f882fed9efc72e7893f8c350a7aa7e84a43e0aa1f781838d",
+      "byteLength": 26122
+    },
+    {
+      "year": 1984,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1984e.txt",
+      "sha256": "a1b9ec84699bc8736886830f80aee1acc6a094e495c7f53eb24efee079fc87b0",
+      "byteLength": 26194
+    },
+    {
+      "year": 1985,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1985e.txt",
+      "sha256": "6b0f0e7009991cab76eed1b1ba6f0ea37b9ad8ff9f29f02e763fae863164f914",
+      "byteLength": 26121
+    },
+    {
+      "year": 1986,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1986e.txt",
+      "sha256": "59dd87d40553faf7d714fb398b8bd3c79202c79b2bbfb5486701129d0b55c393",
+      "byteLength": 26125
+    },
+    {
+      "year": 1987,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1987e.txt",
+      "sha256": "2d9ffbf7f330636eac986dce01914bc54f74f12b16cb276aa75a058f42f2f899",
+      "byteLength": 26126
+    },
+    {
+      "year": 1988,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1988e.txt",
+      "sha256": "69cb7b54203ef601dd87bf7c455b2644460cc4b4e33cf25515cbd6e8188d6b44",
+      "byteLength": 26196
+    },
+    {
+      "year": 1989,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1989e.txt",
+      "sha256": "fe33c9e3248fd312849ba0a745ae9a74f1f2e86e9b14036005da56d4292474c3",
+      "byteLength": 26122
+    },
+    {
+      "year": 1990,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1990e.txt",
+      "sha256": "89f5735fe31b5afe756fd486ac9652a3c2301a218f6293b4208910d94bd740dc",
+      "byteLength": 26119
+    },
+    {
+      "year": 1991,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1991e.txt",
+      "sha256": "499661c959ed7d2f4fda1507ccd97fa6cf77cb92bc2bcd052742bfe8d7e5adc1",
+      "byteLength": 26123
+    },
+    {
+      "year": 1992,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1992e.txt",
+      "sha256": "e3233a6453c6072ade1a19e79af0d9f6fe61439115160565f07efd511306edd5",
+      "byteLength": 26197
+    },
+    {
+      "year": 1993,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1993e.txt",
+      "sha256": "9e0a2dff192ad74cc0c6499214c1e8cce28241d59f71c901ebbea605bb6e808b",
+      "byteLength": 26126
+    },
+    {
+      "year": 1994,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1994e.txt",
+      "sha256": "9d2e1c1a4203f7535eefb4acc523105a97deb2c0fec5682c7731228ebe0b57e5",
+      "byteLength": 26121
+    },
+    {
+      "year": 1995,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1995e.txt",
+      "sha256": "9491cdf76fe10dadfc575952efa0531ae72fbf64df00e327befac465f4fadbf4",
+      "byteLength": 26121
+    },
+    {
+      "year": 1996,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1996e.txt",
+      "sha256": "b8a1755af3371dee2dcf6dbd95a0327441ad2a4da3c4e60db8f433b38ecff90f",
+      "byteLength": 26190
+    },
+    {
+      "year": 1997,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1997e.txt",
+      "sha256": "1c50b91d45ef2ce2ecbb2ed320346092af0e0338e6bb3e1b07301daca6d47cb7",
+      "byteLength": 26123
+    },
+    {
+      "year": 1998,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1998e.txt",
+      "sha256": "73739870809a762638771bbe8290200f776aee2e7e3aa23bca040b5f995479c8",
+      "byteLength": 26123
+    },
+    {
+      "year": 1999,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T1999e.txt",
+      "sha256": "9ef599d130be8f7648dc49067785d2a6e7aec57b373bd31ac7993025d312278c",
+      "byteLength": 26119
+    },
+    {
+      "year": 2000,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2000e.txt",
+      "sha256": "a1fd21eb74931427be686269dce41efa13c3a6c845d48be20696f9bdd324037c",
+      "byteLength": 26198
+    },
+    {
+      "year": 2001,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2001e.txt",
+      "sha256": "d2ae9ff99bb87af3e840342e27019eb9aefe3977d0f53f264c9188a37dcaf5c4",
+      "byteLength": 26123
+    },
+    {
+      "year": 2002,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2002e.txt",
+      "sha256": "db73d4cf08628019b5e27a4c5e49ef1ef15beee263afe8f67e4bc2665f74772e",
+      "byteLength": 26123
+    },
+    {
+      "year": 2003,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2003e.txt",
+      "sha256": "87b04b24df6c2595b74ae7d15b10c4b65dd13cde2d7c82c2906c2e41fb14e7e6",
+      "byteLength": 26123
+    },
+    {
+      "year": 2004,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2004e.txt",
+      "sha256": "69e7cb46d312c81598acf26428efe3657cadc8635b61f73d78607cba6e2dd631",
+      "byteLength": 26197
+    },
+    {
+      "year": 2005,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2005e.txt",
+      "sha256": "b8beb820e22659f36ff146b647956a5dd393b7f39dcf7388e02876d981eac7f3",
+      "byteLength": 26125
+    },
+    {
+      "year": 2006,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2006e.txt",
+      "sha256": "fc679a73c7be988d8abd7e28a97219267ef0cc9fc157c3ec6e78ae11dcd284ac",
+      "byteLength": 26122
+    },
+    {
+      "year": 2007,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2007e.txt",
+      "sha256": "6e0758c2465c3659d79b460f116fc9fec3290e84cd4554800451010362aa7c77",
+      "byteLength": 26123
+    },
+    {
+      "year": 2008,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2008e.txt",
+      "sha256": "5133cb2aed433a3e85b77036caa0e64ed8b3607ef1a45e259119e7d9830e5cc8",
+      "byteLength": 26193
+    },
+    {
+      "year": 2009,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2009e.txt",
+      "sha256": "da4ae2a8f29d7aa44e24133ab2ee95856c74fd45651fadd3e58dd87a4f08956e",
+      "byteLength": 26121
+    },
+    {
+      "year": 2010,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2010e.txt",
+      "sha256": "4a07b6a7c3b6b6c9be09cfacbb61b7788576d25781722e605067bc06d766f020",
+      "byteLength": 26125
+    },
+    {
+      "year": 2011,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2011e.txt",
+      "sha256": "190a245434f85d15a81c7f4c35644a4b97aca62b35dbc153f8d0f93b0b3a3ec9",
+      "byteLength": 28989
+    },
+    {
+      "year": 2012,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2012e.txt",
+      "sha256": "3baa28e28aae7e963a93e932b586bd131a163af9bc7f4f6c26cc97a663e3984d",
+      "byteLength": 28701
+    },
+    {
+      "year": 2013,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2013e.txt",
+      "sha256": "5547e3ac578c35a7fee7124a0a828b332e952af2f98508a261445c40935d2ef0",
+      "byteLength": 28620
+    },
+    {
+      "year": 2014,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2014e.txt",
+      "sha256": "d951404fd19b2e19580f41ca2c2cc854e20a27d2c680d5c50abd5b55df62371f",
+      "byteLength": 28620
+    },
+    {
+      "year": 2015,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2015e.txt",
+      "sha256": "3a00ed814d839900f491b8f93d172b3376de7b2718534efabe90c16beb784974",
+      "byteLength": 28986
+    },
+    {
+      "year": 2016,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2016e.txt",
+      "sha256": "54fd6b05b9ef67f0d4cb415e2cf9fd7144576fa9bc8bd56b31a6fcdbf2883926",
+      "byteLength": 29070
+    },
+    {
+      "year": 2017,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2017e.txt",
+      "sha256": "61289cd623a29273ebac0bfef9d47c25d5c925ff7ad7eee4bb5b1c69d9fdfa83",
+      "byteLength": 28624
+    },
+    {
+      "year": 2018,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2018e.txt",
+      "sha256": "aa927769705f2d92e1db2614e89a2079418ea13f9d1f12a4a10f48b7143692e8",
+      "byteLength": 28617
+    },
+    {
+      "year": 2019,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2019e.txt",
+      "sha256": "678c150eb855b0c381de6afddf85c33b13cc473c6c2145309c8021dce9cd7d46",
+      "byteLength": 28618
+    },
+    {
+      "year": 2020,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2020e.txt",
+      "sha256": "0dde5ed6d41935f8f420643287fc0250588102b154d8243e0f2762bb0c473bd2",
+      "byteLength": 28699
+    },
+    {
+      "year": 2021,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2021e.txt",
+      "sha256": "d3432f28db9a868aa407720a39224d7858395389ddc818d92c3a3fa43d58360a",
+      "byteLength": 28619
+    },
+    {
+      "year": 2022,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2022e.txt",
+      "sha256": "34c1edcf7ce3b20e3963f38379cfd77cce8bcf4dbede9bb9b18412e375bc555f",
+      "byteLength": 28621
+    },
+    {
+      "year": 2023,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2023e.txt",
+      "sha256": "f3bbdef5c9b0c0158ca8328004e347da714494572effc23fea97af48052402e5",
+      "byteLength": 28989
+    },
+    {
+      "year": 2024,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2024e.txt",
+      "sha256": "81f8fba2c809d5dcea5c63699e843b82e29318553cb5de7bbf053aa66d068fdc",
+      "byteLength": 28701
+    },
+    {
+      "year": 2025,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2025e.txt",
+      "sha256": "e11ba9a4d1fcde4d09570871149d3eea329d3a92a1b79be814d3f7313ae3fa50",
+      "byteLength": 28619
+    },
+    {
+      "year": 2026,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2026e.txt",
+      "sha256": "29ef9c43977a69681ef770d0c264e4226692f21f3febc3d16a4ee5c8aa06c60c",
+      "byteLength": 28621
+    },
+    {
+      "year": 2027,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2027e.txt",
+      "sha256": "3754bb79f07ea3dc0d355c7e5da1770bc9bb02ac26bf2e7633692703177f9a17",
+      "byteLength": 28621
+    },
+    {
+      "year": 2028,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2028e.txt",
+      "sha256": "22384e96b87353363be3c4c0d11d4c14988ab4f15335ce2b5cfdb0c411fbed65",
+      "byteLength": 28700
+    },
+    {
+      "year": 2029,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2029e.txt",
+      "sha256": "7aaab28de4a750dea991f6308a69e9361e8219827f53dfce225ff5f7f6b77e0a",
+      "byteLength": 28622
+    },
+    {
+      "year": 2030,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2030e.txt",
+      "sha256": "6235122d90c2934cb6aef2f5702988ec13c03d4fd4459e1b160dc15d49788423",
+      "byteLength": 28619
+    },
+    {
+      "year": 2031,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2031e.txt",
+      "sha256": "20ae7b108634f677e6283c920fd5106964b8b5fba2aecd16bba07b0b3533f295",
+      "byteLength": 28619
+    },
+    {
+      "year": 2032,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2032e.txt",
+      "sha256": "6ba28a15663ae9c7f460eaa823ebe134ba195fcb6b7337e619d511df1899b258",
+      "byteLength": 28698
+    },
+    {
+      "year": 2033,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2033e.txt",
+      "sha256": "f7937894bf740a8b3fa1b348ba718b2cd7d017ae743018a01c138e1c765c4fee",
+      "byteLength": 28619
+    },
+    {
+      "year": 2034,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2034e.txt",
+      "sha256": "a73bc77280d0dd6cc860cdc9e69cc199877e4b92d4a6f9ecd713a2e15ec43138",
+      "byteLength": 28621
+    },
+    {
+      "year": 2035,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2035e.txt",
+      "sha256": "8653abef97319f541a403ce39583b4c3585256a250acdc9eb11a6412be0584db",
+      "byteLength": 28621
+    },
+    {
+      "year": 2036,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2036e.txt",
+      "sha256": "db2d70ab2ef6747467c4df2c63ef3a93c582525dc7f64f99811135441168fa85",
+      "byteLength": 28702
+    },
+    {
+      "year": 2037,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2037e.txt",
+      "sha256": "521893c65d57b8a911a5a6eb78e50b4a7c44a9a033d62e47671fcfc7edc4a1bf",
+      "byteLength": 28621
+    },
+    {
+      "year": 2038,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2038e.txt",
+      "sha256": "f81269a4bd72f0fb2b9677bf42e92629feeea99e0b921be9d28d1a2bc9a50f63",
+      "byteLength": 28619
+    },
+    {
+      "year": 2039,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2039e.txt",
+      "sha256": "39b89c58d77356ead99fe475762f46587dac33e09e0478ed2a77a4e2541acfda",
+      "byteLength": 28986
+    },
+    {
+      "year": 2040,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2040e.txt",
+      "sha256": "0c1041ba294c610c3cfbd0deeebc906473df6a79d0a15eee3c1173ca1650790a",
+      "byteLength": 29070
+    },
+    {
+      "year": 2041,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2041e.txt",
+      "sha256": "5913e75185db4cd8ce52900809ad39e482ac2bec2248971e1b31a888fe0f1638",
+      "byteLength": 28623
+    },
+    {
+      "year": 2042,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2042e.txt",
+      "sha256": "4700b834eba65b53f00b1ceeae7884c4f19c15a66e002f96875a20efc18cdd0e",
+      "byteLength": 28985
+    },
+    {
+      "year": 2043,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2043e.txt",
+      "sha256": "526d5297efac5d8a28760345fb65d7871081730a8ce3de6ddb1b0537c50ed816",
+      "byteLength": 28619
+    },
+    {
+      "year": 2044,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2044e.txt",
+      "sha256": "320ef41ebd0763805edc209b7162a4e894b71bf8bf6ced8f936fbec77eb94b56",
+      "byteLength": 28698
+    },
+    {
+      "year": 2045,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2045e.txt",
+      "sha256": "988389f937475fc3cd38395a08c5309d319e7e5781ee76a5ff36bf18a554aa28",
+      "byteLength": 28618
+    },
+    {
+      "year": 2046,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2046e.txt",
+      "sha256": "03bbdae8073c54ffa9538b78258e239614049e960a39691b476df47a40e320d1",
+      "byteLength": 28622
+    },
+    {
+      "year": 2047,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2047e.txt",
+      "sha256": "f63664c45c8e714610b7597add0b795160633237ee023cc88b63a77e53e1dc30",
+      "byteLength": 28623
+    },
+    {
+      "year": 2048,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2048e.txt",
+      "sha256": "7bc4c98594eb7d67c8a9070e2430ba4b8ab746bab5f52b3cf06254d7cae8770d",
+      "byteLength": 28700
+    },
+    {
+      "year": 2049,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2049e.txt",
+      "sha256": "988cccf80443f106f85a257525f7b0a1430a1e0856a89e9e4f6903669756c1d7",
+      "byteLength": 28619
+    },
+    {
+      "year": 2050,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2050e.txt",
+      "sha256": "a1283cae1a44722c5cca6f65db9b1568e34fd96487374528727fb210aa869ef0",
+      "byteLength": 28621
+    },
+    {
+      "year": 2051,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2051e.txt",
+      "sha256": "9f7d061d855046a4eb9379d7d91e6ba21a22fea045abe232c3c0369df444f2af",
+      "byteLength": 28619
+    },
+    {
+      "year": 2052,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2052e.txt",
+      "sha256": "e193237e425cb22a303f49a7d278b9253e1a1138d2bcd345cc8fa76c7b042d2b",
+      "byteLength": 28701
+    },
+    {
+      "year": 2053,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2053e.txt",
+      "sha256": "03e1a2d78d7f4d4144ef1923de86c705fd801ec5ce2403c88013d219f0930783",
+      "byteLength": 28623
+    },
+    {
+      "year": 2054,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2054e.txt",
+      "sha256": "a10fb808e95c9511f0953840bdef78101947f46bc1bdb1f6bd4acf63b0424223",
+      "byteLength": 28618
+    },
+    {
+      "year": 2055,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2055e.txt",
+      "sha256": "d58572072f1a502be366f0c06aae619e88876e414cf8616d3cb78035b159c8a4",
+      "byteLength": 28985
+    },
+    {
+      "year": 2056,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2056e.txt",
+      "sha256": "e52ff54251409ea7c13ac4d2fda3240c2e9f0228f5005a90c2340a2882968cf5",
+      "byteLength": 28699
+    },
+    {
+      "year": 2057,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2057e.txt",
+      "sha256": "a8a6582d79f2214f68c5e1f7429cf267a50541f5546e494b1a88639fe28ce23d",
+      "byteLength": 28987
+    },
+    {
+      "year": 2058,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2058e.txt",
+      "sha256": "a19b3c16a6edde346f54c70497f8bbe99d75e705950fef8ec8ffd6f267ca4e62",
+      "byteLength": 28987
+    },
+    {
+      "year": 2059,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2059e.txt",
+      "sha256": "f4f0b3592ff63ae7794cba0a3fd6e628c519032d8506963e6ed93ea93f3ce8f9",
+      "byteLength": 28988
+    },
+    {
+      "year": 2060,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2060e.txt",
+      "sha256": "1a05e1fc70b5210f4d8467c9a99df7993dbe4dcd4620ad44d13326e709da3bf4",
+      "byteLength": 29070
+    },
+    {
+      "year": 2061,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2061e.txt",
+      "sha256": "d40a65ecec408834b8fcc9848f43696d3199692bc1bb3f6c41f16c885ebfdca8",
+      "byteLength": 28987
+    },
+    {
+      "year": 2062,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2062e.txt",
+      "sha256": "91b400638e6edb525122f4526d0e68f13bdff77f882c309b5ad329d78cf2424a",
+      "byteLength": 28987
+    },
+    {
+      "year": 2063,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2063e.txt",
+      "sha256": "8e93d6bc5bb4678e03f41356356b455087f0c1e423c1deb281d99bf465678ffe",
+      "byteLength": 28987
+    },
+    {
+      "year": 2064,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2064e.txt",
+      "sha256": "9b5fed8e97d44473af413d4bcbfbaa2e31f5c989faf095134500e79a4eef4157",
+      "byteLength": 29069
+    },
+    {
+      "year": 2065,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2065e.txt",
+      "sha256": "f765a0e8db9084a1f4660c7bdcabb8a226e54317576b462e589da3d8ed22ad57",
+      "byteLength": 28989
+    },
+    {
+      "year": 2066,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2066e.txt",
+      "sha256": "26445228ae4c7e66f2690372cac270d2a03327a3b3236f4af30fb2f63a3fb592",
+      "byteLength": 28986
+    },
+    {
+      "year": 2067,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2067e.txt",
+      "sha256": "20a2ba2143ed87abe026b12f7dcf0bf431bddcfd2dbcd7340855b7d3ac8ae0ce",
+      "byteLength": 28987
+    },
+    {
+      "year": 2068,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2068e.txt",
+      "sha256": "c11527d0ba057d75809e8ea75ad1ec0ee990f6f213ba950ec46436d95c58ce25",
+      "byteLength": 29065
+    },
+    {
+      "year": 2069,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2069e.txt",
+      "sha256": "b8ce6b263adbd9d60b97257ccca7caf8b36e488ac19a5be02ecec7b8c519e502",
+      "byteLength": 28906
+    },
+    {
+      "year": 2070,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2070e.txt",
+      "sha256": "8b6d33a14ef21833c311dcb4c27804cf62ccc48ecda4625abc693ed64d3c5382",
+      "byteLength": 28989
+    },
+    {
+      "year": 2071,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2071e.txt",
+      "sha256": "61b54cba71aeaca69e8ddd48eac72f8169142c62ae871e4d8ff2f92dca450b71",
+      "byteLength": 28622
+    },
+    {
+      "year": 2072,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2072e.txt",
+      "sha256": "d3b6abf6c045efeb208c04f6fac56d884c259278d156d3b036b9234e20cdb0c1",
+      "byteLength": 29069
+    },
+    {
+      "year": 2073,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2073e.txt",
+      "sha256": "c0bcb8e643d3e6199d7d70e1a0c891b46d49a21b2e4714de65f322e0e5d6a96c",
+      "byteLength": 28987
+    },
+    {
+      "year": 2074,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2074e.txt",
+      "sha256": "edd009285c2f1d309c4caa2de330a6917a71f95f66bdd78a2b8391160a4e422a",
+      "byteLength": 28987
+    },
+    {
+      "year": 2075,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2075e.txt",
+      "sha256": "296309bcdd533f47e82ad6d405668ab21000a857719d4bc585cb52f86c67a8d6",
+      "byteLength": 28986
+    },
+    {
+      "year": 2076,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2076e.txt",
+      "sha256": "cec49ada81b202422ec1a9aa98e13b29512c4a69b8edebb2ba4d4b1ff6c0733a",
+      "byteLength": 29070
+    },
+    {
+      "year": 2077,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2077e.txt",
+      "sha256": "e410682c72927808bf9536ba7e89109cbf5fa0d470db69c154e13e9df6700c95",
+      "byteLength": 28991
+    },
+    {
+      "year": 2078,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2078e.txt",
+      "sha256": "38d114f0477d17509acfc605d3b66454163235280c58892ab9623bbd5086d77b",
+      "byteLength": 28984
+    },
+    {
+      "year": 2079,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2079e.txt",
+      "sha256": "af03de6dc3a09e46cdc8d797d6f22847e5f0007079da99a55034160129b1ac91",
+      "byteLength": 28985
+    },
+    {
+      "year": 2080,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2080e.txt",
+      "sha256": "b6de49b2fb434ee02d04524171345e42e079cec380a5b2faea7e90b81602a6db",
+      "byteLength": 28699
+    },
+    {
+      "year": 2081,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2081e.txt",
+      "sha256": "1362fcff6fabe98aa0f81f70b78af847e506fbf7135f0c966004a38d160e683d",
+      "byteLength": 28986
+    },
+    {
+      "year": 2082,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2082e.txt",
+      "sha256": "4a39d22dafa94493babdf11b4d81c901d244de0463fa79cb51a450735d4c357e",
+      "byteLength": 28988
+    },
+    {
+      "year": 2083,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2083e.txt",
+      "sha256": "fec15981ad8bd9f9c36f4d35294f72a380b6cb8ee63d44b92a8f7a0931ae953c",
+      "byteLength": 28989
+    },
+    {
+      "year": 2084,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2084e.txt",
+      "sha256": "5b9a2a2306fa4acb72f5dee717bb8457fc505f3ed4511822f00f70289c0572f2",
+      "byteLength": 29069
+    },
+    {
+      "year": 2085,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2085e.txt",
+      "sha256": "9e7c5d5dbb2d9d26734a1628039825783d2533daf51c135477c2dfd2709ca9ce",
+      "byteLength": 28986
+    },
+    {
+      "year": 2086,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2086e.txt",
+      "sha256": "b3c7ef157e83d4b585c2b547c243f43b113f7e88298fb32f2dbe4a23cde9588a",
+      "byteLength": 28988
+    },
+    {
+      "year": 2087,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2087e.txt",
+      "sha256": "efe2b14c19dd258af882033511a88a18ca246da4a3751a8661e0bfafc9196872",
+      "byteLength": 28988
+    },
+    {
+      "year": 2088,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2088e.txt",
+      "sha256": "6648f4505d3b5676b9db7d6ac7f38477c61375f7a616fffca6e423035125f175",
+      "byteLength": 29068
+    },
+    {
+      "year": 2089,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2089e.txt",
+      "sha256": "032b86ae289624f927dd6fa64c99148ce7adffb9cea6481ca83617db132fdf69",
+      "byteLength": 28989
+    },
+    {
+      "year": 2090,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2090e.txt",
+      "sha256": "85801588295910601d3df501510d47718b396d5f93454a40bda89cee25da7d56",
+      "byteLength": 28986
+    },
+    {
+      "year": 2091,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2091e.txt",
+      "sha256": "35f1d30d1741ab2c4bafd13d7077e7c993750bd4d0cce09db176adba5289c773",
+      "byteLength": 28986
+    },
+    {
+      "year": 2092,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2092e.txt",
+      "sha256": "3d71db803ea9d46657707868180e625dfa6a88cadc2254f86312220bb9600eb5",
+      "byteLength": 29066
+    },
+    {
+      "year": 2093,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2093e.txt",
+      "sha256": "fd45641bc7555db80a13f578436d0b4b1124ab4153b3a02bf460e4e13c10ebd0",
+      "byteLength": 28986
+    },
+    {
+      "year": 2094,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2094e.txt",
+      "sha256": "ffd9ee8845ae594a977cc9f63918ef628831f0f2a02eb3bd75be5ef67b1a1e10",
+      "byteLength": 28988
+    },
+    {
+      "year": 2095,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2095e.txt",
+      "sha256": "9dcb6cf9a52718a53f92bfa87d230c36f4f8ce0eeea3ad4a0142bf22ae7f081c",
+      "byteLength": 28988
+    },
+    {
+      "year": 2096,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2096e.txt",
+      "sha256": "47d584f469df98fb9f14b50b71533d06d050b9c2c3a134475be13639a89db591",
+      "byteLength": 29070
+    },
+    {
+      "year": 2097,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2097e.txt",
+      "sha256": "d174c54cffa8c1268adc408e21038e597f89e425572249dbc7f6dba315fb6919",
+      "byteLength": 28988
+    },
+    {
+      "year": 2098,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2098e.txt",
+      "sha256": "f6a95a15703dd9481737c77f9bac06e1369cd990af939468492fcb32013da474",
+      "byteLength": 28986
+    },
+    {
+      "year": 2099,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2099e.txt",
+      "sha256": "6d3ac1c65bec12a1c56f58a70defb00fe0f48080e2c84487ab7e159b8c7e8c56",
+      "byteLength": 28986
+    },
+    {
+      "year": 2100,
+      "sourceUrl": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2100e.txt",
+      "sha256": "c75561b0e594e3aff40842fae5258e82524d1494c9bd59f69309fce2a7053336",
+      "byteLength": 28624
+    }
+  ],
+  "generatedAt": "2026-07-02T06:47:27.899Z",
+  "generatedBy": "scripts/build-hko-lunar-range-pack.js",
+  "recordsChecksum": {
+    "algorithm": "sha256",
+    "value": "ce3625027e7144733feaeb4915e440ce39791e0c1bc1dd813bdf3cb17f6ec83a"
+  },
+  "schema": {
+    "s": "Gregorian date YYYY-MM-DD",
+    "ly": "lunar year number",
+    "lm": "lunar month number",
+    "ld": "lunar day number",
+    "le": "1 when leap/intercalary lunar month, otherwise 0",
+    "w": "weekday abbreviation",
+    "st": "HKO solar term name on Gregorian date, if present"
+  }
+}
