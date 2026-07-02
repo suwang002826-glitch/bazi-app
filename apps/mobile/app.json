@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Bazi App",
+    "slug": "bazi-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#161626"
+      }
+    }
+  }
+}
