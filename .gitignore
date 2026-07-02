@@ -1,0 +1,10 @@
+node_modules/
+apps/mobile/node_modules/
+.expo/
+apps/mobile/.expo/
+.runtime-logs/
+dist/
+apps/mobile/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
