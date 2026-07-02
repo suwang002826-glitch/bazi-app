@@ -31,14 +31,31 @@
       </picker>
     </view>
 
-    <view class="manual-actions">
-      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="6">点老阴</button>
-      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="7">点少阳</button>
-      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="8">点少阴</button>
-      <button class="secondary action-btn" disabled="{{modeIndex !== 0}}" bindtap="addManualLine" data-value="9">点老阳</button>
+    <view wx:if="{{modeIndex === 0}}" class="cast-mode-panel">
+      <view class="manual-progress">
+        <text>已成 {{lines.length}} / 6 爻</text>
+        <text>静心点击六次，满六爻自动成卦</text>
+      </view>
+      <view wx:if="{{linePreviews.length}}" class="line-preview-row">
+        <text wx:for="{{linePreviews}}" wx:key="position">{{item.position}} {{item.text}}</text>
+      </view>
+      <button class="primary cast-primary" bindtap="addManualLine">{{lines.length >= 6 ? '查看卦象' : '点爻'}}</button>
+    </view>
+    <view wx:elif="{{modeIndex === 1}}" class="cast-mode-panel">
+      <view class="mode-note">
+        <text>当前时间</text>
+        <text>{{currentTimeLabel}}</text>
+      </view>
+      <button class="primary cast-primary" bindtap="castByCurrentTime">按当前时间起卦</button>
+    </view>
+    <view wx:else class="cast-mode-panel">
+      <view class="field number-field">
+        <text class="label">起卦数字</text>
+        <input type="number" placeholder="请输入一组数字" value="{{numberSeed}}" bindinput="onNumberSeedInput" />
+      </view>
+      <button class="primary cast-primary" bindtap="castByNumber">按数字起卦</button>
     </view>
     <view class="cast-actions">
-      <button class="primary cast-primary" bindtap="autoCast">{{modeIndex === 0 ? '一键起卦' : '按当前方式起卦'}}</button>
       <button class="secondary reset-btn" bindtap="resetCast">重新起卦</button>
     </view>
   </view>

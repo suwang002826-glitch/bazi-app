@@ -16,10 +16,17 @@ Page({
     ],
     lines: [],
     linePreviews: [],
+    numberSeed: '',
+    currentTimeLabel: '',
     disclaimer: app.globalData.disclaimer
   },
 
+  onLoad() {
+    this.refreshCurrentTimeLabel();
+  },
+
   onShow() {
+    this.refreshCurrentTimeLabel();
     const restore = app.globalData.restoreLiuyaoReading;
     if (!restore) return;
     app.globalData.restoreLiuyaoReading = null;
@@ -33,6 +40,7 @@ Page({
       question: restore.question || '',
       categoryIndex: Number.isInteger(restore.categoryIndex) ? restore.categoryIndex : 0,
       modeIndex: Number.isInteger(restore.modeIndex) ? restore.modeIndex : 0,
+      numberSeed: restore.numberSeed || '',
       lines: restore.lines || [],
       linePreviews: restore.linePreviews || this.buildLinePreviews(restore.lines || [])
     });
@@ -43,25 +51,34 @@ Page({
   },
 
   onModeChange(event) {
-    this.setData({ modeIndex: Number(event.currentTarget.dataset.index) });
+    this.setData({
+      modeIndex: Number(event.currentTarget.dataset.index),
+      lines: [],
+      linePreviews: []
+    });
+    this.refreshCurrentTimeLabel();
   },
 
   onCategoryChange(event) {
     this.setData({ categoryIndex: Number(event.detail.value) });
   },
 
-  addManualLine(event) {
+  onNumberSeedInput(event) {
+    this.setData({ numberSeed: event.detail.value });
+  },
+
+  addManualLine() {
     if (!this.data.question.trim()) {
       wx.showToast({ title: '请先填写所问事项', icon: 'none' });
       return;
     }
 
     if (this.data.lines.length >= 6) {
-      wx.showToast({ title: '六爻已成卦', icon: 'none' });
+      this.openResult(this.data.lines);
       return;
     }
 
-    const value = Number(event.currentTarget.dataset.value);
+    const value = randomYao();
     const lines = [...this.data.lines, value];
     this.setData({
       lines,
@@ -72,26 +89,54 @@ Page({
     }
   },
 
-  autoCast() {
+  castByCurrentTime() {
     if (!this.data.question.trim()) {
       wx.showToast({ title: '请先填写所问事项', icon: 'none' });
       return;
     }
 
-    let lines = Array.from({ length: 6 }, () => randomYao());
-    if (this.data.modeIndex === 1) {
-      lines = buildTimeLines(new Date(), this.data.question);
+    const now = new Date();
+    const lines = buildTimeLines(now, this.data.question);
+    this.refreshCurrentTimeLabel(now);
+    this.setData({ lines, linePreviews: this.buildLinePreviews(lines) });
+    this.openResult(lines);
+  },
+
+  castByNumber() {
+    if (!this.data.question.trim()) {
+      wx.showToast({ title: '请先填写所问事项', icon: 'none' });
+      return;
     }
-    if (this.data.modeIndex === 2) {
-      const seedDate = new Date(2000, this.data.question.length % 12, (this.data.question.length % 27) + 1, this.data.categoryIndex * 2, 0);
-      lines = buildTimeLines(seedDate, `${this.data.question}-${this.data.categoryIndex}`);
+
+    const digits = String(this.data.numberSeed || '').replace(/\D/g, '');
+    if (!digits) {
+      wx.showToast({ title: '请输入起卦数字', icon: 'none' });
+      return;
     }
+
+    const head = Number(digits.slice(0, 2) || 1);
+    const tail = Number(digits.slice(-4) || 0);
+    const seedDate = new Date(
+      2000 + (tail % 60),
+      tail % 12,
+      (head % 28) + 1,
+      tail % 24,
+      tail % 60
+    );
+    const seedText = `${this.data.question}-${this.data.categoryOptions[this.data.categoryIndex]}-${digits}`;
+    const lines = buildTimeLines(seedDate, seedText);
     this.setData({ lines, linePreviews: this.buildLinePreviews(lines) });
     this.openResult(lines);
   },
 
   resetCast() {
     this.setData({ lines: [], linePreviews: [] });
+  },
+
+  refreshCurrentTimeLabel(date = new Date()) {
+    const pad = (value) => String(value).padStart(2, '0');
+    const label = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    this.setData({ currentTimeLabel: label });
   },
 
   buildLinePreviews(lines) {
@@ -109,6 +154,7 @@ Page({
       question: this.data.question,
       categoryIndex: this.data.categoryIndex,
       modeIndex: this.data.modeIndex,
+      numberSeed: this.data.numberSeed,
       lines,
       linePreviews: this.buildLinePreviews(lines),
       result
