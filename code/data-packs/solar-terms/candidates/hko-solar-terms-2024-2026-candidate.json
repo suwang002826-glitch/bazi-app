@@ -1,10 +1,17 @@
 {
   "id": "hko-solar-terms-2024-2026-candidate",
-  "status": "candidate-preview-not-runtime-approved",
+  "status": "approved-for-runtime",
   "createdAt": "2026-07-03",
   "runtimeApproval": {
-    "status": "blocked",
-    "reason": "Candidate source data is registered for review; runtime promotion requires an explicit approval commit and engine-level regression checks."
+    "status": "approved-for-runtime",
+    "approvedAt": "2026-07-03",
+    "scope": "gregorian-years-2024-2026-runtime-preview",
+    "reason": "HKO official XML source, source-boundary validation, screenshot cross-check, runtime loader gate, and provider integration checks are all required before use.",
+    "limitations": [
+      "Only Gregorian years 2024, 2025, and 2026 are approved.",
+      "The pack provides minute-level solar-term times only.",
+      "Years outside this range must not fail open; they must use the local astronomical-search fallback."
+    ]
   },
   "authority": {
     "sourceId": "HKO-SOLAR-TERMS-OFFICIAL-XML",
