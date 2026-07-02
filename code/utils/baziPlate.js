@@ -290,6 +290,84 @@ function getGanZhiOffset(value, offset) {
   return `${heavenlyStems[(stemIndex + offset + 10) % 10]}${earthlyBranches[(branchIndex + offset + 12) % 12]}`;
 }
 
+function getYearPillarByYear(year) {
+  const index = ((Number(year) - 4) % 60 + 60) % 60;
+  return {
+    stem: heavenlyStems[index % 10],
+    branch: earthlyBranches[index % 12],
+    value: `${heavenlyStems[index % 10]}${earthlyBranches[index % 12]}`
+  };
+}
+
+function getBirthYear(result) {
+  const match = String(result && result.solarTime || '').match(/^(\d{4})/);
+  return match ? Number(match[1]) : NaN;
+}
+
+function getLuckStartYear(luck) {
+  if (!luck) return NaN;
+  if (Number.isFinite(Number(luck.startYear))) return Number(luck.startYear);
+  const firstCycle = Array.isArray(luck.cycles) ? luck.cycles[0] : null;
+  if (firstCycle && Number.isFinite(Number(firstCycle.yearStart))) return Number(firstCycle.yearStart);
+  const rangeStart = firstCycle && String(firstCycle.yearRange || '').split('-')[0];
+  return Number.isFinite(Number(rangeStart)) ? Number(rangeStart) : NaN;
+}
+
+function getLuckEndYear(result, startYear) {
+  const luck = result && result.luck;
+  if (luck && Number.isFinite(Number(luck.endYear))) return Number(luck.endYear);
+  const birthYear = getBirthYear(result);
+  if (Number.isFinite(birthYear)) return birthYear + 105;
+  const cycles = luck && Array.isArray(luck.cycles) ? luck.cycles : [];
+  const lastCycle = cycles[cycles.length - 1];
+  const lastRange = lastCycle && String(lastCycle.yearRange || '').split('-')[1];
+  if (Number.isFinite(Number(lastRange))) return Number(lastRange);
+  return Number.isFinite(Number(startYear)) ? Number(startYear) + 99 : NaN;
+}
+
+function createFallbackFlowYear(result, year) {
+  const pillar = getYearPillarByYear(year);
+  const dayStem = result && result.dayMaster && result.dayMaster.stem;
+  const birthYear = getBirthYear(result);
+  return {
+    year,
+    age: Number.isFinite(birthYear) ? year - birthYear : '',
+    value: pillar.value,
+    tenGod: getTenGod(dayStem, pillar.stem),
+    stemElement: stemElementMap[pillar.stem],
+    branchElement: branchElementMap[pillar.branch],
+    influenceSummary: `${year}年${pillar.value}流年，按起运时间轴补齐展示。`,
+    interactionSummary: '旧命例或后端结果未返回完整流年轴，前端按年份干支补齐。',
+    triggerPoints: []
+  };
+}
+
+function normalizeFlowYearsForLuck(result, flowYearsSource) {
+  const source = Array.isArray(flowYearsSource) ? flowYearsSource : [];
+  const startYear = getLuckStartYear(result && result.luck);
+  const endYear = getLuckEndYear(result, startYear);
+  if (!Number.isFinite(startYear) || !Number.isFinite(endYear)) return source;
+
+  const firstYear = source.length ? Number(source[0].year) : NaN;
+  const lastYear = source.length ? Number(source[source.length - 1].year) : NaN;
+  const hasCompleteAxis = source.length
+    && firstYear <= startYear
+    && lastYear >= endYear;
+  if (hasCompleteAxis) {
+    return source.filter((item) => Number(item.year) >= startYear && Number(item.year) <= endYear);
+  }
+
+  const byYear = source.reduce((map, item) => {
+    const year = Number(item.year);
+    if (Number.isFinite(year)) map[year] = item;
+    return map;
+  }, {});
+  return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
+    const year = startYear + index;
+    return byYear[year] || createFallbackFlowYear(result, year);
+  });
+}
+
 function findFlowYearSource(flowYears, year, fallbackIndex) {
   const direct = flowYears.find((item) => Number(item.year) === Number(year));
   if (direct) return direct;
@@ -422,7 +500,7 @@ function summarizeRelations(result, activeLuck, flowYear) {
 
 function createProfessionalDetail(result, options = {}) {
   const luckCyclesSource = result.luck.cycles || [];
-  const flowYearsSource = result.flowYears || [];
+  const flowYearsSource = normalizeFlowYearsForLuck(result, result.flowYears || []);
   const flowMonthsSource = result.flowMonths || [];
   const flowYearBlocksSource = buildFlowYearBlocks(flowYearsSource);
   const selectedLuckIndex = clampIndex(options.luckIndex, luckCyclesSource.length, getActiveLuckIndex(result));

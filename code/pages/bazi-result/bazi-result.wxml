@@ -180,9 +180,9 @@
         <view class="flow-side"><view class="flow-side-top">始于</view><view class="side-label"><text>流</text><text>年</text></view><view class="flow-side-bottom">止于</view></view>
         <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
           <view class="flow-year-table" style="width: {{professionalDetail.flowYearStripWidth}}rpx; min-width: {{professionalDetail.flowYearStripWidth}}rpx;">
-            <view class="flow-year-col" wx:for="{{professionalDetail.flowYears}}" wx:key="year" bindtap="onFlowYearTap" data-index="{{index}}">
+            <view class="flow-year-col {{item.active ? 'active' : ''}}" wx:for="{{professionalDetail.flowYears}}" wx:key="year" bindtap="onFlowYearTap" data-index="{{index}}">
               <view class="flow-year">{{item.year}}</view>
-              <view class="flow-year-line" wx:for="{{item.miniPillars}}" wx:for-item="line" wx:for-index="lineIndex" wx:key="year" catchtap="onFlowYearItemTap" data-index="{{index}}" data-offset="{{lineIndex}}">
+              <view class="flow-year-line {{line.active ? 'active' : ''}}" wx:for="{{item.miniPillars}}" wx:for-item="line" wx:for-index="lineIndex" wx:key="year" catchtap="onFlowYearItemTap" data-index="{{index}}" data-offset="{{lineIndex}}">
                 <text class="flow-year-line-year">{{line.year}}</text>
                 <text class="flow-year-line-value">{{line.value}}</text>
               </view>

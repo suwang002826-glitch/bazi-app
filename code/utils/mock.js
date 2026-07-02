@@ -1062,7 +1062,7 @@ function buildLuckCycles(readingDate, monthPillar, yearPillar, gender) {
   };
 }
 
-function buildFlowYears(startYear, dayStem, natalPillars, endYear) {
+function buildFlowYears(startYear, dayStem, natalPillars, endYear, birthYear) {
   const safeStart = Number(startYear);
   const safeEnd = Number(endYear);
   const count = Number.isFinite(safeStart) && Number.isFinite(safeEnd)
@@ -1074,7 +1074,7 @@ function buildFlowYears(startYear, dayStem, natalPillars, endYear) {
     const context = buildFlowContext(pillar, dayStem, natalPillars, '流年');
     return {
       year,
-      age: Number.isFinite(safeStart) ? year - safeStart : index,
+      age: Number.isFinite(Number(birthYear)) ? year - Number(birthYear) : index,
       value: pillar.value,
       ...context
     };
@@ -1176,7 +1176,7 @@ function buildBaziProfile(form) {
     professional.usefulGod,
     professional.natalRelations
   );
-  const flowYears = buildFlowYears(luck.startYear || now.getFullYear(), dayPillar.stem, pillars, luck.endYear || (readingDate.getFullYear() + 105));
+  const flowYears = buildFlowYears(luck.startYear || now.getFullYear(), dayPillar.stem, pillars, luck.endYear || (readingDate.getFullYear() + 105), readingDate.getFullYear());
   const flowMonths = buildFlowMonths(now.getFullYear(), dayPillar.stem, pillars);
   const flowDays = buildFlowDays(now, dayPillar.stem, pillars);
   const flowHours = buildFlowHours(now, dayPillar.stem, pillars);
