@@ -1032,9 +1032,8 @@ function buildLuckCycles(readingDate, monthPillar, yearPillar, gender) {
     const ageStart = Math.round((startAge + (i - 1) * 10) * 10) / 10;
     const ageEnd = Math.min(endAge, Math.round((ageStart + 9.9) * 10) / 10);
     const cycleStartDate = new Date(startDate.getFullYear() + (i - 1) * 10, startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes());
-    const cycleEndDate = new Date(cycleStartDate.getFullYear() + 10, cycleStartDate.getMonth(), cycleStartDate.getDate() - 1, cycleStartDate.getHours(), cycleStartDate.getMinutes());
     const cycleStartYear = cycleStartDate.getFullYear();
-    const cycleEndYear = Math.min(birthYear + endAge, cycleEndDate.getFullYear());
+    const cycleEndYear = Math.min(birthYear + endAge, cycleStartYear + 9);
     cycles.push({
       label: `第${i}步大运`,
       value: pillar.value,

@@ -325,6 +325,102 @@ function getLuckEndYear(result, startYear) {
   return Number.isFinite(Number(startYear)) ? Number(startYear) + 99 : NaN;
 }
 
+function parseYearRange(value) {
+  const parts = String(value || '').split('-').map((item) => Number(item));
+  return {
+    start: Number.isFinite(parts[0]) ? parts[0] : NaN,
+    end: Number.isFinite(parts[1]) ? parts[1] : NaN
+  };
+}
+
+function parseAgeRange(value) {
+  const parts = String(value || '').replace(/岁/g, '').split('-').map((item) => Number(item));
+  return {
+    start: Number.isFinite(parts[0]) ? parts[0] : NaN,
+    end: Number.isFinite(parts[1]) ? parts[1] : NaN
+  };
+}
+
+function normalizeLuckCycle(cycle, index) {
+  const yearRange = parseYearRange(cycle.yearRange);
+  const ageRange = parseAgeRange(cycle.ageRange);
+  const yearStart = Number.isFinite(Number(cycle.yearStart)) ? Number(cycle.yearStart) : yearRange.start;
+  const yearEnd = Number.isFinite(Number(cycle.yearEnd)) ? Number(cycle.yearEnd) : yearRange.end;
+  const ageStart = Number.isFinite(Number(cycle.ageStart)) ? Number(cycle.ageStart) : ageRange.start;
+  const ageEnd = Number.isFinite(Number(cycle.ageEnd)) ? Number(cycle.ageEnd) : ageRange.end;
+  return {
+    ...cycle,
+    label: cycle.label || `第${index + 1}步大运`,
+    yearStart,
+    yearEnd,
+    yearRange: Number.isFinite(yearStart) && Number.isFinite(yearEnd) ? `${yearStart}-${yearEnd}` : cycle.yearRange,
+    ageStart,
+    ageEnd,
+    ageRange: Number.isFinite(ageStart) && Number.isFinite(ageEnd) ? `${ageStart}-${ageEnd}岁` : cycle.ageRange
+  };
+}
+
+function inferLuckDirection(luck, cycles) {
+  const directionText = String(luck && luck.direction || cycles[0] && cycles[0].direction || '');
+  if (directionText.includes('逆')) return -1;
+  if (directionText.includes('顺')) return 1;
+  if (cycles.length >= 2 && getGanZhiOffset(cycles[0].value, 1) === cycles[1].value) return 1;
+  if (cycles.length >= 2 && getGanZhiOffset(cycles[0].value, -1) === cycles[1].value) return -1;
+  return 1;
+}
+
+function normalizeLuckCyclesForEndAge(result, cyclesSource) {
+  const source = Array.isArray(cyclesSource) ? cyclesSource : [];
+  if (!source.length) return source;
+
+  const luck = result && result.luck || {};
+  const cycles = source.map(normalizeLuckCycle);
+  const startYear = getLuckStartYear(luck);
+  const endYear = getLuckEndYear(result, startYear);
+  const endAge = Number.isFinite(Number(luck.endAge)) ? Number(luck.endAge) : 105;
+  if (!Number.isFinite(endYear)) return cycles;
+
+  cycles.forEach((cycle, index) => {
+    if (!Number.isFinite(Number(cycle.yearStart))) return;
+    const next = cycles[index + 1];
+    const normalizedEnd = next && Number.isFinite(Number(next.yearStart))
+      ? Number(next.yearStart) - 1
+      : Math.min(endYear, Number(cycle.yearStart) + 9);
+    cycle.yearEnd = normalizedEnd;
+    cycle.yearRange = `${cycle.yearStart}-${cycle.yearEnd}`;
+  });
+
+  const direction = inferLuckDirection(luck, cycles);
+  let last = cycles[cycles.length - 1];
+  while (Number(last.yearEnd) < endYear) {
+    const nextYearStart = Number(last.yearEnd) + 1;
+    const nextYearEnd = Math.min(endYear, nextYearStart + 9);
+    const nextAgeStart = Number.isFinite(Number(last.ageEnd))
+      ? Math.round((Number(last.ageEnd) + 0.1) * 10) / 10
+      : '';
+    const nextAgeEnd = Number.isFinite(Number(nextAgeStart))
+      ? Math.min(endAge, Math.round((Number(nextAgeStart) + 9.9) * 10) / 10)
+      : '';
+    const nextValue = getGanZhiOffset(last.value, direction);
+    last = {
+      label: `第${cycles.length + 1}步大运`,
+      value: nextValue,
+      ageStart: nextAgeStart,
+      ageEnd: nextAgeEnd,
+      ageRange: `${nextAgeStart}-${nextAgeEnd}岁`,
+      yearStart: nextYearStart,
+      yearEnd: nextYearEnd,
+      yearRange: `${nextYearStart}-${nextYearEnd}`,
+      startDate: last.startDate ? String(last.startDate).replace(/^\d{4}/, String(nextYearStart)) : '',
+      startDateText: last.startDate ? `${String(last.startDate).replace(/^\d{4}/, String(nextYearStart))}起运` : '',
+      direction: direction > 0 ? '顺排' : '逆排'
+    };
+    cycles.push(last);
+  }
+
+  return cycles;
+}
+
 function createFallbackFlowYear(result, year) {
   const pillar = getYearPillarByYear(year);
   const dayStem = result && result.dayMaster && result.dayMaster.stem;
@@ -499,7 +595,7 @@ function summarizeRelations(result, activeLuck, flowYear) {
 }
 
 function createProfessionalDetail(result, options = {}) {
-  const luckCyclesSource = result.luck.cycles || [];
+  const luckCyclesSource = normalizeLuckCyclesForEndAge(result, result.luck.cycles || []);
   const flowYearsSource = normalizeFlowYearsForLuck(result, result.flowYears || []);
   const flowMonthsSource = result.flowMonths || [];
   const flowYearBlocksSource = buildFlowYearBlocks(flowYearsSource);
