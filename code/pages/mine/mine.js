@@ -18,7 +18,7 @@ Page({
       cases: [
         ...(wx.getStorageSync('caseArchive') || []),
         ...(wx.getStorageSync('readingHistory') || [])
-      ].filter((item) => item.type === '八字' || item.type === '六爻' || item.type === 'bazi' || item.type === 'liuyao')
+      ].filter((item) => item.type === '八字' || item.type === '六爻' || item.type === '奇门' || item.type === 'bazi' || item.type === 'liuyao' || item.type === 'qimen')
     });
   },
 

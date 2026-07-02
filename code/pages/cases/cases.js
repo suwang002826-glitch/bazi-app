@@ -70,6 +70,7 @@ function getZodiacIconSrc(iconKey) {
 function normalizeType(type) {
   if (type === '八字' || type === 'bazi') return 'bazi';
   if (type === '六爻' || type === 'liuyao') return 'liuyao';
+  if (type === '奇门' || type === 'qimen') return 'qimen';
   return '';
 }
 
@@ -123,9 +124,16 @@ function buildZodiacSeal(result) {
 function makeReplayKey(item) {
   const typeKey = normalizeType(item.type);
   const result = item.payload && item.payload.result ? item.payload.result : {};
-  const identity = typeKey === 'bazi'
-    ? `${result.displayName || stripBaziTitle(item.title)}-${result.solarTime || ''}`
-    : `${item.payload.question || result.question || ''}-${result.hexagramName || item.title || ''}`;
+  let identity = `${item.title || ''}-${item.createdAt || item.archivedAt || ''}`;
+  if (typeKey === 'bazi') {
+    identity = `${result.displayName || stripBaziTitle(item.title)}-${result.solarTime || ''}`;
+  }
+  if (typeKey === 'liuyao') {
+    identity = `${item.payload.question || result.question || ''}-${result.hexagramName || item.title || ''}`;
+  }
+  if (typeKey === 'qimen') {
+    identity = `${item.payload.form && item.payload.form.question ? item.payload.form.question : result.question || ''}-${result.castTime || ''}`;
+  }
   return `${typeKey}-${identity}`;
 }
 
@@ -172,8 +180,31 @@ function decorateLiuyaoRecord(item, result) {
     gender: category,
     detailLine: question,
     subLine: `${method} · ${item.createdAt || item.archivedAt || ''}`,
-    liuyaoSummary: result.changedName ? `${result.hexagramName} 之 ${result.changedName}` : (result.hexagramName || '卦象待复盘'),
-    liuyaoTags: [result.focus, result.movingSummary, result.palaceLabel].filter(Boolean).slice(0, 3)
+    recordSummary: result.changedName ? `${result.hexagramName} 之 ${result.changedName}` : (result.hexagramName || '卦象待复盘'),
+    recordTags: [result.focus, result.movingSummary, result.palaceLabel].filter(Boolean).slice(0, 3),
+    symbolText: '卦'
+  };
+}
+
+function decorateQimenRecord(item, result) {
+  const form = item.payload && item.payload.form ? item.payload.form : {};
+  const question = form.question || result.question || '未填写问事';
+  const category = form.category || '问事';
+  return {
+    ...item,
+    typeKey: 'qimen',
+    typeLabel: '奇门',
+    displayName: result.title || item.title || '奇门局',
+    gender: category,
+    detailLine: question,
+    subLine: `${result.castTime || [form.date, form.time].filter(Boolean).join(' ')} · ${item.createdAt || item.archivedAt || ''}`,
+    recordSummary: result.calendar && result.calendar.ju ? `${result.calendar.ju} · ${result.focus && result.focus.door ? result.focus.door : '用宫待复盘'}` : '奇门局待复盘',
+    recordTags: [
+      result.chief && result.chief.star ? `值符${result.chief.star}` : '',
+      result.chief && result.chief.door ? `值使${result.chief.door}` : '',
+      result.calendar && result.calendar.horseBranch ? `马星${result.calendar.horseBranch}` : ''
+    ].filter(Boolean).slice(0, 3),
+    symbolText: '奇'
   };
 }
 
@@ -181,6 +212,7 @@ function decorateRecord(item) {
   const result = item.payload && item.payload.result ? item.payload.result : {};
   const typeKey = normalizeType(item.type);
   if (typeKey === 'liuyao') return decorateLiuyaoRecord(item, result);
+  if (typeKey === 'qimen') return decorateQimenRecord(item, result);
   return decorateBaziRecord(item, result);
 }
 
@@ -189,13 +221,13 @@ Page({
     allCases: [],
     cases: [],
     query: '',
-    categories: ['全部', '八字', '六爻', '复盘'],
-    activeCategory: '全部',
+    categories: ['八字', '六爻', '奇门'],
+    activeCategory: '八字',
     openedDeleteId: null,
     touchStartX: 0,
     touchStartY: 0,
     touchMoved: false,
-    emptyText: '暂无复盘记录。完成八字排盘或六爻起卦后，会自动记录在这里。'
+    emptyText: '暂无当前分类记录。完成对应排盘或起卦后，会自动记录在这里。'
   },
 
   onShow() {
@@ -215,11 +247,10 @@ Page({
     const filtered = source
       .filter((item) => {
         const typeKey = normalizeType(item.type);
-        const itemCategory = item.category || item.group || '复盘';
-        if (category === '全部') return typeKey === 'bazi' || typeKey === 'liuyao';
         if (category === '八字') return typeKey === 'bazi';
         if (category === '六爻') return typeKey === 'liuyao';
-        return item.status === '需复盘' || itemCategory === '复盘' || typeKey === 'liuyao';
+        if (category === '奇门') return typeKey === 'qimen';
+        return false;
       })
       .filter((item) => {
         if (!query) return true;
@@ -233,6 +264,11 @@ Page({
           result.hexagramName,
           result.changedName,
           result.question,
+          result.title,
+          result.castTime,
+          result.calendar && result.calendar.ju,
+          result.focus && result.focus.door,
+          item.payload && item.payload.form && item.payload.form.question,
           item.payload && item.payload.question
         ].some((value) => String(value || '').includes(query));
       });
@@ -260,7 +296,7 @@ Page({
     wx.showActionSheet({
       itemList: this.data.categories,
       success: (res) => {
-        const category = this.data.categories[res.tapIndex] || '全部';
+        const category = this.data.categories[res.tapIndex] || '八字';
         this.setData({
           activeCategory: category,
           openedDeleteId: null,
@@ -330,6 +366,12 @@ Page({
       app.globalData.currentLiuyaoReading = payload;
       wx.setStorageSync('currentLiuyaoReading', payload);
       wx.navigateTo({ url: '/pages/liuyao-result/liuyao-result' });
+      return;
+    }
+    if (normalizeType(record.type) === 'qimen') {
+      app.globalData.currentQimenReading = payload;
+      wx.setStorageSync('currentQimenReading', payload);
+      wx.navigateTo({ url: '/pages/qimen-result/qimen-result' });
       return;
     }
     app.globalData.currentBaziReading = payload;

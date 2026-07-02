@@ -54,17 +54,17 @@
             >{{char.char}}</text>
           </view>
         </view>
-        <view wx:else class="liuyao-case-summary">
-          <view class="liuyao-case-title">{{item.liuyaoSummary}}</view>
-          <view class="liuyao-case-tags">
-            <text wx:for="{{item.liuyaoTags}}" wx:key="*this">{{item}}</text>
+        <view wx:else class="replay-case-summary">
+          <view class="replay-case-title">{{item.recordSummary}}</view>
+          <view class="replay-case-tags">
+            <text wx:for="{{item.recordTags}}" wx:key="*this">{{item}}</text>
           </view>
         </view>
 
         <view wx:if="{{item.typeKey === 'bazi'}}" class="zodiac-seal {{item.zodiacSeal.className}}">
           <image class="zodiac-image" src="{{item.zodiacSeal.icon}}" mode="aspectFit" />
         </view>
-        <view wx:else class="case-symbol liuyao-symbol">卦</view>
+        <view wx:else class="case-symbol {{item.typeKey}}-symbol">{{item.symbolText}}</view>
       </view>
     </view>
   </block>
