@@ -63,6 +63,8 @@ async function run() {
     enabled: true,
     baseUrl: 'http://127.0.0.1:8787',
     calculatePath: '/bazi/calculate',
+    healthPath: '/health',
+    coveragePath: '/bazi/calendar/coverage',
     timeout: 15000,
     provider: 'backend-local'
   });
@@ -234,8 +236,60 @@ async function testDisabledConfigDoesNotFallback() {
   assert.strictEqual(page.data.isGenerating, false);
 }
 
+async function testRealDeviceLoopbackConfigShowsWarning() {
+  const calls = {
+    requests: [],
+    toasts: []
+  };
+  const app = {
+    globalData: {
+      disclaimer: '娴嬭瘯鍏嶈矗澹版槑',
+      currentBaziReading: null,
+      engineVersion: 'backend-api-2026.07.02',
+      baziApi: {
+        enabled: true,
+        baseUrl: 'http://127.0.0.1:8787',
+        calculatePath: '/bazi/calculate',
+        timeout: 15000,
+        provider: 'backend-local'
+      }
+    },
+    addHistory() {},
+    addCase() {},
+    formatDateTime(date) {
+      return date.toISOString().slice(0, 19).replace('T', ' ');
+    }
+  };
+  const wxApi = {
+    getDeviceInfo() {
+      return { platform: 'ios' };
+    },
+    request(options) {
+      calls.requests.push(options);
+    },
+    showToast(options) {
+      calls.toasts.push(options);
+    },
+    navigateTo() {},
+    setStorageSync() {}
+  };
+
+  const page = loadBaziPage(app, wxApi);
+  if (typeof page.onLoad === 'function') {
+    page.onLoad();
+  }
+  await page.generateReading();
+
+  assert.strictEqual(calls.requests.length, 0);
+  assert.strictEqual(calls.toasts.length, 1);
+  assert.match(calls.toasts[0].title, /127\.0\.0\.1|局域网|灞€鍩熺綉/);
+  assert.match(page.data.baziApiWarning, /127\.0\.0\.1|局域网|灞€鍩熺綉/);
+  assert.strictEqual(page.data.isGenerating, false);
+}
+
 await testRemoteEntry();
 await testDisabledConfigDoesNotFallback();
+await testRealDeviceLoopbackConfigShowsWarning();
 console.log('PASS bazi API page entry');
 }
 
