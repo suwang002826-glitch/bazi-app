@@ -113,6 +113,14 @@ async function withServer(run) {
   assert.strictEqual(reading.result.calendarConversion.calendarType, 'lunar');
   assert.strictEqual(reading.result.calendarConversion.solarDate, '2023-09-29');
   assert.strictEqual(reading.result.timeMode, 'beijingTime');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.provider, 'Hong Kong Observatory');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.dataPackId, 'hko-lunar-conversions-2023');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.calendarDataVersion, 'hko-lunar-data-pack@2026.07.02-runtime-preview.1');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.source, 'HKO_OPEN_DATA_NONGLI_2023');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.status, 'runtime-preview');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.completeLunarCalendar, false);
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.scope, 'data_pack_candidate_preview');
+  assert.ok(reading.result.calendarProviderInfo.lunar.sourceNote);
 }
 
 {

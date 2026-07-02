@@ -101,6 +101,34 @@ function findHint(result, title) {
   return (result.validationHints || []).find((item) => item.title === title) || {};
 }
 
+function getLunarProviderLabel(conversion = {}) {
+  const source = String(conversion.source || '').toUpperCase();
+  const dataPackId = String(conversion.dataPackId || '').toLowerCase();
+
+  if (source.includes('HKO') || dataPackId.includes('hko')) {
+    return 'Hong Kong Observatory';
+  }
+
+  if (source.includes('PMO') || dataPackId.includes('pmo')) {
+    return 'Purple Mountain Observatory candidate';
+  }
+
+  return 'local-preview-data-pack';
+}
+
+function buildLunarProviderInfo(conversion = {}) {
+  return {
+    provider: getLunarProviderLabel(conversion),
+    dataPackId: conversion.dataPackId || '',
+    calendarDataVersion: conversion.calendarDataVersion || '',
+    source: conversion.source || '',
+    status: conversion.dataPackStatus || 'local-preview',
+    completeLunarCalendar: Boolean(conversion.completeLunarCalendar),
+    scope: conversion.scope || '',
+    sourceNote: conversion.sourceNote || ''
+  };
+}
+
 function attachBackendAccuracyFields(result, input) {
   const trueSolarHint = findHint(result, '真太阳时校验');
   const solarTermHint = findHint(result, '节气边界校验');
@@ -131,12 +159,7 @@ function attachBackendAccuracyFields(result, input) {
       provider: 'local-solar-longitude-search'
     },
     calendarProviderInfo: {
-      lunar: {
-        provider: 'local-preview-data-pack',
-        calendarDataVersion: conversion.calendarDataVersion || '',
-        source: conversion.source || '',
-        status: conversion.dataPackStatus || 'local-preview'
-      },
+      lunar: buildLunarProviderInfo(conversion),
       solarTerm: {
         provider: 'local-solar-longitude-search',
         status: 'preview-rule-engine'
