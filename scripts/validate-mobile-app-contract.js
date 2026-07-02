@@ -11,6 +11,8 @@ const mobileEntryPath = path.join(root, 'apps', 'mobile', 'App.js');
 const mobileApiPath = path.join(root, 'apps', 'mobile', 'src', 'api', 'baziApi.js');
 const mobileInputScreenPath = path.join(root, 'apps', 'mobile', 'src', 'screens', 'BaziInputScreen.js');
 const mobileResultScreenPath = path.join(root, 'apps', 'mobile', 'src', 'screens', 'BaziResultScreen.js');
+const previewCmdPath = path.join(root, 'start-app-preview.cmd');
+const previewScriptPath = path.join(root, 'scripts', 'start-mobile-web-preview.ps1');
 
 assert.ok(fs.existsSync(specPath), 'mobile app transition spec must exist');
 
@@ -63,5 +65,17 @@ assert.ok(mobileInputScreen.includes('立即排盘'), 'mobile input screen must 
 const mobileResultScreen = fs.readFileSync(mobileResultScreenPath, 'utf8');
 assert.ok(mobileResultScreen.includes('四柱'), 'mobile result screen must show four pillars');
 assert.ok(mobileResultScreen.includes('calendarProviderInfo'), 'mobile result screen must show authority metadata');
+
+assert.ok(fs.existsSync(previewCmdPath), 'one-click preview command must exist');
+assert.ok(fs.existsSync(previewScriptPath), 'one-click preview PowerShell script must exist');
+
+const previewCmd = fs.readFileSync(previewCmdPath, 'utf8');
+assert.ok(previewCmd.includes('start-mobile-web-preview.ps1'), 'preview command must call PowerShell preview script');
+
+const previewScript = fs.readFileSync(previewScriptPath, 'utf8');
+assert.ok(previewScript.includes('EXPO_PUBLIC_BAZI_API_BASE_URL'), 'preview script must configure backend URL for app');
+assert.ok(previewScript.includes('8787'), 'preview script must use backend port 8787');
+assert.ok(previewScript.includes('8082'), 'preview script must use web preview port 8082');
+assert.ok(previewScript.includes('backend\\server.js'), 'preview script must start backend server');
 
 console.log('PASS mobile app transition contract');

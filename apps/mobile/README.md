@@ -24,6 +24,22 @@ npm run start
 
 Use this when Expo Go is not convenient.
 
+### One-click Preview on Windows
+
+Double-click this file at the repository root:
+
+```text
+start-app-preview.cmd
+```
+
+It starts the backend, starts the browser preview, and opens:
+
+```text
+http://localhost:8082
+```
+
+### Manual Preview
+
 Start backend first:
 
 ```powershell
