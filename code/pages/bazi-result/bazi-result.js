@@ -262,7 +262,6 @@ function buildSongPlate(baziPlate, result) {
       { label: '天干', rowClass: 'plate-stem-row', isMain: true, cells: pillars.map((item) => ({ text: item.stem, className: item.stemClass })) },
       { label: '地支', rowClass: 'plate-branch-row', isMain: true, cells: pillars.map((item) => ({ text: item.branch, className: item.branchClass })) },
       { label: '藏干', rowClass: 'plate-hidden-row', isHidden: true, cells: pillars.map((item) => ({ hiddenItems: item.hiddenItems })) },
-      { label: '副星', rowClass: 'plate-substar-row', isText: true, cells: pillars.map((item) => ({ lines: item.subStarLines })) },
       { label: '星运', rowClass: 'plate-small-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.stage) })) },
       { label: '自坐', rowClass: 'plate-small-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.seat) })) },
       { label: '空亡', rowClass: 'plate-small-row', isText: true, cells: pillars.map((item) => ({ lines: splitCellLines(item.void) })) },
