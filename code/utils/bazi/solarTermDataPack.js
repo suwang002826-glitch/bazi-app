@@ -111,7 +111,7 @@ function getSolarTermDataPackCoverage(manifest = solarTermManifest, options = {}
     runtimeEnabled: approvedPacks.length > 0,
     packIds: approvedPacks.map((pack) => pack.id),
     years,
-    warnings: manifest.blockers || []
+    warnings: manifest.warnings || manifest.blockers || []
   };
 }
 

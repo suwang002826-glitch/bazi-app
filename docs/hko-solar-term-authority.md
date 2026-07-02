@@ -22,6 +22,8 @@ The HKO page also states that all displayed times are Hong Kong Time, which is U
 
 ## Runtime Boundary
 
-The HKO data-pack added in this phase is a candidate preview only. It must not be loaded by the bazi runtime until a separate promotion commit marks it `approved-for-runtime` and runs engine-level regression tests.
+The HKO data-pack for Gregorian years 2024, 2025, and 2026 is approved for runtime preview only. It may be used by the bazi runtime for those years, while all out-of-scope years must continue to use local astronomical-search fallback.
+
+This approval covers solar-term times only. It does not imply full historical lunar conversion coverage.
 
 User-submitted screenshots with second-level times are used only as cross-check evidence. Because HKO XML provides minute-level times, screenshot comparisons must remain within one minute of the official HKO XML values.

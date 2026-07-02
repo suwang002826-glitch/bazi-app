@@ -7,17 +7,56 @@ const {
   loadSolarTermDataPacks
 } = require('../code/utils/bazi/solarTermDataPack');
 
-assert.deepStrictEqual(loadSolarTermDataPacks(), []);
+const runtimePacks = loadSolarTermDataPacks();
+assert.strictEqual(runtimePacks.length, 1);
+assert.strictEqual(runtimePacks[0].id, 'hko-solar-terms-2024-2026-candidate');
 
-const blockedCoverage = getSolarTermDataPackCoverage();
-assert.strictEqual(blockedCoverage.runtimeEnabled, false);
-assert.deepStrictEqual(blockedCoverage.packIds, []);
-assert.deepStrictEqual(blockedCoverage.years, []);
+const runtimeCoverage = getSolarTermDataPackCoverage();
+assert.strictEqual(runtimeCoverage.runtimeEnabled, true);
+assert.deepStrictEqual(runtimeCoverage.packIds, ['hko-solar-terms-2024-2026-candidate']);
+assert.deepStrictEqual(runtimeCoverage.years, [2024, 2025, 2026]);
+
+const defaultLichun2026 = findSolarTermRecord({ year: 2026, termKey: 'lichun' });
+assert.ok(defaultLichun2026, 'approved HKO solar-term pack must be visible to runtime lookup');
+assert.strictEqual(defaultLichun2026.local, '2026-02-04 04:02');
+
+const blockedManifest = {
+  ...solarTermManifest,
+  status: 'hko-candidate-preview-not-runtime-approved',
+  runtimeEnabled: false,
+  runtimeEnabledPackIds: [],
+  packs: [
+    {
+      ...solarTermManifest.packs[0],
+      status: 'candidate-preview-not-runtime-approved',
+      runtimeEnabled: false
+    }
+  ]
+};
+
+const blockedPackModules = {
+  'candidates/hko-solar-terms-2024-2026-candidate.json': {
+    ...hkoCandidatePack,
+    status: 'candidate-preview-not-runtime-approved',
+    runtimeApproval: {
+      status: 'blocked',
+      scope: 'test fixture only'
+    }
+  }
+};
+
+assert.deepStrictEqual(loadSolarTermDataPacks(blockedManifest, {
+  packModules: blockedPackModules
+}), []);
 
 assert.strictEqual(
-  findSolarTermRecord({ year: 2026, termKey: 'lichun' }),
+  findSolarTermRecord(
+    { year: 2026, termKey: 'lichun' },
+    blockedManifest,
+    { packModules: blockedPackModules }
+  ),
   null,
-  'candidate HKO solar-term pack must not be visible to runtime lookup'
+  'blocked HKO solar-term pack must not be visible to runtime lookup'
 );
 
 assert.throws(
@@ -78,7 +117,7 @@ const lichun2026 = findSolarTermRecord(
 );
 assert.ok(lichun2026, 'approved HKO pack should expose 2026 lichun');
 assert.strictEqual(lichun2026.local, '2026-02-04 04:02');
-assert.strictEqual(lichun2026.term.zh, '立春');
+assert.strictEqual(lichun2026.term.zh, '\u7acb\u6625');
 assert.strictEqual(lichun2026.provider, 'Hong Kong Observatory');
 assert.strictEqual(lichun2026.precision, 'minute');
 assert.strictEqual(lichun2026.date.getFullYear(), 2026);

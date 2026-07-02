@@ -120,8 +120,9 @@ function validatePack(rootDir, manifest, packEntry, errors) {
   }
 
   assertCondition(errors, pack.id === packEntry.id, `pack id mismatch for ${packEntry.id}`);
-  assertCondition(errors, pack.status === 'candidate-preview-not-runtime-approved', `${pack.id} must remain candidate-only`);
-  assertCondition(errors, pack.runtimeApproval?.status === 'blocked', `${pack.id} must block runtime approval`);
+  assertCondition(errors, pack.status === 'approved-for-runtime', `${pack.id} must be approved for limited runtime preview`);
+  assertCondition(errors, pack.runtimeApproval?.status === 'approved-for-runtime', `${pack.id} must record runtime approval`);
+  assertCondition(errors, pack.runtimeApproval?.scope === 'gregorian-years-2024-2026-runtime-preview', `${pack.id} must limit runtime approval scope`);
   assertCondition(errors, pack.authority?.institution === 'Hong Kong Observatory', `${pack.id} must use HKO as authority`);
   assertCondition(errors, pack.authority?.sourceId === manifest.primarySourceId, `${pack.id} must match manifest source id`);
   assertCondition(errors, pack.authority?.officialPageUrl === 'https://www.hko.gov.hk/sc/gts/astronomy/Solar_Term.htm', `${pack.id} must keep official HKO page URL`);
@@ -186,14 +187,15 @@ function validateSolarTermDataPackRepository({ rootDir }) {
     return { errors, summary };
   }
 
-  assertCondition(errors, manifest.calendarDataVersion === 'hko-solar-term-data-pack@2026.07.03-preview', 'manifest must use HKO preview calendar version');
-  assertCondition(errors, manifest.status === 'hko-candidate-preview-not-runtime-approved', 'manifest must stay HKO candidate-only');
-  assertCondition(errors, manifest.runtimeEnabled === false, 'manifest must not enable runtime loading');
+  assertCondition(errors, manifest.calendarDataVersion === 'hko-solar-term-data-pack@2026.07.03-runtime-preview.1', 'manifest must use HKO runtime-preview calendar version');
+  assertCondition(errors, manifest.status === 'hko-runtime-preview', 'manifest must stay HKO runtime preview');
+  assertCondition(errors, manifest.runtimeEnabled === true, 'manifest must enable limited runtime loading');
   assertCondition(errors, manifest.primaryAuthority === 'Hong Kong Observatory', 'manifest must use HKO as primary authority');
   assertCondition(errors, manifest.primarySourceId === 'HKO-SOLAR-TERMS-OFFICIAL-XML', 'manifest must use HKO official XML source id');
-  assertCondition(errors, compareArrays(manifest.runtimeEnabledPackIds, []), 'no solar-term pack may be runtime enabled yet');
-  assertCondition(errors, compareArrays(manifest.blockers, ['stable-runtime-approval-not-granted']), 'manifest blockers must stay explicit');
-  assertCondition(errors, Array.isArray(manifest.packs) && manifest.packs.length === 1, 'manifest must register exactly one candidate pack');
+  assertCondition(errors, compareArrays(manifest.runtimeEnabledPackIds, ['hko-solar-terms-2024-2026-candidate']), 'manifest must enable only the HKO 2024-2026 pack');
+  assertCondition(errors, compareArrays(manifest.blockers, []), 'manifest must not keep stale approval blockers');
+  assertCondition(errors, Array.isArray(manifest.warnings) && manifest.warnings.some((warning) => warning.includes('2024, 2025, and 2026')), 'manifest must warn about limited runtime years');
+  assertCondition(errors, Array.isArray(manifest.packs) && manifest.packs.length === 1, 'manifest must register exactly one runtime preview pack');
 
   for (const packEntry of manifest.packs || []) {
     const result = validatePack(rootDir, manifest, packEntry, errors);

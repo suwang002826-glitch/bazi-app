@@ -5,7 +5,7 @@ const baziRuleConfig = {
   policies: {
     runtimeAuthority: 'backend_service',
     clientRole: 'input_display_validation_terminal',
-    solarTermAuthority: 'pmo_primary_cross_check_required',
+    solarTermAuthority: 'hko_runtime_preview_2024_2026_with_local_fallback',
     yearBoundary: 'lichun',
     monthBoundary: 'jie',
     ziHourDaySwitch: 'explicit_policy_required',

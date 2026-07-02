@@ -1,3 +1,8 @@
+const {
+  findSolarTermRecord,
+  getSolarTermDataPackCoverage
+} = require('./solarTermDataPack');
+
 const jieTerms = [
   { key: '立春', angle: 315, month: 2, day: 4, branch: '寅', index: 0 },
   { key: '惊蛰', angle: 345, month: 3, day: 6, branch: '卯', index: 1 },
@@ -13,10 +18,27 @@ const jieTerms = [
   { key: '小寒', angle: 285, month: 1, day: 6, branch: '丑', index: 11 }
 ];
 
+const jieTermKeysByIndex = [
+  'lichun',
+  'jingzhe',
+  'qingming',
+  'lixia',
+  'mangzhong',
+  'xiaoshu',
+  'liqiu',
+  'bailu',
+  'hanlu',
+  'lidong',
+  'daxue',
+  'xiaohan'
+];
+
 const solarTermProviderInfo = {
   providerId: 'local-solar-longitude-provider',
+  provider: 'local-solar-longitude-search',
   version: 'solar-term-provider@0.1.0',
   status: 'local-astronomical-search',
+  authority: 'local-astronomical-search',
   boundaryPolicy: 'jie-only-month-boundary',
   precisionNote: '当前使用太阳黄经本地二分搜索推算十二节令时刻；后续可替换为权威节气数据包。'
 };
@@ -46,6 +68,15 @@ function findSolarTermTime(year, term) {
   }
 
   const termYear = term.month === 1 ? year + 1 : year;
+  const approvedRecord = findSolarTermRecord({
+    year: termYear,
+    termKey: term.termKey || jieTermKeysByIndex[term.index]
+  });
+  if (approvedRecord) {
+    solarTermCache[cacheKey] = approvedRecord.date.getTime();
+    return new Date(solarTermCache[cacheKey]);
+  }
+
   let start = new Date(termYear, term.month - 1, term.day - 3, 0, 0, 0, 0);
   let end = new Date(termYear, term.month - 1, term.day + 3, 0, 0, 0, 0);
   let startDiff = angleDiff(sunLongitude(start), term.angle);
@@ -104,6 +135,21 @@ function getAdjacentJie(date, direction) {
 }
 
 function getSolarTermProviderInfo() {
+  const runtimeCoverage = getSolarTermDataPackCoverage();
+  if (runtimeCoverage.runtimeEnabled) {
+    return {
+      ...solarTermProviderInfo,
+      providerId: 'hko-solar-term-data-pack-with-local-fallback',
+      provider: 'hko-solar-term-data-pack-with-local-fallback',
+      version: 'solar-term-provider@0.2.0',
+      status: 'hko-runtime-preview-with-local-fallback',
+      authority: runtimeCoverage.primaryAuthority,
+      precisionNote: '2024-2026 年优先使用香港天文台 HKO 官方节气 XML 分钟级时刻；范围外继续使用本地太阳黄经搜索兜底。',
+      runtimeCoverage,
+      fallbackProvider: 'local-solar-longitude-search'
+    };
+  }
+
   return { ...solarTermProviderInfo };
 }
 
