@@ -1,8 +1,11 @@
+const hkoLunarConversions2023 = require('../../data-packs/lunar/hko-lunar-conversions-2023');
 const lunarConversions2023 = require('../../data-packs/lunar/lunar-conversions-2023');
 const lunarConversions2025Candidate = require('../../data-packs/lunar/lunar-conversions-2025-candidate');
 const lunarManifest = require('../../data-packs/lunar/manifest');
 
 const lunarPackModules = {
+  'hko-lunar-conversions-2023.js': hkoLunarConversions2023,
+  'hko-lunar-conversions-2023.json': hkoLunarConversions2023,
   'lunar-conversions-2023.js': lunarConversions2023,
   'lunar-conversions-2023.json': lunarConversions2023,
   'lunar-conversions-2025-candidate.js': lunarConversions2025Candidate

@@ -168,6 +168,14 @@ function createOutsideCoverageError(lunarInput) {
 }
 
 function createLunarDataPackWarning(match) {
+  if (match.dataPackStatus === 'runtime-preview' && match.source === 'HKO_OPEN_DATA_NONGLI_2023') {
+    return {
+      code: 'HKO_LUNAR_DATA_PACK_RUNTIME_PREVIEW',
+      level: 'info',
+      message: '当前农历转换使用香港天文台开放数据运行时预览包。'
+    };
+  }
+
   if (match.dataPackStatus === 'candidate-not-runtime-approved') {
     return {
       code: 'LUNAR_DATA_PACK_PREVIEW_ONLY',
