@@ -177,10 +177,12 @@ assert(
   tapCalendarMode(page, '农历');
   await page.generateReading();
 
-  assert.strictEqual(calls.requests.length, 1);
-  assert.strictEqual(calls.requests[0].url, 'https://api.example.test/bazi/calculate');
-  assert.strictEqual(calls.requests[0].data.calendarType, 'lunar');
-  assert.deepStrictEqual(calls.requests[0].data.lunarDate, {
+  assert.strictEqual(calls.requests.length, 2);
+  assert.strictEqual(calls.requests[0].url, 'https://api.example.test/health');
+  assert.strictEqual(calls.requests[0].method, 'GET');
+  assert.strictEqual(calls.requests[1].url, 'https://api.example.test/bazi/calculate');
+  assert.strictEqual(calls.requests[1].data.calendarType, 'lunar');
+  assert.deepStrictEqual(calls.requests[1].data.lunarDate, {
     year: 2023,
     month: 8,
     day: 15,
@@ -198,6 +200,13 @@ assert(
 {
   const { page, app, calls } = loadBaziPage({
     request(requestOptions) {
+      if (requestOptions.url === 'https://api.example.test/health') {
+        requestOptions.success({
+          statusCode: 200,
+          data: { ok: true }
+        });
+        return;
+      }
       requestOptions.success({
         statusCode: 400,
         data: {
@@ -217,7 +226,7 @@ assert(
   tapCalendarMode(page, '农历');
   await page.generateReading();
 
-  assert.strictEqual(calls.requests.length, 1);
+  assert.strictEqual(calls.requests.length, 2);
   assert.strictEqual(calls.navigations.length, 0);
   assert.strictEqual(app.globalData.currentBaziReading, null);
   assert.strictEqual(page.data.isGenerating, false);

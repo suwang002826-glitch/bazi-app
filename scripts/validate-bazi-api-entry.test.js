@@ -167,10 +167,12 @@ async function testRemoteEntry() {
   });
   await page.generateReading();
 
-  assert.strictEqual(calls.requests.length, 1);
-  assert.strictEqual(calls.requests[0].url, 'https://api.example.com/bazi/calculate');
-  assert.strictEqual(calls.requests[0].data.name, '张三');
-  assert.strictEqual(calls.requests[0].data.timeMode, 'trueSolarTime');
+  assert.strictEqual(calls.requests.length, 2);
+  assert.strictEqual(calls.requests[0].url, 'https://api.example.com/health');
+  assert.strictEqual(calls.requests[0].method, 'GET');
+  assert.strictEqual(calls.requests[1].url, 'https://api.example.com/bazi/calculate');
+  assert.ok(calls.requests[1].data.name);
+  assert.strictEqual(calls.requests[1].data.timeMode, 'trueSolarTime');
   assert.strictEqual(calls.navigations.length, 1);
   assert.strictEqual(calls.history.length, 1);
   assert.strictEqual(calls.cases.length, 1);
@@ -287,9 +289,77 @@ async function testRealDeviceLoopbackConfigShowsWarning() {
   assert.strictEqual(page.data.isGenerating, false);
 }
 
+async function testHealthCheckBlocksCalculateWhenBackendIsOffline() {
+  const calls = {
+    requests: [],
+    toasts: [],
+    navigations: []
+  };
+  const app = {
+    globalData: {
+      disclaimer: 'test disclaimer',
+      currentBaziReading: null,
+      engineVersion: 'backend-api-2026.07.02',
+      baziApi: {
+        enabled: true,
+        baseUrl: 'https://api.example.com',
+        calculatePath: '/bazi/calculate',
+        healthPath: '/health',
+        timeout: 15000,
+        provider: 'backend'
+      }
+    },
+    addHistory() {},
+    addCase() {},
+    formatDateTime(date) {
+      return date.toISOString().slice(0, 19).replace('T', ' ');
+    }
+  };
+  const wxApi = {
+    getDeviceInfo() {
+      return { platform: 'devtools' };
+    },
+    request(options) {
+      calls.requests.push(options);
+      if (options.url === 'https://api.example.com/health') {
+        options.fail({ errMsg: 'connect ECONNREFUSED' });
+        return;
+      }
+      options.success({
+        statusCode: 200,
+        data: {
+          result: {
+            title: 'should not calculate',
+            pillars: []
+          }
+        }
+      });
+    },
+    showToast(options) {
+      calls.toasts.push(options);
+    },
+    navigateTo(options) {
+      calls.navigations.push(options);
+    },
+    setStorageSync() {}
+  };
+
+  const page = loadBaziPage(app, wxApi);
+  await page.generateReading();
+
+  assert.strictEqual(calls.requests.length, 1);
+  assert.strictEqual(calls.requests[0].url, 'https://api.example.com/health');
+  assert.strictEqual(calls.requests[0].method, 'GET');
+  assert.strictEqual(calls.navigations.length, 0);
+  assert.strictEqual(calls.toasts.length, 1);
+  assert.ok(calls.toasts[0].title);
+  assert.strictEqual(page.data.isGenerating, false);
+}
+
 await testRemoteEntry();
 await testDisabledConfigDoesNotFallback();
 await testRealDeviceLoopbackConfigShowsWarning();
+await testHealthCheckBlocksCalculateWhenBackendIsOffline();
 console.log('PASS bazi API page entry');
 }
 

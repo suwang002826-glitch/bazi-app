@@ -4,6 +4,7 @@ const DEFAULT_BAZI_API_CONFIG = {
   enabled: false,
   baseUrl: '',
   calculatePath: '/bazi/calculate',
+  healthPath: '/health',
   timeout: 15000,
   provider: 'local'
 };
@@ -161,10 +162,46 @@ function requestBaziCalculation({ wxApi, config = {}, input = {}, saveCase = fal
   });
 }
 
+function requestBaziHealth({ wxApi, config = {} }) {
+  const runtimeConfig = {
+    ...DEFAULT_BAZI_API_CONFIG,
+    ...config
+  };
+  if (!shouldUseRemoteBaziApi(runtimeConfig)) {
+    const error = new Error('后端排盘服务未配置，请先启动后端服务');
+    error.code = 'BAZI_API_DISABLED';
+    return Promise.reject(error);
+  }
+
+  return new Promise((resolve, reject) => {
+    wxApi.request({
+      url: joinUrl(runtimeConfig.baseUrl, runtimeConfig.healthPath),
+      method: 'GET',
+      timeout: runtimeConfig.timeout,
+      success(response) {
+        if (!response || response.statusCode < 200 || response.statusCode >= 300) {
+          const error = new Error('后端连接失败，请确认服务已启动');
+          error.code = 'BAZI_API_HEALTH_ERROR';
+          error.statusCode = response && response.statusCode;
+          reject(error);
+          return;
+        }
+        resolve(response.data || {});
+      },
+      fail() {
+        const error = new Error('后端连接失败，请确认服务已启动');
+        error.code = 'BAZI_API_HEALTH_ERROR';
+        reject(error);
+      }
+    });
+  });
+}
+
 module.exports = {
   DEFAULT_BAZI_API_CONFIG,
   buildBaziCalculateRequest,
   normalizeBaziApiResponse,
   requestBaziCalculation,
+  requestBaziHealth,
   shouldUseRemoteBaziApi
 };

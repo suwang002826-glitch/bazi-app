@@ -1,6 +1,7 @@
 const { createBaziPlate } = require('../../utils/baziPlate');
 const {
   requestBaziCalculation,
+  requestBaziHealth,
   shouldUseRemoteBaziApi
 } = require('../../utils/baziApiClient');
 const {
@@ -358,12 +359,15 @@ Page({
       return;
     }
 
-    return requestBaziCalculation({
+    return requestBaziHealth({
+      wxApi: wx,
+      config: app.globalData.baziApi
+    }).then(() => requestBaziCalculation({
       wxApi: wx,
       config: app.globalData.baziApi,
       input: readingInput,
       saveCase: this.data.saveCase
-    }).then((reading) => {
+    })).then((reading) => {
       this.persistReading(reading, readingInput);
     }).catch((error) => {
       this.handleGenerateError(error);

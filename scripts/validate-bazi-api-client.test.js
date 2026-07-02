@@ -3,6 +3,7 @@ const {
   buildBaziCalculateRequest,
   normalizeBaziApiResponse,
   requestBaziCalculation,
+  requestBaziHealth,
   shouldUseRemoteBaziApi
 } = require('../code/utils/baziApiClient');
 const {
@@ -159,7 +160,34 @@ async function testRequest() {
   assert.strictEqual(requests[0].data.birthTime, '2000-01-01 08:00:00');
 }
 
-testRequest()
+async function testHealthRequest() {
+  const requests = [];
+  const wxApi = {
+    request(options) {
+      requests.push(options);
+      options.success({
+        statusCode: 200,
+        data: { ok: true, service: 'bazi-backend' }
+      });
+    }
+  };
+  const health = await requestBaziHealth({
+    wxApi,
+    config: {
+      enabled: true,
+      baseUrl: 'https://api.example.com/',
+      healthPath: '/health',
+      timeout: 15000
+    }
+  });
+  assert.strictEqual(health.ok, true);
+  assert.strictEqual(requests.length, 1);
+  assert.strictEqual(requests[0].url, 'https://api.example.com/health');
+  assert.strictEqual(requests[0].method, 'GET');
+  assert.strictEqual(requests[0].timeout, 15000);
+}
+
+Promise.all([testRequest(), testHealthRequest()])
   .then(() => console.log('PASS bazi API client contract'))
   .catch((error) => {
     console.error(error);
