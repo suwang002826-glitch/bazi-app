@@ -1,5 +1,6 @@
 const http = require('http');
 const { calculateBazi, toErrorBody } = require('./baziService');
+const { getCalendarCoverage } = require('./calendarCoverage');
 
 function sendJson(response, statusCode, body) {
   const payload = JSON.stringify(body);
@@ -8,7 +9,7 @@ function sendJson(response, statusCode, body) {
     'Content-Length': Buffer.byteLength(payload),
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'content-type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
   });
   response.end(payload);
 }
@@ -61,6 +62,18 @@ function createBaziServer() {
         service: 'bazi-backend',
         version: 'bazi-backend@0.1.0'
       });
+      return;
+    }
+
+    if (request.url === '/bazi/calendar/coverage') {
+      if (request.method !== 'GET') {
+        sendJson(response, 405, {
+          code: 'METHOD_NOT_ALLOWED',
+          message: '璇蜂娇鐢?GET /bazi/calendar/coverage'
+        });
+        return;
+      }
+      sendJson(response, 200, getCalendarCoverage());
       return;
     }
 

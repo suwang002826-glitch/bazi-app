@@ -144,6 +144,18 @@ withServer(async (server) => {
   assert.strictEqual(missing.statusCode, 404);
   assert.strictEqual(missing.data.code, 'NOT_FOUND');
 
+  const coverage = await requestJson(server, 'GET', '/bazi/calendar/coverage');
+  assert.strictEqual(coverage.statusCode, 200);
+  assert.strictEqual(coverage.data.ok, true);
+  assert.strictEqual(coverage.data.lunar.backendRangePack.dataPackId, 'hko-lunar-conversions-1901-2100');
+  assert.strictEqual(coverage.data.lunar.backendRangePack.provider, 'Hong Kong Observatory');
+  assert.deepStrictEqual(coverage.data.lunar.backendRangePack.coverage.gregorianYears, [1901, 2100]);
+  assert.strictEqual(coverage.data.lunar.backendRangePack.coverage.records, 73049);
+  assert.strictEqual(coverage.data.lunar.backendRangePack.usagePolicy.miniprogramMainPackage, 'blocked');
+  assert.strictEqual(coverage.data.lunar.backendRangePack.usagePolicy.calculateEndpointUse, 'not-yet-promoted');
+  assert.strictEqual(coverage.data.lunar.backendRangePack.pmoCrossCheck.status, 'pass');
+  assert.strictEqual(coverage.data.lunar.backendRangePack.pmoCrossCheck.comparedRecords, 365);
+
   const badMethod = await requestJson(server, 'GET', '/bazi/calculate');
   assert.strictEqual(badMethod.statusCode, 405);
   assert.strictEqual(badMethod.data.code, 'METHOD_NOT_ALLOWED');
