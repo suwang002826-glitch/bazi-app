@@ -88,6 +88,18 @@
   border-bottom: 1rpx solid rgba(242, 240, 228, .10);
 }
 
+.api-warning {
+  margin-bottom: 18rpx;
+  padding: 16rpx 18rpx;
+  border: 1rpx solid rgba(216, 79, 72, .22);
+  border-radius: 14rpx;
+  background: rgba(216, 79, 72, .16);
+  color: #f2c6c2;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
 .instrument-panel {
   margin-top: 20rpx;
   padding: 8rpx 20rpx;

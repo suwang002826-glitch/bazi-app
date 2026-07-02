@@ -8,6 +8,7 @@
   </view>
 
   <view class="entry-card">
+    <view wx:if="{{baziApiWarning}}" class="api-warning">{{baziApiWarning}}</view>
     <view class="entry-card-head">
       <view>
         <view class="form-kicker">出生档案</view>
