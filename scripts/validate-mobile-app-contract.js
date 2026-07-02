@@ -8,6 +8,7 @@ const commandPath = path.join(root, 'docs', '项目指挥体系.md');
 const mobilePackagePath = path.join(root, 'apps', 'mobile', 'package.json');
 const mobileAppConfigPath = path.join(root, 'apps', 'mobile', 'app.json');
 const mobileEntryPath = path.join(root, 'apps', 'mobile', 'App.js');
+const mobileApiPath = path.join(root, 'apps', 'mobile', 'src', 'api', 'baziApi.js');
 
 assert.ok(fs.existsSync(specPath), 'mobile app transition spec must exist');
 
@@ -39,5 +40,12 @@ assert.ok(mobilePackage.dependencies['react-native'], 'mobile app must depend on
 const mobileEntry = fs.readFileSync(mobileEntryPath, 'utf8');
 assert.ok(mobileEntry.includes('八字排盘'), 'mobile entry must show Bazi app title');
 assert.ok(mobileEntry.includes('精准、稳定、专业的排盘系统'), 'mobile entry must keep product core promise');
+assert.ok(mobileEntry.includes('getBackendBaseUrl'), 'mobile entry must use the backend API wrapper');
+
+assert.ok(fs.existsSync(mobileApiPath), 'mobile backend API wrapper must exist');
+const mobileApi = fs.readFileSync(mobileApiPath, 'utf8');
+assert.ok(mobileApi.includes('/bazi/calculate'), 'mobile API client must call calculate endpoint');
+assert.ok(mobileApi.includes('/bazi/calendar/coverage'), 'mobile API client must call coverage endpoint');
+assert.ok(mobileApi.includes('EXPO_PUBLIC_BAZI_API_BASE_URL'), 'mobile API client must support environment base URL');
 
 console.log('PASS mobile app transition contract');
