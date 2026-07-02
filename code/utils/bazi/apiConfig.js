@@ -55,6 +55,21 @@ function isRealDevicePlatform(platform) {
   return text === 'real-device' || text === 'device' || text === 'phone';
 }
 
+function detectBaziRuntimePlatform(wxApi) {
+  const api = wxApi || (typeof wx !== 'undefined' ? wx : null);
+  let info = null;
+  if (api && typeof api.getDeviceInfo === 'function') {
+    info = api.getDeviceInfo();
+  } else if (api && typeof api.getSystemInfoSync === 'function') {
+    info = api.getSystemInfoSync();
+  }
+
+  const platform = String((info && info.platform) || '').toLowerCase();
+  if (platform === 'devtools') return 'devtools';
+  if (platform === 'ios' || platform === 'android' || platform === 'harmony') return 'real-device';
+  return platform;
+}
+
 function getBaziApiConnectionAdvice(config = {}, runtime = {}) {
   if (!config.enabled) {
     return {
@@ -98,5 +113,6 @@ module.exports = {
   buildBaziHealthUrl,
   buildBaziCoverageUrl,
   isLoopbackBaziApiUrl,
+  detectBaziRuntimePlatform,
   getBaziApiConnectionAdvice
 };
