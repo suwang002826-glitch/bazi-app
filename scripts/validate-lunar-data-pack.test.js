@@ -63,11 +63,15 @@ const result = validateLunarDataPackRepository({
 });
 
 assert.deepStrictEqual(result.errors, []);
-assert.strictEqual(result.summary.calendarDataVersion, 'lunar-data-pack@2026.07.01');
-assert.strictEqual(result.summary.status, 'acceptance-seed');
-assert.strictEqual(result.summary.packCount, 1);
-assert.strictEqual(result.summary.recordCount, 2);
-assert.deepStrictEqual(result.summary.packIds, ['lunar-conversions-2023']);
+assert.strictEqual(result.summary.calendarDataVersion, 'hko-lunar-data-pack@2026.07.02-runtime-preview.1');
+assert.strictEqual(result.summary.status, 'hko-runtime-preview');
+assert.strictEqual(result.summary.packCount, 3);
+assert.strictEqual(result.summary.recordCount, 732);
+assert.deepStrictEqual(result.summary.packIds, [
+  'hko-lunar-conversions-2023',
+  'lunar-conversions-2023',
+  'lunar-data-pack-2025-candidate'
+]);
 
 const invalidRoot = createTempRepository(
   {
@@ -149,9 +153,243 @@ const invalidRoot = createTempRepository(
 const invalidResult = validateLunarDataPackRepository({ rootDir: invalidRoot });
 assertHasError(invalidResult.errors, 'pack-b: coverage.years [2025] does not match manifest years [2024]');
 assertHasError(invalidResult.errors, 'pack-b: coverage.completeLunarCalendar false does not match manifest true');
-assertHasError(invalidResult.errors, 'pack-b.records[0]: duplicate lunar date across packs 2023-1-1-normal');
+assertHasError(invalidResult.errors, 'pack-b.records[0]: duplicate lunar date across runtime packs 2023-1-1-normal');
 assertHasError(invalidResult.errors, 'pack-b.records[0]: duplicate caseId across packs BZI-DUP');
 assertHasError(invalidResult.errors, 'pack-b.records[0]: lunarYear 2023 outside coverage years 2025');
+
+const mixedRuntimeRecords = [
+  {
+    caseId: 'BZI-MIXED-RUNTIME',
+    lunarYear: 2023,
+    lunarMonth: 8,
+    lunarDay: 15,
+    isLeapMonth: false,
+    solarDate: '2023-09-29',
+    sourceNote: 'active runtime fixture'
+  }
+];
+const mixedDisabledRecords = [
+  {
+    caseId: 'BZI-MIXED-DISABLED',
+    lunarYear: 2023,
+    lunarMonth: 8,
+    lunarDay: 15,
+    isLeapMonth: false,
+    solarDate: '2023-09-29',
+    sourceNote: 'disabled archive fixture with same lunar date'
+  }
+];
+const mixedCandidateRecords = [
+  {
+    caseId: 'BZI-MIXED-CANDIDATE',
+    lunarYear: 2025,
+    lunarMonth: 1,
+    lunarDay: 1,
+    isLeapMonth: false,
+    solarDate: '2025-01-29',
+    sourceNote: 'candidate fixture'
+  }
+];
+const mixedRegistryRoot = createTempRepository(
+  {
+    calendarDataVersion: 'registry@test',
+    status: 'runtime-preview',
+    packs: [
+      {
+        dataPackId: 'pack-runtime',
+        path: 'pack-runtime.json',
+        years: [2023],
+        completeLunarCalendar: false,
+        runtimeEnabled: true
+      },
+      {
+        dataPackId: 'pack-disabled-archive',
+        path: 'pack-disabled-archive.json',
+        years: [2023],
+        completeLunarCalendar: false,
+        runtimeEnabled: false
+      },
+      {
+        dataPackId: 'pack-candidate',
+        path: 'pack-candidate.json',
+        years: [2025],
+        completeLunarCalendar: false,
+        runtimeEnabled: true,
+        runtimeApprovalStatus: 'blocked'
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-runtime.json': {
+      dataPackId: 'pack-runtime',
+      calendarDataVersion: 'source-runtime@test',
+      source: 'test:pack-runtime',
+      status: 'runtime-preview',
+      coverage: {
+        lunarYears: [2023],
+        gregorianYears: [2023],
+        scope: 'mixed registry runtime fixture',
+        completeLunarCalendar: false
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture runtime',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-02T06:00:09.900Z',
+          note: 'runtime source fixture'
+        }
+      ],
+      generatedAt: '2026-07-02T06:00:09.900Z',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(mixedRuntimeRecords)
+      },
+      records: mixedRuntimeRecords
+    },
+    'pack-disabled-archive.json': {
+      dataPackId: 'pack-disabled-archive',
+      calendarDataVersion: 'source-disabled@test',
+      source: 'test:pack-disabled-archive',
+      status: 'acceptance-seed',
+      coverage: {
+        years: [2023],
+        scope: 'disabled archive fixture',
+        completeLunarCalendar: false
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture disabled',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-02T00:00:00+08:00',
+          note: 'disabled source fixture'
+        }
+      ],
+      generatedAt: '2026-07-02T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(mixedDisabledRecords)
+      },
+      records: mixedDisabledRecords
+    },
+    'pack-candidate.json': {
+      dataPackId: 'pack-candidate',
+      calendarDataVersion: 'source-candidate@test',
+      source: 'test:pack-candidate',
+      status: 'candidate-not-runtime-approved',
+      coverage: {
+        years: [2025],
+        scope: 'candidate fixture',
+        completeLunarCalendar: false
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture candidate',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-02T00:00:00+08:00',
+          note: 'candidate source fixture'
+        }
+      ],
+      generatedAt: '2026-07-02T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(mixedCandidateRecords)
+      },
+      records: mixedCandidateRecords
+    }
+  }
+);
+assert.deepStrictEqual(validateLunarDataPackRepository({ rootDir: mixedRegistryRoot }).errors, []);
+
+const duplicateActiveRuntimeRoot = createTempRepository(
+  {
+    calendarDataVersion: 'registry@test',
+    status: 'runtime-preview',
+    packs: [
+      {
+        dataPackId: 'pack-runtime-a',
+        path: 'pack-runtime-a.json',
+        years: [2023],
+        completeLunarCalendar: false,
+        runtimeEnabled: true
+      },
+      {
+        dataPackId: 'pack-runtime-b',
+        path: 'pack-runtime-b.json',
+        years: [2023],
+        completeLunarCalendar: false,
+        runtimeEnabled: true
+      }
+    ],
+    warnings: []
+  },
+  {
+    'pack-runtime-a.json': {
+      dataPackId: 'pack-runtime-a',
+      calendarDataVersion: 'source-a@test',
+      source: 'test:pack-runtime-a',
+      status: 'runtime-preview',
+      coverage: {
+        years: [2023],
+        scope: 'active runtime duplicate fixture',
+        completeLunarCalendar: false
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture active a',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-02T00:00:00+08:00',
+          note: 'active source fixture'
+        }
+      ],
+      generatedAt: '2026-07-02T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(mixedRuntimeRecords)
+      },
+      records: mixedRuntimeRecords
+    },
+    'pack-runtime-b.json': {
+      dataPackId: 'pack-runtime-b',
+      calendarDataVersion: 'source-b@test',
+      source: 'test:pack-runtime-b',
+      status: 'runtime-preview',
+      coverage: {
+        years: [2023],
+        scope: 'active runtime duplicate fixture',
+        completeLunarCalendar: false
+      },
+      authoritySource: 'test-fixture',
+      sourceLedger: [
+        {
+          sourceName: 'fixture active b',
+          sourceVersion: 'v1',
+          retrievedAt: '2026-07-02T00:00:00+08:00',
+          note: 'active source fixture'
+        }
+      ],
+      generatedAt: '2026-07-02T00:00:00+08:00',
+      generatedBy: 'validate-lunar-data-pack.test',
+      recordsChecksum: {
+        algorithm: 'sha256',
+        value: checksumRecords(mixedDisabledRecords)
+      },
+      records: mixedDisabledRecords
+    }
+  }
+);
+assertHasError(
+  validateLunarDataPackRepository({ rootDir: duplicateActiveRuntimeRoot }).errors,
+  'pack-runtime-b.records[0]: duplicate lunar date across runtime packs 2023-8-15-normal'
+);
 
 const invalidTypeRoot = createTempRepository(
   {

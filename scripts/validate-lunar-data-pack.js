@@ -48,7 +48,7 @@ function isIsoDate(value) {
 
 function isIsoDateTime(value) {
   const text = String(value || '');
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$/.test(text)) {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}:\d{2})$/.test(text)) {
     return false;
   }
   return !Number.isNaN(new Date(text).getTime());
@@ -153,6 +153,20 @@ function yearsAreIntegers(years) {
   return Array.isArray(years) && years.every((year) => Number.isInteger(year));
 }
 
+function getCoverageYears(pack) {
+  if (!pack.coverage) return undefined;
+  if (Array.isArray(pack.coverage.years)) return pack.coverage.years;
+  if (Array.isArray(pack.coverage.lunarYears)) return pack.coverage.lunarYears;
+  return pack.coverage.years;
+}
+
+function getCoverageYearsLabel(pack) {
+  if (pack.coverage && Array.isArray(pack.coverage.lunarYears) && !Array.isArray(pack.coverage.years)) {
+    return 'coverage.lunarYears';
+  }
+  return 'coverage.years';
+}
+
 function validateYearsArray(label, years, errors) {
   if (!Array.isArray(years)) {
     errors.push(`${label}: years must be an array`);
@@ -165,6 +179,17 @@ function validateYearsArray(label, years, errors) {
   }
 
   return true;
+}
+
+function validateCoverageYearsArray(pack, errors) {
+  const years = getCoverageYears(pack);
+  const label = `${pack.dataPackId}: ${getCoverageYearsLabel(pack)}`;
+  return validateYearsArray(label, years, errors);
+}
+
+function validateOptionalYearsArray(label, years, errors) {
+  if (years === undefined) return true;
+  return validateYearsArray(label, years, errors);
 }
 
 function sameYears(left, right) {
@@ -196,7 +221,7 @@ function isDraftStatus(status) {
   return String(status || '').toLowerCase() === 'draft';
 }
 
-function validateRecord(record, pack, index, seen, repositoryState, errors) {
+function validateRecord(record, pack, index, seen, repositoryState, manifestEntry, errors) {
   REQUIRED_RECORD_FIELDS.forEach((field) => {
     if (record[field] === undefined || record[field] === null || record[field] === '') {
       errors.push(`${pack.dataPackId}.records[${index}]: missing ${field}`);
@@ -217,8 +242,8 @@ function validateRecord(record, pack, index, seen, repositoryState, errors) {
     errors.push(`${pack.dataPackId}.records[${index}]: solarDate must be YYYY-MM-DD`);
   }
 
-  const coverageYears = pack.coverage && Array.isArray(pack.coverage.years)
-    ? normalizeYears(pack.coverage.years)
+  const coverageYears = pack.coverage && Array.isArray(getCoverageYears(pack))
+    ? normalizeYears(getCoverageYears(pack))
     : [];
   if (Number.isInteger(record.lunarYear) && coverageYears.length > 0 && !coverageYears.includes(record.lunarYear)) {
     errors.push(`${pack.dataPackId}.records[${index}]: lunarYear ${record.lunarYear} outside coverage years ${coverageYears.join(', ')}`);
@@ -238,10 +263,10 @@ function validateRecord(record, pack, index, seen, repositoryState, errors) {
     }
     seen.add(key);
 
-    if (repositoryState.lunarDates.has(key)) {
-      errors.push(`${pack.dataPackId}.records[${index}]: duplicate lunar date across packs ${key}`);
+    if (manifestEntry.runtimeEnabled !== false && repositoryState.runtimeLunarDates.has(key)) {
+      errors.push(`${pack.dataPackId}.records[${index}]: duplicate lunar date across runtime packs ${key}`);
     }
-    repositoryState.lunarDates.add(key);
+    if (manifestEntry.runtimeEnabled !== false) repositoryState.runtimeLunarDates.add(key);
   }
 }
 
@@ -389,20 +414,25 @@ function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
     errors.push(`${manifestEntry.path}: dataPackId does not match manifest`);
   }
 
-  if (pack.calendarDataVersion !== manifest.calendarDataVersion) {
-    errors.push(`${pack.dataPackId}: calendarDataVersion does not match manifest`);
-  }
-
   const coverageYearsValid = Boolean(pack.coverage)
-    && validateYearsArray(`${pack.dataPackId}: coverage.years`, pack.coverage.years, errors);
+    && validateCoverageYearsArray(pack, errors);
+
+  if (pack.coverage) {
+    validateOptionalYearsArray(
+      `${pack.dataPackId}: coverage.gregorianYears`,
+      pack.coverage.gregorianYears,
+      errors
+    );
+  }
 
   if (pack.coverage && typeof pack.coverage.completeLunarCalendar !== 'boolean') {
     errors.push(`${pack.dataPackId}: coverage.completeLunarCalendar must be boolean`);
   }
 
+  const coverageYears = getCoverageYears(pack);
   if (coverageYearsValid && yearsAreIntegers(manifestEntry.years)
-    && !sameYears(pack.coverage.years, manifestEntry.years)) {
-    errors.push(`${pack.dataPackId}: coverage.years ${formatYears(pack.coverage.years)} does not match manifest years ${formatYears(manifestEntry.years)}`);
+    && !sameYears(coverageYears, manifestEntry.years)) {
+    errors.push(`${pack.dataPackId}: ${getCoverageYearsLabel(pack)} ${formatYears(coverageYears)} does not match manifest years ${formatYears(manifestEntry.years)}`);
   }
 
   if (pack.coverage && typeof pack.coverage.completeLunarCalendar === 'boolean'
@@ -426,7 +456,7 @@ function validatePack(pack, manifest, manifestEntry, repositoryState, errors) {
   validateRecordsChecksum(pack, errors);
 
   const seen = new Set();
-  pack.records.forEach((record, index) => validateRecord(record, pack, index, seen, repositoryState, errors));
+  pack.records.forEach((record, index) => validateRecord(record, pack, index, seen, repositoryState, manifestEntry, errors));
   return pack.records.length;
 }
 
@@ -443,7 +473,7 @@ function validateLunarDataPackRepository(options = {}) {
   const packIds = [];
   const manifestPackIds = new Set();
   const repositoryState = {
-    lunarDates: new Set(),
+    runtimeLunarDates: new Set(),
     caseIds: new Set()
   };
   let recordCount = 0;

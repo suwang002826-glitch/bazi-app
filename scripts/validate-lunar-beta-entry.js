@@ -139,7 +139,7 @@ assert(
   const { page, app, calls } = loadBaziPage();
   page.setData({
     'form.name': '李四',
-    'form.lunarYear': '2023',
+    'form.lunarYear': '2026',
     'form.lunarMonth': '1',
     'form.lunarDay': '1',
     'form.isLeapMonth': false

@@ -108,8 +108,8 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-09-29',
-    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.02-preview',
-    expectedConversionSource: 'data-pack:lunar-conversions-2023',
+    expectedCalendarDataVersion: 'hko-lunar-data-pack@2026.07.02-runtime-preview.1',
+    expectedConversionSource: 'HKO_OPEN_DATA_NONGLI_2023',
     expected: ['癸卯', '辛酉', '庚寅', '丙戌'],
     note: '第三轮要求农历输入从 data-pack 转换，不再读取代码内置白名单。'
   },
@@ -130,8 +130,8 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-03-31',
-    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.02-preview',
-    expectedConversionSource: 'data-pack:lunar-conversions-2023',
+    expectedCalendarDataVersion: 'hko-lunar-data-pack@2026.07.02-runtime-preview.1',
+    expectedConversionSource: 'HKO_OPEN_DATA_NONGLI_2023',
     expected: ['癸卯', '乙卯', '戊子', '丁巳'],
     note: '第三轮要求农历闰月输入从 data-pack 转换，不再读取代码内置白名单。'
   }
@@ -145,9 +145,9 @@ const unsupportedLunarCases = [
       name: 'BZI-NEG-001',
       gender: '女',
       calendarType: 'lunar',
-      lunarYear: 2023,
-      lunarMonth: 8,
-      lunarDay: 16,
+      lunarYear: 2026,
+      lunarMonth: 1,
+      lunarDay: 1,
       isLeapMonth: false,
       birthTime: '20:00',
       birthPlace: '北京',
@@ -175,7 +175,7 @@ const implicitLunarCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-09-29',
-    expectedConversionSource: 'data-pack:lunar-conversions-2023'
+    expectedConversionSource: 'HKO_OPEN_DATA_NONGLI_2023'
   }
 ];
 
@@ -200,9 +200,12 @@ function assertDataPackRegistry() {
   assert.strictEqual(coverage.calendarDataVersion, lunarManifest.calendarDataVersion);
   assert.strictEqual(coverage.status, lunarManifest.status);
   assert.strictEqual(coverage.completeLunarCalendar, false);
+  const runtimePackIds = lunarManifest.packs
+    .filter((pack) => pack.runtimeEnabled !== false)
+    .map((pack) => pack.dataPackId);
   assert.deepStrictEqual(
     coverage.packIds.slice().sort(),
-    lunarManifest.packs.map((pack) => pack.dataPackId).sort()
+    runtimePackIds.sort()
   );
   console.log(`PASS DATA-PACK manifest registry ${coverage.calendarDataVersion}`);
 }
@@ -308,7 +311,8 @@ function assertUnsupportedLunarInputs() {
         assert.strictEqual(error.details.completeLunarCalendar, false);
         assert.ok(
           Array.isArray(error.details.availablePackIds)
-            && error.details.availablePackIds.includes('lunar-conversions-2023'),
+            && error.details.availablePackIds.includes('hko-lunar-conversions-2023')
+            && error.details.availablePackIds.includes('lunar-data-pack-2025-candidate'),
           'outside coverage errors must include available pack ids'
         );
         return true;
