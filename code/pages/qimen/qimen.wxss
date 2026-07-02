@@ -650,3 +650,122 @@
 .qimen-page .engine-item::before {
   background: #e8c98a;
 }
+
+/* Restored tab page palette: align qimen with the current dark Bazi system. */
+.qimen-page {
+  background:
+    radial-gradient(circle at 78% 0%, rgba(58, 62, 116, .22), transparent 34%),
+    linear-gradient(180deg, #07080e 0%, #1d1f3a 48%, #090a12 100%);
+}
+
+.qimen-page .section,
+.qimen-page .input-panel,
+.qimen-page .ritual-panel,
+.qimen-page .result-shell,
+.qimen-page .qimen-board,
+.qimen-page .palace-detail,
+.qimen-page .analysis-card,
+.qimen-page .layer-card,
+.qimen-page .final-reading,
+.qimen-page .qimen-pro-table {
+  border-color: rgba(217, 191, 113, .16);
+  background:
+    linear-gradient(145deg, rgba(242, 240, 228, .075), rgba(242, 240, 228, .025)),
+    rgba(24, 25, 48, .94);
+  box-shadow:
+    inset 0 1rpx 0 rgba(242, 240, 228, .06),
+    0 12rpx 26rpx rgba(0, 0, 0, .22);
+}
+
+.qimen-page .section-title,
+.qimen-page .ritual-title,
+.qimen-page .analysis-title,
+.qimen-page .layer-title,
+.qimen-page .cell-main,
+.qimen-page .pro-value.strong {
+  color: #f2f0e4;
+}
+
+.qimen-page .section-kicker,
+.qimen-page .mini-badge,
+.qimen-page .qimen-seal,
+.qimen-page .detail-tone,
+.qimen-page .cell-tags text,
+.qimen-page .analysis-action,
+.qimen-page .pro-label {
+  border-color: rgba(217, 191, 113, .20);
+  background: rgba(217, 191, 113, .10);
+  color: #d9bf71;
+}
+
+.qimen-page .muted,
+.qimen-page .label,
+.qimen-page .ritual-row,
+.qimen-page .analysis-text,
+.qimen-page .layer-row,
+.qimen-page .result-line,
+.qimen-page .engine-item,
+.qimen-page .cell-line,
+.qimen-page .pro-value {
+  color: rgba(242, 240, 228, .72);
+}
+
+.qimen-page .field textarea,
+.qimen-page picker,
+.qimen-page .qimen-meta view,
+.qimen-page .qimen-cell,
+.qimen-page .detail-grid view,
+.qimen-page .pro-row {
+  border-color: rgba(217, 191, 113, .13);
+  background: rgba(7, 8, 14, .52);
+  color: #f2f0e4;
+}
+
+.qimen-page .qimen-cell.good {
+  border-color: rgba(95, 169, 140, .28);
+  background: rgba(22, 49, 43, .72);
+}
+
+.qimen-page .qimen-cell.warn {
+  border-color: rgba(194, 99, 86, .26);
+  background: rgba(58, 28, 30, .66);
+}
+
+.qimen-page .qimen-cell.active {
+  border-color: rgba(217, 191, 113, .58);
+  box-shadow:
+    inset 0 0 0 2rpx rgba(217, 191, 113, .18),
+    0 10rpx 22rpx rgba(0, 0, 0, .18);
+}
+
+.qimen-page .cell-head,
+.qimen-page .qimen-meta text:first-child,
+.qimen-page .detail-grid text:first-child,
+.qimen-page .layer-label {
+  color: #d9bf71;
+}
+
+.qimen-page .cell-door,
+.qimen-page .cell-heaven,
+.qimen-page .cell-earth,
+.qimen-page .qimen-meta text,
+.qimen-page .detail-grid text {
+  color: rgba(242, 240, 228, .78);
+}
+
+.qimen-page .ritual-dot,
+.qimen-page .engine-item::before {
+  background: #d9bf71;
+}
+
+.qimen-page button.primary {
+  border-color: rgba(230, 205, 139, .42);
+  background: linear-gradient(135deg, #e5cf88, #b8924f);
+  color: #101116;
+}
+
+.qimen-page button.secondary {
+  border-color: rgba(217, 191, 113, .14);
+  background: rgba(7, 8, 14, .54);
+  color: rgba(242, 240, 228, .72);
+}
