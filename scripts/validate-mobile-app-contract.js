@@ -9,6 +9,8 @@ const mobilePackagePath = path.join(root, 'apps', 'mobile', 'package.json');
 const mobileAppConfigPath = path.join(root, 'apps', 'mobile', 'app.json');
 const mobileEntryPath = path.join(root, 'apps', 'mobile', 'App.js');
 const mobileApiPath = path.join(root, 'apps', 'mobile', 'src', 'api', 'baziApi.js');
+const mobileInputScreenPath = path.join(root, 'apps', 'mobile', 'src', 'screens', 'BaziInputScreen.js');
+const mobileResultScreenPath = path.join(root, 'apps', 'mobile', 'src', 'screens', 'BaziResultScreen.js');
 
 assert.ok(fs.existsSync(specPath), 'mobile app transition spec must exist');
 
@@ -38,14 +40,28 @@ assert.ok(mobilePackage.dependencies.expo, 'mobile app must depend on Expo');
 assert.ok(mobilePackage.dependencies['react-native'], 'mobile app must depend on React Native');
 
 const mobileEntry = fs.readFileSync(mobileEntryPath, 'utf8');
-assert.ok(mobileEntry.includes('八字排盘'), 'mobile entry must show Bazi app title');
-assert.ok(mobileEntry.includes('精准、稳定、专业的排盘系统'), 'mobile entry must keep product core promise');
 assert.ok(mobileEntry.includes('getBackendBaseUrl'), 'mobile entry must use the backend API wrapper');
+assert.ok(mobileEntry.includes('BaziInputScreen'), 'mobile entry must render the first calculate flow');
 
 assert.ok(fs.existsSync(mobileApiPath), 'mobile backend API wrapper must exist');
 const mobileApi = fs.readFileSync(mobileApiPath, 'utf8');
 assert.ok(mobileApi.includes('/bazi/calculate'), 'mobile API client must call calculate endpoint');
 assert.ok(mobileApi.includes('/bazi/calendar/coverage'), 'mobile API client must call coverage endpoint');
 assert.ok(mobileApi.includes('EXPO_PUBLIC_BAZI_API_BASE_URL'), 'mobile API client must support environment base URL');
+
+assert.ok(fs.existsSync(mobileInputScreenPath), 'mobile Bazi input screen must exist');
+assert.ok(fs.existsSync(mobileResultScreenPath), 'mobile Bazi result screen must exist');
+
+const mobileInputScreen = fs.readFileSync(mobileInputScreenPath, 'utf8');
+assert.ok(mobileInputScreen.includes('八字排盘'), 'mobile input screen must show Bazi app title');
+assert.ok(mobileInputScreen.includes('精准、稳定、专业的排盘系统'), 'mobile input screen must keep product core promise');
+assert.ok(mobileInputScreen.includes('calculateBazi'), 'mobile input screen must call calculateBazi');
+assert.ok(mobileInputScreen.includes('birthTime'), 'mobile input screen must submit birthTime');
+assert.ok(mobileInputScreen.includes('calendarType'), 'mobile input screen must submit calendarType');
+assert.ok(mobileInputScreen.includes('立即排盘'), 'mobile input screen must expose calculate action');
+
+const mobileResultScreen = fs.readFileSync(mobileResultScreenPath, 'utf8');
+assert.ok(mobileResultScreen.includes('四柱'), 'mobile result screen must show four pillars');
+assert.ok(mobileResultScreen.includes('calendarProviderInfo'), 'mobile result screen must show authority metadata');
 
 console.log('PASS mobile app transition contract');
