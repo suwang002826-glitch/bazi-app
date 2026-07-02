@@ -9,17 +9,29 @@ Frontend reads `app.globalData.baziApi`.
 
 ```js
 baziApi: {
-  enabled: false,
-  baseUrl: '',
+  enabled: true,
+  baseUrl: 'http://127.0.0.1:8787',
   calculatePath: '/bazi/calculate',
   timeout: 15000,
-  provider: 'local'
+  provider: 'backend-local'
 }
 ```
 
-When `enabled` is `false`, the Mini Program still uses the current local preview
-engine. When `enabled` is `true`, the same page calls the backend without changing
-the UI.
+In the Mini Program test phase, the Bazi page should call the backend by default.
+If `enabled` is `false` or `baseUrl` is empty, the page must show a service
+configuration error instead of falling back to local calculation.
+
+For local WeChat DevTools preview, start the backend first:
+
+```bash
+node backend/server.js
+```
+
+Default test URL:
+
+```text
+http://127.0.0.1:8787/bazi/calculate
+```
 
 ## Request
 
