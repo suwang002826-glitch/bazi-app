@@ -2,6 +2,13 @@ App({
   globalData: {
     appName: '玄门命理',
     engineVersion: 'local-rules-2026.06.29',
+    baziApi: {
+      enabled: false,
+      baseUrl: '',
+      calculatePath: '/bazi/calculate',
+      timeout: 15000,
+      provider: 'local'
+    },
     disclaimer: '术数为观象明理之学，本小程序内容用于传统文化学习、趋吉避凶与自我复盘，不作绝对命运裁断，也不用于医疗、法律、投资等重大决策。'
   },
 
