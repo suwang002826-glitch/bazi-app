@@ -24,12 +24,16 @@ assert.ok(spec.includes('GET /bazi/calendar/coverage'), 'spec must keep backend 
 
 const commandDoc = fs.existsSync(commandPath) ? fs.readFileSync(commandPath, 'utf8') : '';
 assert.ok(
-  commandDoc.includes('项目主客户端已从微信小程序切换为独立 App。'),
-  'command doc must declare standalone App as the primary client'
+  commandDoc.includes('当前阶段以微信小程序测试版先行验证'),
+  'command doc must declare Mini Program test build as the current validation phase'
 );
 assert.ok(
-  commandDoc.includes('原 `code/` 微信小程序目录保留为原型参考'),
-  'command doc must keep Mini Program as prototype reference only'
+  commandDoc.includes('独立 App 仍是最终正式交付方向'),
+  'command doc must keep standalone App as the final delivery direction'
+);
+assert.ok(
+  commandDoc.includes('算法、农历转换、节气、真太阳时和权威来源不得写死在小程序端'),
+  'command doc must keep calculation authority out of the Mini Program client'
 );
 
 assert.ok(fs.existsSync(mobilePackagePath), 'mobile package.json must exist');

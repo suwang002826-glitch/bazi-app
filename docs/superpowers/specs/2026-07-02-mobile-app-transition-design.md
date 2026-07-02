@@ -2,9 +2,11 @@
 
 ## Decision
 
-The product will stop targeting WeChat Mini Program as the primary client and will move to a standalone mobile app.
+The current phase will use the WeChat Mini Program as a test build for flow validation.
 
-The first standalone app client should use React Native with Expo. The current WeChat Mini Program code remains as a visual and flow prototype only. It should not define future packaging, storage, or runtime constraints.
+The final formal client direction remains a standalone mobile app. The project should not assume the Mini Program can be converted into the final app automatically.
+
+The first standalone app client should still use React Native with Expo. The Mini Program can validate interaction flow, result display, and feedback loops first, but it must not own calculation authority.
 
 ## Product Goal
 
@@ -16,11 +18,12 @@ The app must make it clear when a result is produced by verified data, preview d
 
 The project will use a three-part architecture:
 
-1. Mobile app client under `apps/mobile`
-2. Existing backend under `backend`
-3. Shared algorithm and calendar data under `code/utils` and `code/data-packs`
+1. Mini Program test client under `code`
+2. Mobile app client under `apps/mobile`
+3. Existing backend under `backend`
+4. Shared algorithm and calendar data under `code/utils` and `code/data-packs`
 
-The mobile app calls backend HTTP APIs for chart calculation. The backend owns calendar conversion, Bazi rules, authority-source tracking, validation, and large data packs.
+The Mini Program test client and the mobile app call backend HTTP APIs for chart calculation. The backend owns calendar conversion, Bazi rules, authority-source tracking, validation, and large data packs.
 
 ## Technology Direction
 
@@ -74,7 +77,13 @@ The app must not reimplement Bazi calculation logic in the first version.
 
 ## Migration Scope
 
-The first App migration should deliver:
+The first client phase should deliver:
+
+- A Mini Program test build that can call the backend and show Bazi results.
+- Clear unsupported-range and data-source messages when lunar coverage is incomplete.
+- Feedback from real test usage.
+
+The first App migration should preserve:
 
 - A new Expo app scaffold under `apps/mobile`
 - A home/input screen
@@ -95,7 +104,7 @@ The first migration should not deliver:
 ## Acceptance Criteria
 
 - Existing backend validation still passes.
-- Mini Program files remain untouched except documentation references.
+- Mini Program changes must stay client-side and must not reimplement calculation authority.
 - `apps/mobile` can be installed and started independently.
 - The app code uses API response contracts instead of copying backend algorithms.
 - The project documents that the primary client is now standalone App, not Mini Program.
