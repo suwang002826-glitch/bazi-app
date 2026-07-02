@@ -1,4 +1,9 @@
-const { calculateBazi } = require('../../utils/bazi/baziCalculator');
+const { buildBaziProfile } = require('../../utils/mock');
+const { createBaziPlate } = require('../../utils/baziPlate');
+const {
+  requestBaziCalculation,
+  shouldUseRemoteBaziApi
+} = require('../../utils/baziApiClient');
 
 const app = getApp();
 
@@ -51,9 +56,6 @@ Page({
       birthPlace: '北京市 北京市 东城区',
       group: '练习',
       longitude: '116.40',
-      latitude: '39.90',
-      coordType: 'GCJ02',
-      timeMode: 'beijingTime',
       useTrueSolarTime: false
     },
     disclaimer: app.globalData.disclaimer
@@ -165,10 +167,7 @@ Page({
   },
 
   onTrueSolarSwitch(event) {
-    this.setData({
-      'form.useTrueSolarTime': event.detail.value,
-      'form.timeMode': event.detail.value ? 'trueSolarTime' : 'beijingTime'
-    });
+    this.setData({ 'form.useTrueSolarTime': event.detail.value });
   },
 
   onSaveSwitch(event) {
@@ -203,55 +202,49 @@ Page({
     return '';
   },
 
-  async generateReading() {
-    if (this.data.isGenerating) return;
-    const longitude = Number(this.data.form.longitude);
-    if (!Number.isFinite(longitude) || longitude < 73 || longitude > 135) {
-      wx.showToast({ title: '经度请填 73-135 之间', icon: 'none' });
-      return;
-    }
-
-    this.setData({ isGenerating: true });
-    const readingInput = {
-      ...this.buildReadingInput(),
-      name: this.data.form.name.trim() || '未命名',
-      saveCase: this.data.saveCase
+  buildLocalReading(readingInput) {
+    const result = buildBaziProfile(readingInput);
+    result.gender = readingInput.gender || '未填';
+    result.sourceInput = readingInput;
+    return {
+      result,
+      baziPlate: createBaziPlate(result)
     };
-    let reading;
-    let result;
-    try {
-      reading = await calculateBazi(readingInput);
-      result = reading.result;
-    } catch (error) {
-      const lunarBetaError = this.getLunarBetaError(error);
-      this.setData({
-        isGenerating: false,
-        lunarBetaError
-      });
-      if (lunarBetaError) {
-        wx.showToast({ title: lunarBetaError, icon: 'none' });
-        return;
-      }
-      wx.showToast({ title: '排盘服务暂不可用，请稍后再试', icon: 'none' });
-      console.error('calculateBazi failed', error);
-      return;
-    }
-    app.globalData.currentBaziReading = reading;
-    wx.setStorageSync('currentBaziReading', reading);
+  },
 
+  normalizeReadingForStorage(reading, readingInput) {
+    const result = reading.result || {};
+    result.gender = result.gender || readingInput.gender || '未填';
+    result.sourceInput = result.sourceInput || readingInput;
+    return {
+      result,
+      baziPlate: reading.baziPlate || createBaziPlate(result)
+    };
+  },
+
+  buildReadingSummary(result) {
     const triggerText = result.flowTriggerSummary && result.flowTriggerSummary.summary
       ? `流运触发：${result.flowTriggerSummary.summary}`
       : '';
-    const chartSummary = result.professional && result.professional.chartSummary
-      ? result.professional.chartSummary.oneLine
-      : '';
+    const chartSummary = result.professional
+      && result.professional.chartSummary
+      && result.professional.chartSummary.oneLine;
+    return [chartSummary, triggerText, result.aiText].filter(Boolean).join(' ');
+  },
+
+  persistReading(reading, readingInput) {
+    const normalizedReading = this.normalizeReadingForStorage(reading, readingInput);
+    const result = normalizedReading.result;
+    app.globalData.currentBaziReading = normalizedReading;
+    wx.setStorageSync('currentBaziReading', normalizedReading);
+
     const record = {
       type: '八字',
-      title: result.title,
+      title: result.title || `${readingInput.name || '未命名'}的八字排盘`,
       group: readingInput.group || '练习',
       category: readingInput.group || '练习',
-      summary: [chartSummary, triggerText, result.aiText].filter(Boolean).join(' '),
-      payload: reading
+      summary: this.buildReadingSummary(result),
+      payload: normalizedReading
     };
     app.addHistory(record);
     if (this.data.saveCase) {
@@ -272,5 +265,54 @@ Page({
       url: '/pages/bazi-result/bazi-result',
       complete: () => this.setData({ isGenerating: false })
     });
+  },
+
+  handleGenerateError(error) {
+    const lunarBetaError = this.getLunarBetaError(error);
+    this.setData({
+      isGenerating: false,
+      lunarBetaError
+    });
+    if (lunarBetaError) {
+      wx.showToast({ title: lunarBetaError, icon: 'none' });
+      return;
+    }
+    wx.showToast({
+      title: error && error.message ? error.message : '排盘服务暂不可用',
+      icon: 'none'
+    });
+  },
+
+  generateReading() {
+    if (this.data.isGenerating) return;
+    const longitude = Number(this.data.form.longitude);
+    if (!Number.isFinite(longitude) || longitude < 73 || longitude > 135) {
+      wx.showToast({ title: '经度请填 73-135 之间', icon: 'none' });
+      return;
+    }
+
+    this.setData({ isGenerating: true });
+    const readingInput = {
+      ...this.buildReadingInput(),
+      name: this.data.form.name.trim() || '未命名'
+    };
+    if (shouldUseRemoteBaziApi(app.globalData.baziApi)) {
+      return requestBaziCalculation({
+        wxApi: wx,
+        config: app.globalData.baziApi,
+        input: readingInput,
+        saveCase: this.data.saveCase
+      }).then((reading) => {
+        this.persistReading(reading, readingInput);
+      }).catch((error) => {
+        this.handleGenerateError(error);
+      });
+    }
+
+    try {
+      this.persistReading(this.buildLocalReading(readingInput), readingInput);
+    } catch (error) {
+      this.handleGenerateError(error);
+    }
   }
 });
