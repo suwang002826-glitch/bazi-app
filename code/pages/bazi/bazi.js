@@ -3,6 +3,10 @@ const {
   requestBaziCalculation,
   shouldUseRemoteBaziApi
 } = require('../../utils/baziApiClient');
+const {
+  detectBaziRuntimePlatform,
+  getBaziApiConnectionAdvice
+} = require('../../utils/bazi/apiConfig');
 
 const app = getApp();
 
@@ -36,6 +40,7 @@ Page({
     activeCalendarMode: '公历',
     saveCase: true,
     isGenerating: false,
+    baziApiWarning: '',
     lunarBetaError: '',
     lunarPickerRange: [LUNAR_YEAR_OPTIONS, LUNAR_MONTH_OPTIONS, LUNAR_DAY_OPTIONS],
     lunarPickerValue: getLunarPickerValue('2023', '8', '15'),
@@ -58,6 +63,14 @@ Page({
       useTrueSolarTime: false
     },
     disclaimer: app.globalData.disclaimer
+  },
+
+  onLoad() {
+    this.refreshBaziApiWarning();
+  },
+
+  onShow() {
+    this.refreshBaziApiWarning();
   },
 
   onNameInput(event) {
@@ -171,6 +184,32 @@ Page({
 
   onSaveSwitch(event) {
     this.setData({ saveCase: event.detail.value });
+  },
+
+  getBaziApiAdvice() {
+    return getBaziApiConnectionAdvice(app.globalData.baziApi || {}, {
+      platform: detectBaziRuntimePlatform(wx)
+    });
+  },
+
+  getBaziApiWarningText(advice) {
+    if (!advice || advice.ok) return '';
+    if (advice.code === 'BAZI_API_LOOPBACK_ON_REAL_DEVICE') {
+      return '手机真机不能使用 127.0.0.1，请改成电脑局域网 IP 后再排盘';
+    }
+    if (advice.code === 'BAZI_API_MISSING_BASE_URL') {
+      return '后端地址为空，请先配置排盘服务地址';
+    }
+    if (advice.code === 'BAZI_API_DISABLED') {
+      return '后端排盘服务未启用，请先启动后端服务';
+    }
+    return '';
+  },
+
+  refreshBaziApiWarning() {
+    this.setData({
+      baziApiWarning: this.getBaziApiWarningText(this.getBaziApiAdvice())
+    });
   },
 
   buildReadingInput() {
@@ -302,6 +341,16 @@ Page({
       ...this.buildReadingInput(),
       name: this.data.form.name.trim() || '未命名'
     };
+    const apiAdvice = this.getBaziApiAdvice();
+    const apiWarning = this.getBaziApiWarningText(apiAdvice);
+    if (apiWarning) {
+      this.setData({
+        isGenerating: false,
+        baziApiWarning: apiWarning
+      });
+      wx.showToast({ title: apiWarning, icon: 'none' });
+      return;
+    }
     if (!shouldUseRemoteBaziApi(app.globalData.baziApi)) {
       const error = new Error('后端排盘服务未配置，请先启动后端服务');
       error.code = 'BAZI_API_DISABLED';
