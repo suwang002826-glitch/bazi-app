@@ -5,6 +5,12 @@ const {
   requestBaziCalculation,
   shouldUseRemoteBaziApi
 } = require('../code/utils/baziApiClient');
+const {
+  buildBaziHealthUrl,
+  buildBaziCoverageUrl,
+  getBaziApiConnectionAdvice,
+  isLoopbackBaziApiUrl
+} = require('../code/utils/bazi/apiConfig');
 
 const solarInput = {
   name: '张三',
@@ -67,6 +73,31 @@ const solarInput = {
   assert.strictEqual(shouldUseRemoteBaziApi({ enabled: false, baseUrl: 'https://api.example.com' }), false);
   assert.strictEqual(shouldUseRemoteBaziApi({ enabled: true, baseUrl: 'https://api.example.com' }), true);
   assert.strictEqual(shouldUseRemoteBaziApi({ enabled: true, baseUrl: '' }), false);
+}
+
+{
+  const phoneConfig = {
+    enabled: true,
+    baseUrl: 'http://127.0.0.1:8787/',
+    healthPath: '/health',
+    coveragePath: '/bazi/calendar/coverage'
+  };
+  assert.strictEqual(buildBaziHealthUrl(phoneConfig), 'http://127.0.0.1:8787/health');
+  assert.strictEqual(buildBaziCoverageUrl(phoneConfig), 'http://127.0.0.1:8787/bazi/calendar/coverage');
+  assert.strictEqual(isLoopbackBaziApiUrl('http://127.0.0.1:8787'), true);
+  assert.strictEqual(isLoopbackBaziApiUrl('http://localhost:8787'), true);
+  assert.strictEqual(isLoopbackBaziApiUrl('http://192.168.1.23:8787'), false);
+
+  const realDeviceAdvice = getBaziApiConnectionAdvice(phoneConfig, { platform: 'real-device' });
+  assert.strictEqual(realDeviceAdvice.code, 'BAZI_API_LOOPBACK_ON_REAL_DEVICE');
+  assert.strictEqual(realDeviceAdvice.ok, false);
+
+  const lanAdvice = getBaziApiConnectionAdvice({
+    ...phoneConfig,
+    baseUrl: 'http://192.168.1.23:8787'
+  }, { platform: 'real-device' });
+  assert.strictEqual(lanAdvice.code, 'BAZI_API_READY');
+  assert.strictEqual(lanAdvice.ok, true);
 }
 
 {
