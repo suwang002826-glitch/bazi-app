@@ -14,7 +14,7 @@
         <text>{{history.length}}</text>
       </view>
       <view>
-        <text>命例</text>
+        <text>复盘</text>
         <text>{{cases.length}}</text>
       </view>
       <view>
@@ -27,9 +27,9 @@
 
   <view class="section archive-entry tappable-row" hover-class="tap-active" bindtap="goCases">
     <view class="archive-copy">
-      <view class="section-kicker">命例复盘</view>
-      <view class="section-title">命例档案</view>
-      <view class="muted">保存八字排盘记录，用于复盘准确度、整理反馈和后续校验。</view>
+      <view class="section-kicker">术数复盘</view>
+      <view class="section-title">复盘记录</view>
+      <view class="muted">保存八字排盘与六爻起卦记录，用于复盘准确度、整理反馈和后续校验。</view>
     </view>
     <view class="entry-arrow">›</view>
   </view>
@@ -38,6 +38,6 @@
     <view class="section-kicker">边界声明</view>
     <view class="section-title">免责声明</view>
     <view class="muted">{{disclaimer}}</view>
-    <view class="muted extra">本测试版采用本地规则引擎，不提供确定性命运裁断。八字结果用于排盘复核、传统文化学习和命例反馈。</view>
+    <view class="muted extra">本测试版采用本地规则引擎，不提供确定性命运裁断。八字与六爻结果用于排盘复核、传统文化学习和复盘反馈。</view>
   </view>
 </view>

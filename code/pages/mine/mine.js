@@ -15,7 +15,10 @@ Page({
   onShow() {
     this.setData({
       history: wx.getStorageSync('readingHistory') || [],
-      cases: (wx.getStorageSync('caseArchive') || []).filter((item) => item.type === '八字' || item.type === '鍏瓧')
+      cases: [
+        ...(wx.getStorageSync('caseArchive') || []),
+        ...(wx.getStorageSync('readingHistory') || [])
+      ].filter((item) => item.type === '八字' || item.type === '六爻' || item.type === 'bazi' || item.type === 'liuyao')
     });
   },
 
@@ -23,7 +26,7 @@ Page({
     wx.navigateTo({
       url: '/pages/cases/cases',
       fail: () => {
-        wx.showToast({ title: '命例档案暂无法打开，请重新编译', icon: 'none' });
+        wx.showToast({ title: '复盘记录暂无法打开，请重新编译', icon: 'none' });
       }
     });
   },
@@ -50,7 +53,7 @@ Page({
       wx.navigateTo({ url: '/pages/qimen-result/qimen-result' });
       return;
     }
-    wx.showToast({ title: '旧记录无详情，已打开命例档案', icon: 'none' });
+    wx.showToast({ title: '旧记录无详情，已打开复盘记录', icon: 'none' });
     this.goCases();
   },
 

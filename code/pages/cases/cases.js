@@ -67,13 +67,17 @@ function getZodiacIconSrc(iconKey) {
   return `/assets/zodiac/${iconKey}.png`;
 }
 
-function isBaziRecord(item) {
-  if (!item) return false;
-  if (item.payload && item.payload.result) return true;
-  return item.type === '八字' || item.type === 'bazi';
+function normalizeType(type) {
+  if (type === '八字' || type === 'bazi') return 'bazi';
+  if (type === '六爻' || type === 'liuyao') return 'liuyao';
+  return '';
 }
 
-function stripTitle(title) {
+function isReplayRecord(item) {
+  return Boolean(item && normalizeType(item.type) && item.payload && item.payload.result);
+}
+
+function stripBaziTitle(title) {
   return String(title || '未命名').replace(/的八字排盘$/, '') || '未命名';
 }
 
@@ -116,17 +120,68 @@ function buildZodiacSeal(result) {
   };
 }
 
-function decorateRecord(item) {
-  const result = item.payload && item.payload.result ? item.payload.result : null;
-  const name = result && result.displayName ? result.displayName : stripTitle(item.title);
+function makeReplayKey(item) {
+  const typeKey = normalizeType(item.type);
+  const result = item.payload && item.payload.result ? item.payload.result : {};
+  const identity = typeKey === 'bazi'
+    ? `${result.displayName || stripBaziTitle(item.title)}-${result.solarTime || ''}`
+    : `${item.payload.question || result.question || ''}-${result.hexagramName || item.title || ''}`;
+  return `${typeKey}-${identity}`;
+}
+
+function buildReplaySource() {
+  const archive = (wx.getStorageSync('caseArchive') || [])
+    .filter(isReplayRecord)
+    .map((item) => ({ ...item, sourceStore: 'archive' }));
+  const history = (wx.getStorageSync('readingHistory') || [])
+    .filter(isReplayRecord)
+    .map((item) => ({ ...item, sourceStore: 'history' }));
+  const seen = {};
+  return [...archive, ...history].filter((item) => {
+    const key = makeReplayKey(item);
+    if (seen[key]) return false;
+    seen[key] = true;
+    return true;
+  });
+}
+
+function decorateBaziRecord(item, result) {
+  const name = result && result.displayName ? result.displayName : stripBaziTitle(item.title);
   return {
     ...item,
+    typeKey: 'bazi',
+    typeLabel: '八字',
     displayName: name || '未命名',
     gender: result && result.gender ? result.gender : '未填',
-    solarDate: result ? splitDateLine(result.solarTime) : (item.createdAt || item.archivedAt || '时间待校验'),
+    detailLine: `阳历 ${splitDateLine(result && result.solarTime)}`,
+    subLine: item.archivedAt || item.createdAt || '时间待校验',
     pillarRows: buildPillarRows(result),
     zodiacSeal: buildZodiacSeal(result)
   };
+}
+
+function decorateLiuyaoRecord(item, result) {
+  const question = item.payload && item.payload.question ? item.payload.question : (result.question || '未填写问事');
+  const method = result.method || (item.payload && item.payload.modeIndex === 0 ? '手动起卦' : '六爻起卦');
+  const category = result.category || '复盘';
+  return {
+    ...item,
+    typeKey: 'liuyao',
+    typeLabel: '六爻',
+    displayName: result.hexagramName || item.title || '六爻卦象',
+    gender: category,
+    detailLine: question,
+    subLine: `${method} · ${item.createdAt || item.archivedAt || ''}`,
+    liuyaoSummary: result.changedName ? `${result.hexagramName} 之 ${result.changedName}` : (result.hexagramName || '卦象待复盘'),
+    liuyaoTags: [result.focus, result.movingSummary, result.palaceLabel].filter(Boolean).slice(0, 3)
+  };
+}
+
+function decorateRecord(item) {
+  const result = item.payload && item.payload.result ? item.payload.result : {};
+  const typeKey = normalizeType(item.type);
+  if (typeKey === 'liuyao') return decorateLiuyaoRecord(item, result);
+  return decorateBaziRecord(item, result);
 }
 
 Page({
@@ -134,13 +189,13 @@ Page({
     allCases: [],
     cases: [],
     query: '',
-    categories: ['全部', '练习', '亲友', '客户', '复盘'],
+    categories: ['全部', '八字', '六爻', '复盘'],
     activeCategory: '全部',
     openedDeleteId: null,
     touchStartX: 0,
     touchStartY: 0,
     touchMoved: false,
-    emptyText: '暂无八字命例。完成一次八字排盘后，会自动记录在命例档案中。'
+    emptyText: '暂无复盘记录。完成八字排盘或六爻起卦后，会自动记录在这里。'
   },
 
   onShow() {
@@ -148,27 +203,38 @@ Page({
   },
 
   loadData() {
-    const archive = (wx.getStorageSync('caseArchive') || []).filter(isBaziRecord);
+    const source = buildReplaySource();
     this.setData({
-      allCases: archive,
-      cases: this.filterAndDecorate(archive, this.data.query, this.data.activeCategory),
+      allCases: source,
+      cases: this.filterAndDecorate(source, this.data.query, this.data.activeCategory),
       openedDeleteId: null
     });
   },
 
-  filterAndDecorate(archive, query, category) {
-    const filtered = archive
+  filterAndDecorate(source, query, category) {
+    const filtered = source
       .filter((item) => {
-        const itemCategory = item.category || item.group || '练习';
-        if (category === '全部') return true;
-        if (category === '复盘') return item.status === '需复盘' || itemCategory === '复盘';
-        return itemCategory === category;
+        const typeKey = normalizeType(item.type);
+        const itemCategory = item.category || item.group || '复盘';
+        if (category === '全部') return typeKey === 'bazi' || typeKey === 'liuyao';
+        if (category === '八字') return typeKey === 'bazi';
+        if (category === '六爻') return typeKey === 'liuyao';
+        return item.status === '需复盘' || itemCategory === '复盘' || typeKey === 'liuyao';
       })
       .filter((item) => {
         if (!query) return true;
         const result = item.payload && item.payload.result ? item.payload.result : {};
-        return [item.title, result.displayName, result.solarTime, item.note]
-          .some((value) => String(value || '').includes(query));
+        return [
+          item.title,
+          item.summary,
+          item.note,
+          result.displayName,
+          result.solarTime,
+          result.hexagramName,
+          result.changedName,
+          result.question,
+          item.payload && item.payload.question
+        ].some((value) => String(value || '').includes(query));
       });
     return filtered.map(decorateRecord);
   },
@@ -243,17 +309,6 @@ Page({
       || this.data.cases.find((item) => Number(item.id) === id);
   },
 
-  resolvePayload(record) {
-    if (record && record.payload) return record.payload;
-    const history = wx.getStorageSync('readingHistory') || [];
-    const sourceId = Number(record && record.sourceId);
-    const title = record && record.title;
-    const matched = history.find((item) => Number(item.id) === sourceId)
-      || history.find((item) => title && item.title === title && item.payload)
-      || history.find((item) => item.payload && item.payload.result && stripTitle(item.title) === stripTitle(title));
-    return matched && matched.payload ? matched.payload : null;
-  },
-
   openCase(event) {
     const id = Number(event.currentTarget.dataset.id);
     if (this.data.touchMoved) {
@@ -265,37 +320,44 @@ Page({
       return;
     }
     const record = this.findRecordById(id);
-    const payload = this.resolvePayload(record);
+    const payload = record && record.payload;
     if (!record || !payload) {
-      wx.showToast({ title: '旧命例缺少详情，请重新排盘', icon: 'none' });
+      wx.showToast({ title: '旧记录缺少详情，请重新排盘', icon: 'none' });
+      return;
+    }
+    this.setData({ openedDeleteId: null });
+    if (normalizeType(record.type) === 'liuyao') {
+      app.globalData.currentLiuyaoReading = payload;
+      wx.setStorageSync('currentLiuyaoReading', payload);
+      wx.navigateTo({ url: '/pages/liuyao-result/liuyao-result' });
       return;
     }
     app.globalData.currentBaziReading = payload;
     wx.setStorageSync('currentBaziReading', payload);
-    this.setData({ openedDeleteId: null });
     wx.navigateTo({ url: '/pages/bazi-result/bazi-result' });
   },
 
   deleteCase(event) {
     const id = Number(event.currentTarget.dataset.id);
     wx.showModal({
-      title: '删除命例',
-      content: '删除后无法恢复，确认删除这条命例吗？',
+      title: '删除记录',
+      content: '删除后无法恢复，确认删除这条复盘记录吗？',
       success: (res) => {
         if (!res.confirm) return;
-        const archive = (wx.getStorageSync('caseArchive') || []).filter((item) => Number(item.id) !== id);
         const record = this.findRecordById(id);
-        const sourceId = Number(record && record.sourceId);
-        if (sourceId) {
-          const history = (wx.getStorageSync('readingHistory') || []).filter((item) => Number(item.id) !== sourceId);
+        if (record && record.sourceStore === 'history') {
+          const history = (wx.getStorageSync('readingHistory') || []).filter((item) => Number(item.id) !== id);
           wx.setStorageSync('readingHistory', history);
+        } else {
+          const archive = (wx.getStorageSync('caseArchive') || []).filter((item) => Number(item.id) !== id);
+          wx.setStorageSync('caseArchive', archive);
+          const sourceId = Number(record && record.sourceId);
+          if (sourceId) {
+            const history = (wx.getStorageSync('readingHistory') || []).filter((item) => Number(item.id) !== sourceId);
+            wx.setStorageSync('readingHistory', history);
+          }
         }
-        wx.setStorageSync('caseArchive', archive);
-        this.setData({
-          allCases: archive,
-          cases: this.filterAndDecorate(archive, this.data.query, this.data.activeCategory),
-          openedDeleteId: null
-        });
+        this.loadData();
       }
     });
   },
