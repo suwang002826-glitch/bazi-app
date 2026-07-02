@@ -124,6 +124,66 @@ async function withServer(run) {
 }
 
 {
+  const reading = calculateBazi({
+    ...solarRequest,
+    calendarType: 'lunar',
+    lunarDate: {
+      year: 2025,
+      month: 6,
+      day: 1,
+      isLeapMonth: false
+    },
+    birthTime: '2025-06-01 09:00:00',
+    timeMode: 'beijingTime'
+  });
+  assert.strictEqual(reading.result.calendarConversion.calendarType, 'lunar');
+  assert.strictEqual(reading.result.calendarConversion.solarDate, '2025-06-25');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.provider, 'Hong Kong Observatory');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.dataPackId, 'hko-lunar-conversions-1901-2100');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.calendarDataVersion, 'hko-lunar-text-pack@1901-2100.runtime-preview.1');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.source, 'HKO_TEXT_TABLE_1901_2100');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.status, 'backend-runtime-preview');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.completeLunarCalendar, false);
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.scope, 'backend_hko_lunar_range_runtime_preview');
+  assert.ok(reading.result.calendarProviderInfo.lunar.sourceNote.includes('1901-2100'));
+}
+
+{
+  const reading = calculateBazi({
+    ...solarRequest,
+    calendarType: 'lunar',
+    lunarDate: {
+      year: 2025,
+      month: 6,
+      day: 1,
+      isLeapMonth: true
+    },
+    birthTime: '2025-06-01 09:00:00',
+    timeMode: 'beijingTime'
+  });
+  assert.strictEqual(reading.result.calendarConversion.solarDate, '2025-07-25');
+  assert.strictEqual(reading.result.calendarConversion.isLeapMonth, true);
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.dataPackId, 'hko-lunar-conversions-1901-2100');
+}
+
+{
+  const reading = calculateBazi({
+    ...solarRequest,
+    calendarType: 'lunar',
+    lunarDate: {
+      year: 2000,
+      month: 11,
+      day: 25,
+      isLeapMonth: false
+    },
+    birthTime: '2000-11-25 08:00:00',
+    timeMode: 'beijingTime'
+  });
+  assert.strictEqual(reading.result.calendarConversion.solarDate, '2000-12-20');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.dataPackId, 'hko-lunar-conversions-1901-2100');
+}
+
+{
   assert.throws(
     () => normalizeCalculateRequest({ ...solarRequest, birthTime: 'bad-time' }),
     (error) => {
@@ -152,7 +212,7 @@ withServer(async (server) => {
   assert.deepStrictEqual(coverage.data.lunar.backendRangePack.coverage.gregorianYears, [1901, 2100]);
   assert.strictEqual(coverage.data.lunar.backendRangePack.coverage.records, 73049);
   assert.strictEqual(coverage.data.lunar.backendRangePack.usagePolicy.miniprogramMainPackage, 'blocked');
-  assert.strictEqual(coverage.data.lunar.backendRangePack.usagePolicy.calculateEndpointUse, 'not-yet-promoted');
+  assert.strictEqual(coverage.data.lunar.backendRangePack.usagePolicy.calculateEndpointUse, 'enabled-for-backend-runtime-preview');
   assert.strictEqual(coverage.data.lunar.backendRangePack.pmoCrossCheck.status, 'pass');
   assert.strictEqual(coverage.data.lunar.backendRangePack.pmoCrossCheck.comparedRecords, 365);
 
