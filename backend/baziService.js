@@ -1,5 +1,7 @@
 const { buildBaziProfile } = require('../code/utils/mock');
 const { createBaziPlate } = require('../code/utils/baziPlate');
+const { findLunarConversion } = require('../code/utils/bazi/lunarDataPack');
+const { findHkoLunarRangeConversion } = require('./hkoLunarRangePack');
 
 class BaziApiError extends Error {
   constructor(code, message, statusCode = 400, details = {}) {
@@ -129,6 +131,57 @@ function buildLunarProviderInfo(conversion = {}) {
   };
 }
 
+function getNormalizedLunarInput(input = {}) {
+  return {
+    lunarYear: input.lunarYear,
+    lunarMonth: input.lunarMonth,
+    lunarDay: input.lunarDay,
+    isLeapMonth: Boolean(input.isLeapMonth)
+  };
+}
+
+function isHkoPreviewConversion(conversion = {}) {
+  if (!conversion) return false;
+  const source = String(conversion.source || '').toUpperCase();
+  const dataPackId = String(conversion.dataPackId || '').toLowerCase();
+  return source.includes('HKO') || dataPackId.includes('hko');
+}
+
+function prepareCalculationInput(input) {
+  if (input.calendarType !== 'lunar') {
+    return {
+      engineInput: input,
+      backendLunarConversion: null
+    };
+  }
+
+  const lunarInput = getNormalizedLunarInput(input);
+  const previewConversion = findLunarConversion(lunarInput);
+  if (isHkoPreviewConversion(previewConversion)) {
+    return {
+      engineInput: input,
+      backendLunarConversion: null
+    };
+  }
+
+  const backendLunarConversion = findHkoLunarRangeConversion(lunarInput);
+  if (!backendLunarConversion) {
+    return {
+      engineInput: input,
+      backendLunarConversion: null
+    };
+  }
+
+  return {
+    engineInput: {
+      ...input,
+      calendarType: 'solar',
+      birthDate: backendLunarConversion.solarDate
+    },
+    backendLunarConversion
+  };
+}
+
 function attachBackendAccuracyFields(result, input) {
   const trueSolarHint = findHint(result, '真太阳时校验');
   const solarTermHint = findHint(result, '节气边界校验');
@@ -170,7 +223,12 @@ function attachBackendAccuracyFields(result, input) {
 
 function calculateBazi(payload = {}) {
   const input = normalizeCalculateRequest(payload);
-  const result = attachBackendAccuracyFields(buildBaziProfile(input), input);
+  const { engineInput, backendLunarConversion } = prepareCalculationInput(input);
+  const profile = buildBaziProfile(engineInput);
+  if (backendLunarConversion) {
+    profile.calendarConversion = backendLunarConversion;
+  }
+  const result = attachBackendAccuracyFields(profile, input);
   return {
     result,
     baziPlate: createBaziPlate(result)

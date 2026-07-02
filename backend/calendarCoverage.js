@@ -56,8 +56,8 @@ function getCalendarCoverage() {
         usagePolicy: {
           storage: 'backend-or-cdn-only',
           miniprogramMainPackage: 'blocked',
-          calculateEndpointUse: 'not-yet-promoted',
-          promotionRequirement: 'runtime approval review plus PMO/HKO boundary acceptance'
+          calculateEndpointUse: 'enabled-for-backend-runtime-preview',
+          promotionRequirement: 'keep mini program package blocked; serve through backend calculate endpoint only'
         }
       }
     }
