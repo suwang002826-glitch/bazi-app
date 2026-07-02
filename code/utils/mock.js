@@ -1001,7 +1001,7 @@ function buildLuckFlowOverlay(luck, flowYears) {
     const [start, end] = cycle.yearRange.split('-').map(Number);
     return currentYear >= start && currentYear <= end;
   }) || luck.cycles[0];
-  const currentYearFlow = flowYears[0];
+  const currentYearFlow = flowYears.find((item) => Number(item.year) === currentYear) || flowYears[0];
   return {
     title: '大运流年叠看',
     activeLuck: activeCycle ? `${activeCycle.label} ${activeCycle.value}（${activeCycle.yearRange}）` : '当前大运待校验',
@@ -1019,17 +1019,33 @@ function buildLuckCycles(readingDate, monthPillar, yearPillar, gender) {
   const boundary = getAdjacentJie(readingDate, direction);
   const days = Math.abs(boundary.date.getTime() - readingDate.getTime()) / 86400000;
   const startAge = Math.max(1, Math.round(days / 3 * 10) / 10);
-  const startYear = readingDate.getFullYear() + Math.floor(startAge);
+  const startOffsetDays = Math.round(startAge * 365.2425);
+  const startDate = new Date(readingDate.getTime() + startOffsetDays * 86400000);
+  const startYear = startDate.getFullYear();
+  const birthYear = readingDate.getFullYear();
+  const endAge = 105;
+  const cycleCount = Math.max(8, Math.ceil((endAge - startAge + 1) / 10));
   const cycles = [];
 
-  for (let i = 1; i <= 8; i += 1) {
+  for (let i = 1; i <= cycleCount; i += 1) {
     const pillar = ganzhiFromIndex(monthPillar.index + direction * i);
     const ageStart = Math.round((startAge + (i - 1) * 10) * 10) / 10;
+    const ageEnd = Math.min(endAge, Math.round((ageStart + 9.9) * 10) / 10);
+    const cycleStartDate = new Date(startDate.getFullYear() + (i - 1) * 10, startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes());
+    const cycleEndDate = new Date(cycleStartDate.getFullYear() + 10, cycleStartDate.getMonth(), cycleStartDate.getDate() - 1, cycleStartDate.getHours(), cycleStartDate.getMinutes());
+    const cycleStartYear = cycleStartDate.getFullYear();
+    const cycleEndYear = Math.min(birthYear + endAge, cycleEndDate.getFullYear());
     cycles.push({
       label: `第${i}步大运`,
       value: pillar.value,
-      ageRange: `${ageStart}-${Math.round(ageStart + 9.9)}岁`,
-      yearRange: `${startYear + (i - 1) * 10}-${startYear + i * 10 - 1}`,
+      ageStart,
+      ageEnd,
+      ageRange: `${ageStart}-${ageEnd}岁`,
+      yearStart: cycleStartYear,
+      yearEnd: cycleEndYear,
+      yearRange: `${cycleStartYear}-${cycleEndYear}`,
+      startDate: formatDate(cycleStartDate),
+      startDateText: `${formatDate(cycleStartDate)}起运`,
       direction: direction > 0 ? '顺排' : '逆排'
     });
   }
@@ -1037,18 +1053,28 @@ function buildLuckCycles(readingDate, monthPillar, yearPillar, gender) {
   return {
     direction: direction > 0 ? '顺排' : '逆排',
     startAge,
+    startYear,
+    startDate: formatDate(startDate),
+    endYear: birthYear + endAge,
+    endAge,
     boundary: `${boundary.key} ${formatDateTime(boundary.date)}`,
     cycles
   };
 }
 
-function buildFlowYears(startYear, dayStem, natalPillars) {
-  return Array.from({ length: 12 }, (_, index) => {
+function buildFlowYears(startYear, dayStem, natalPillars, endYear) {
+  const safeStart = Number(startYear);
+  const safeEnd = Number(endYear);
+  const count = Number.isFinite(safeStart) && Number.isFinite(safeEnd)
+    ? Math.max(1, safeEnd - safeStart + 1)
+    : 12;
+  return Array.from({ length: count }, (_, index) => {
     const year = startYear + index;
     const pillar = getYearPillarByYear(year);
     const context = buildFlowContext(pillar, dayStem, natalPillars, '流年');
     return {
       year,
+      age: Number.isFinite(safeStart) ? year - safeStart : index,
       value: pillar.value,
       ...context
     };
@@ -1150,7 +1176,7 @@ function buildBaziProfile(form) {
     professional.usefulGod,
     professional.natalRelations
   );
-  const flowYears = buildFlowYears(now.getFullYear(), dayPillar.stem, pillars);
+  const flowYears = buildFlowYears(luck.startYear || now.getFullYear(), dayPillar.stem, pillars, luck.endYear || (readingDate.getFullYear() + 105));
   const flowMonths = buildFlowMonths(now.getFullYear(), dayPillar.stem, pillars);
   const flowDays = buildFlowDays(now, dayPillar.stem, pillars);
   const flowHours = buildFlowHours(now, dayPillar.stem, pillars);

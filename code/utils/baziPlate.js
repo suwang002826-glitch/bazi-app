@@ -338,6 +338,26 @@ function getActiveLuckIndex(result) {
   return index >= 0 ? index : 0;
 }
 
+function buildFlowYearBlocks(flowYearsSource) {
+  const source = Array.isArray(flowYearsSource) ? flowYearsSource : [];
+  const blocks = [];
+  for (let index = 0; index < source.length; index += 10) {
+    const years = source.slice(index, index + 10);
+    if (!years.length) continue;
+    const first = years[0];
+    const last = years[years.length - 1];
+    blocks.push({
+      ...first,
+      blockIndex: blocks.length,
+      year: first.year,
+      endYear: last.year,
+      yearRange: `${first.year}-${last.year}`,
+      years
+    });
+  }
+  return blocks;
+}
+
 function getSpiritsForBranch(result, branch) {
   return (result.professional.spirits || [])
     .filter((spirit) => spirit.branch === branch)
@@ -404,13 +424,15 @@ function createProfessionalDetail(result, options = {}) {
   const luckCyclesSource = result.luck.cycles || [];
   const flowYearsSource = result.flowYears || [];
   const flowMonthsSource = result.flowMonths || [];
+  const flowYearBlocksSource = buildFlowYearBlocks(flowYearsSource);
   const selectedLuckIndex = clampIndex(options.luckIndex, luckCyclesSource.length, getActiveLuckIndex(result));
-  const selectedYearIndex = clampIndex(options.yearIndex, flowYearsSource.length, 0);
-  const selectedYearOffset = clampIndex(options.yearOffset, 10, 0);
+  const selectedYearIndex = clampIndex(options.yearIndex, flowYearBlocksSource.length, 0);
+  const selectedYearBlock = flowYearBlocksSource[selectedYearIndex] || null;
+  const selectedYearOffset = clampIndex(options.yearOffset, selectedYearBlock && selectedYearBlock.years ? selectedYearBlock.years.length : 10, 0);
   const activeLuck = luckCyclesSource[selectedLuckIndex] || null;
-  const baseFlowYear = flowYearsSource[selectedYearIndex] || null;
+  const baseFlowYear = selectedYearBlock && selectedYearBlock.years ? selectedYearBlock.years[0] : null;
   const exactFlowYear = baseFlowYear ? Number(baseFlowYear.year) + selectedYearOffset : 0;
-  const flowYear = baseFlowYear ? findFlowYearSource(flowYearsSource, exactFlowYear, selectedYearIndex) : null;
+  const flowYear = baseFlowYear ? findFlowYearSource(flowYearsSource, exactFlowYear, flowYearsSource.indexOf(baseFlowYear)) : null;
   const selectedFlowYearValue = flowYear ? flowYear.value : '';
   const flowMonthsSourceForYear = flowYear ? createFlowMonthsForYear(result, flowYear) : flowMonthsSource;
   const selectedMonthIndex = clampIndex(options.monthIndex, flowMonthsSourceForYear.length, 0);
@@ -454,15 +476,15 @@ function createProfessionalDetail(result, options = {}) {
       spirits: getSpiritsForBranch(result, pillar.branch)
     };
   });
-  const flowYears = flowYearsSource.map((year, index) => ({
-    ...year,
-    endYear: year.year + 10,
-    miniPillars: Array.from({ length: 10 }, (_, offset) => {
-      const itemYear = year.year + offset;
-      const value = getGanZhiOffset(year.value, offset);
+  const flowYears = flowYearBlocksSource.map((yearBlock, index) => ({
+    ...yearBlock,
+    miniPillars: (yearBlock.years || []).map((sourceYear, offset) => {
+      const itemYear = sourceYear.year;
+      const value = sourceYear.value || getGanZhiOffset(yearBlock.value, offset);
       return {
         year: itemYear,
         value,
+        age: sourceYear.age,
         active: index === selectedYearIndex && offset === selectedYearOffset
       };
     }),

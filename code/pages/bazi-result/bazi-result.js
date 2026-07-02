@@ -550,7 +550,19 @@ Page({
   },
 
   onLuckTap(event) {
-    this.refreshProfessionalDetail({ luckIndex: Number(event.currentTarget.dataset.index) });
+    const luckIndex = Number(event.currentTarget.dataset.index);
+    const detail = this.data.professionalDetail || {};
+    const luck = detail.luckCycles && detail.luckCycles[luckIndex];
+    const luckStartYear = luck ? Number(luck.yearStart) : NaN;
+    const yearIndex = Number.isFinite(luckStartYear) && detail.flowYears
+      ? detail.flowYears.findIndex((item) => luckStartYear >= Number(item.year) && luckStartYear <= Number(item.endYear))
+      : -1;
+    this.refreshProfessionalDetail({
+      luckIndex,
+      yearIndex: yearIndex >= 0 ? yearIndex : this.data.selectedYearIndex,
+      yearOffset: 0,
+      monthIndex: 0
+    });
   },
 
   onFlowYearTap(event) {
