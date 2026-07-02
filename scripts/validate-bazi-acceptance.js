@@ -430,3 +430,4 @@ require('./validate-lunar-source-boundary.test');
 require('./validate-pmo-2025-promotion-readiness.test');
 require('./validate-bazi-api-client.test');
 require('./validate-bazi-api-entry.test');
+require('./validate-bazi-backend-service.test');
