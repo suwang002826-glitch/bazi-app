@@ -192,9 +192,10 @@ function createLunarDataPackWarning(match) {
 }
 
 function resolveCalendar(input = {}) {
-  const calendarType = hasLunarDateFields(input)
-    ? 'lunar'
-    : normalizeCalendarType(input.calendarType || input.calendarMode);
+  const hasExplicitCalendarType = input.calendarType !== undefined || input.calendarMode !== undefined;
+  const calendarType = hasExplicitCalendarType
+    ? normalizeCalendarType(input.calendarType || input.calendarMode)
+    : (hasLunarDateFields(input) ? 'lunar' : 'solar');
   if (calendarType !== 'lunar') {
     return {
       birthDate: input.birthDate,
