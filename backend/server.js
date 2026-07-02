@@ -48,6 +48,22 @@ function createBaziServer() {
       return;
     }
 
+    if (request.url === '/health') {
+      if (request.method !== 'GET') {
+        sendJson(response, 405, {
+          code: 'METHOD_NOT_ALLOWED',
+          message: '请使用 GET /health'
+        });
+        return;
+      }
+      sendJson(response, 200, {
+        ok: true,
+        service: 'bazi-backend',
+        version: 'bazi-backend@0.1.0'
+      });
+      return;
+    }
+
     if (request.url !== '/bazi/calculate') {
       sendJson(response, 404, {
         code: 'NOT_FOUND',
