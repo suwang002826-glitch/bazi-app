@@ -417,22 +417,33 @@ function run() {
   );
 }
 
-run();
-require('./validate-lunar-runtime-loader.test');
-require('./validate-lunar-beta-entry');
-require('./generate-lunar-data-pack.test');
-require('./generate-lunar-draft-data-pack.test');
-require('./validate-lunar-review-matrix.test');
-require('./validate-lunar-promotion-readiness.test');
-require('./validate-lunar-runtime-approval-review.test');
-require('./validate-lunar-limited-runtime-scope.test');
-require('./generate-lunar-limited-runtime-candidate.test');
-require('./validate-lunar-limited-runtime-candidate.test');
-require('./validate-lunar-limited-preview-gate.test');
-require('./validate-lunar-authority-source-intake.test');
-require('./validate-lunar-source-boundary.test');
-require('./validate-pmo-2025-promotion-readiness.test');
-require('./validate-bazi-api-client.test');
-require('./validate-bazi-api-entry.test');
-require('./validate-bazi-backend-service.test');
-require('./validate-bazi-backend-client-integration.test');
+async function runAll() {
+  run();
+  require('./validate-lunar-runtime-loader.test');
+  await require('./validate-lunar-beta-entry').run();
+  require('./generate-lunar-data-pack.test');
+  require('./generate-lunar-draft-data-pack.test');
+  require('./validate-lunar-review-matrix.test');
+  require('./validate-lunar-promotion-readiness.test');
+  require('./validate-lunar-runtime-approval-review.test');
+  require('./validate-lunar-limited-runtime-scope.test');
+  require('./generate-lunar-limited-runtime-candidate.test');
+  require('./validate-lunar-limited-runtime-candidate.test');
+  require('./validate-lunar-limited-preview-gate.test');
+  require('./validate-lunar-authority-source-intake.test');
+  require('./validate-lunar-source-boundary.test');
+  require('./validate-pmo-2025-promotion-readiness.test');
+  require('./validate-bazi-api-client.test');
+  await require('./validate-bazi-api-entry.test').run();
+  require('./validate-bazi-backend-service.test');
+  require('./validate-bazi-backend-client-integration.test');
+}
+
+if (require.main === module) {
+  runAll().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { runAll };

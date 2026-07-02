@@ -23,9 +23,41 @@ function applyDataPatch(target, patch) {
   });
 }
 
-function loadBaziPage() {
+function createRemoteReading() {
+  return {
+    result: {
+      title: '远程农历八字排盘',
+      displayName: '张三',
+      gender: '男',
+      solarTime: '2023-09-29 09:00',
+      birthPlace: '北京市 北京市 东城区',
+      longitude: '116.40',
+      calendarConversion: {
+        calendarType: 'lunar',
+        solarDate: '2023-09-29',
+        dataPackVersion: 'hko-lunar-data-pack@2026.07.02-runtime-preview.1',
+        sourceId: 'HKO_OPEN_DATA_NONGLI_2023'
+      },
+      pillars: [
+        { label: '年柱', value: '癸卯', stem: '癸', branch: '卯', element: '水/木' },
+        { label: '月柱', value: '辛酉', stem: '辛', branch: '酉', element: '金/金' },
+        { label: '日柱', value: '庚寅', stem: '庚', branch: '寅', element: '金/木' },
+        { label: '时柱', value: '丙戌', stem: '丙', branch: '戌', element: '火/土' }
+      ],
+      professional: {
+        chartSummary: { oneLine: '远程农历样例' },
+        spirits: [],
+        growthStages: []
+      },
+      detailProfile: { pillarExtras: [] }
+    }
+  };
+}
+
+function loadBaziPage(options = {}) {
   delete require.cache[require.resolve(pagePath)];
   const calls = {
+    requests: [],
     toasts: [],
     navigations: [],
     storage: [],
@@ -35,7 +67,14 @@ function loadBaziPage() {
   const app = {
     globalData: {
       disclaimer: '测试免责声明',
-      currentBaziReading: null
+      currentBaziReading: null,
+      baziApi: {
+        enabled: true,
+        baseUrl: 'https://api.example.test',
+        calculatePath: '/bazi/calculate',
+        timeout: 15000,
+        provider: 'backend-test'
+      }
     },
     addHistory(item) {
       calls.history.push(item);
@@ -50,6 +89,17 @@ function loadBaziPage() {
 
   global.getApp = () => app;
   global.wx = {
+    request(requestOptions) {
+      calls.requests.push(requestOptions);
+      if (typeof options.request === 'function') {
+        options.request(requestOptions);
+        return;
+      }
+      requestOptions.success({
+        statusCode: 200,
+        data: createRemoteReading()
+      });
+    },
     showToast(options) {
       calls.toasts.push(options);
     },
@@ -86,6 +136,7 @@ function tapCalendarMode(page, mode) {
   });
 }
 
+async function run() {
 const wxml = fs.readFileSync(wxmlPath, 'utf8');
 assert(
   wxml.includes('农历排盘') || wxml.includes('农历择盘'),
@@ -124,8 +175,17 @@ assert(
     'form.isLeapMonth': false
   });
   tapCalendarMode(page, '农历');
-  page.generateReading();
+  await page.generateReading();
 
+  assert.strictEqual(calls.requests.length, 1);
+  assert.strictEqual(calls.requests[0].url, 'https://api.example.test/bazi/calculate');
+  assert.strictEqual(calls.requests[0].data.calendarType, 'lunar');
+  assert.deepStrictEqual(calls.requests[0].data.lunarDate, {
+    year: 2023,
+    month: 8,
+    day: 15,
+    isLeapMonth: false
+  });
   assert.strictEqual(calls.navigations.length, 1);
   assert.strictEqual(calls.history.length, 1);
   assert.strictEqual(calls.cases.length, 1);
@@ -136,7 +196,17 @@ assert(
 }
 
 {
-  const { page, app, calls } = loadBaziPage();
+  const { page, app, calls } = loadBaziPage({
+    request(requestOptions) {
+      requestOptions.success({
+        statusCode: 400,
+        data: {
+          code: 'LUNAR_DATE_OUTSIDE_LIMITED_RUNTIME_SCOPE',
+          message: '当前农历日期暂未覆盖'
+        }
+      });
+    }
+  });
   page.setData({
     'form.name': '李四',
     'form.lunarYear': '2026',
@@ -145,8 +215,9 @@ assert(
     'form.isLeapMonth': false
   });
   tapCalendarMode(page, '农历');
-  page.generateReading();
+  await page.generateReading();
 
+  assert.strictEqual(calls.requests.length, 1);
   assert.strictEqual(calls.navigations.length, 0);
   assert.strictEqual(app.globalData.currentBaziReading, null);
   assert.strictEqual(page.data.isGenerating, false);
@@ -155,3 +226,13 @@ assert(
 }
 
 console.log('PASS lunar beta entry');
+}
+
+if (require.main === module) {
+  run().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { run };

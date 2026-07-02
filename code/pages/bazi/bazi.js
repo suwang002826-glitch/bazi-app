@@ -1,4 +1,3 @@
-const { buildBaziProfile } = require('../../utils/mock');
 const { createBaziPlate } = require('../../utils/baziPlate');
 const {
   requestBaziCalculation,
@@ -196,20 +195,13 @@ Page({
     if (error && error.code === 'LUNAR_DATE_OUTSIDE_DATA_PACK_COVERAGE') {
       return '当前农历日期暂未覆盖，请先使用公历生日排盘';
     }
+    if (error && error.code === 'LUNAR_DATE_OUTSIDE_LIMITED_RUNTIME_SCOPE') {
+      return '当前农历日期暂未覆盖，请先使用公历生日排盘';
+    }
     if (error && /Invalid lunar field/.test(error.message || '')) {
       return '请填写有效农历年月日';
     }
     return '';
-  },
-
-  buildLocalReading(readingInput) {
-    const result = buildBaziProfile(readingInput);
-    result.gender = readingInput.gender || '未填';
-    result.sourceInput = readingInput;
-    return {
-      result,
-      baziPlate: createBaziPlate(result)
-    };
   },
 
   normalizeReadingForStorage(reading, readingInput) {
@@ -277,6 +269,20 @@ Page({
       wx.showToast({ title: lunarBetaError, icon: 'none' });
       return;
     }
+    if (error && error.code === 'BAZI_API_DISABLED') {
+      wx.showToast({
+        title: '后端排盘服务未配置，请先启动后端服务',
+        icon: 'none'
+      });
+      return;
+    }
+    if (error && error.code === 'BAZI_API_NETWORK_ERROR') {
+      wx.showToast({
+        title: '连接后端失败，请确认服务已启动',
+        icon: 'none'
+      });
+      return;
+    }
     wx.showToast({
       title: error && error.message ? error.message : '排盘服务暂不可用',
       icon: 'none'
@@ -296,23 +302,22 @@ Page({
       ...this.buildReadingInput(),
       name: this.data.form.name.trim() || '未命名'
     };
-    if (shouldUseRemoteBaziApi(app.globalData.baziApi)) {
-      return requestBaziCalculation({
-        wxApi: wx,
-        config: app.globalData.baziApi,
-        input: readingInput,
-        saveCase: this.data.saveCase
-      }).then((reading) => {
-        this.persistReading(reading, readingInput);
-      }).catch((error) => {
-        this.handleGenerateError(error);
-      });
+    if (!shouldUseRemoteBaziApi(app.globalData.baziApi)) {
+      const error = new Error('后端排盘服务未配置，请先启动后端服务');
+      error.code = 'BAZI_API_DISABLED';
+      this.handleGenerateError(error);
+      return;
     }
 
-    try {
-      this.persistReading(this.buildLocalReading(readingInput), readingInput);
-    } catch (error) {
+    return requestBaziCalculation({
+      wxApi: wx,
+      config: app.globalData.baziApi,
+      input: readingInput,
+      saveCase: this.data.saveCase
+    }).then((reading) => {
+      this.persistReading(reading, readingInput);
+    }).catch((error) => {
       this.handleGenerateError(error);
-    }
+    });
   }
 });

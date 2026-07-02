@@ -1,9 +1,9 @@
 const baziApiConfig = {
-  enabled: false,
-  baseUrl: '',
+  enabled: true,
+  baseUrl: 'http://127.0.0.1:8787',
   calculatePath: '/bazi/calculate',
   timeout: 15000,
-  provider: 'local'
+  provider: 'backend-local'
 };
 
 function getBaziApiConfig() {

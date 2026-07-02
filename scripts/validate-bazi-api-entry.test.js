@@ -56,15 +56,28 @@ function loadBaziPage(app, wxApi) {
   return global.__baziApiPage;
 }
 
+async function run() {
 {
   const appDefinition = loadAppDefinition();
   assert.deepStrictEqual(appDefinition.globalData.baziApi, {
-    enabled: false,
-    baseUrl: '',
+    enabled: true,
+    baseUrl: 'http://127.0.0.1:8787',
     calculatePath: '/bazi/calculate',
     timeout: 15000,
-    provider: 'local'
+    provider: 'backend-local'
   });
+}
+
+{
+  const pageSource = require('fs').readFileSync(pagePath, 'utf8');
+  assert(
+    !pageSource.includes('buildBaziProfile'),
+    'Mini Program bazi entry must not use local mock calculation when backend API is disabled'
+  );
+  assert(
+    !pageSource.includes('buildLocalReading'),
+    'Mini Program bazi entry must not keep a local calculation fallback'
+  );
 }
 
 async function testRemoteEntry() {
@@ -165,9 +178,72 @@ async function testRemoteEntry() {
   assert.strictEqual(page.data.isGenerating, false);
 }
 
-testRemoteEntry()
-  .then(() => console.log('PASS bazi API page entry'))
-  .catch((error) => {
+async function testDisabledConfigDoesNotFallback() {
+  const calls = {
+    requests: [],
+    history: [],
+    cases: [],
+    navigations: [],
+    toasts: []
+  };
+  const app = {
+    globalData: {
+      disclaimer: '测试免责声明',
+      currentBaziReading: null,
+      engineVersion: 'backend-api-2026.07.02',
+      baziApi: {
+        enabled: false,
+        baseUrl: '',
+        calculatePath: '/bazi/calculate',
+        timeout: 15000,
+        provider: 'local-disabled'
+      }
+    },
+    addHistory(record) {
+      calls.history.push(record);
+    },
+    addCase(record) {
+      calls.cases.push(record);
+    },
+    formatDateTime(date) {
+      return date.toISOString().slice(0, 19).replace('T', ' ');
+    }
+  };
+  const wxApi = {
+    request(options) {
+      calls.requests.push(options);
+    },
+    showToast(options) {
+      calls.toasts.push(options);
+    },
+    navigateTo(options) {
+      calls.navigations.push(options);
+    },
+    setStorageSync() {}
+  };
+
+  const page = loadBaziPage(app, wxApi);
+  await page.generateReading();
+
+  assert.strictEqual(calls.requests.length, 0);
+  assert.strictEqual(calls.history.length, 0);
+  assert.strictEqual(calls.cases.length, 0);
+  assert.strictEqual(calls.navigations.length, 0);
+  assert.strictEqual(calls.toasts.length, 1);
+  assert.match(calls.toasts[0].title, /后端排盘服务|排盘服务/);
+  assert.strictEqual(page.data.isGenerating, false);
+}
+
+await testRemoteEntry();
+await testDisabledConfigDoesNotFallback();
+console.log('PASS bazi API page entry');
+}
+
+if (require.main === module) {
+  run().catch((error) => {
     console.error(error);
     process.exitCode = 1;
   });
+}
+
+module.exports = { run };
