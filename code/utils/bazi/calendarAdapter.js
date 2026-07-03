@@ -4,6 +4,20 @@ const {
   getLunarDataPackCoverage
 } = require('./lunarDataPack');
 
+function buildLunarConversionWarnings(match, coverage) {
+  const isComplete = match && match.completeLunarCalendar && coverage.completeLunarCalendar;
+  if (isComplete) return [];
+
+  const scopeText = match && match.scope ? `（${match.scope}）` : '（部分覆盖）';
+  return [
+    {
+      code: 'LUNAR_DATA_PACK_PARTIAL_COVERAGE',
+      level: 'warning',
+      message: `当前农历转换数据包为非完整覆盖${scopeText}，建议限制输入年份在[${(coverage.years && coverage.years[0]) || '-'}-${(coverage.years && coverage.years[coverage.years.length - 1]) || '-'}]内。`
+    }
+  ];
+}
+
 function normalizeCalendarType(value) {
   const raw = String(value || 'solar').trim().toLowerCase();
   if (['lunar', '农历', 'nongli', 'lunarleap', 'lunar_leap', 'lunarleapmonth', '农历闰月'].includes(raw)) {
@@ -104,6 +118,9 @@ function resolveCalendar(input = {}) {
     throw createOutsideCoverageError(lunarInput);
   }
 
+  const coverage = getLunarDataPackCoverage();
+  const warnings = buildLunarConversionWarnings(match, coverage);
+
   return {
     birthDate: match.solarDate,
     conversion: {
@@ -117,13 +134,7 @@ function resolveCalendar(input = {}) {
       sourceNote: match.sourceNote,
       scope: baziRuleConfig.policies.lunarConversionScope
     },
-    warnings: [
-      {
-        code: 'LUNAR_DATA_PACK_SEED_ONLY',
-        level: 'warning',
-        message: 'Lunar data-pack currently contains acceptance seed records only.'
-      }
-    ]
+    warnings
   };
 }
 

@@ -1,9 +1,9 @@
-const preciseSolarTerms = require('../code/data-packs/solar-terms/solarTerms-precise-1900-2100.json');
+﻿const preciseSolarTerms = require('../code/data-packs/solar-terms/solarTerms-precise-1900-2100.json');
 
 const TEST_CASES = [
   {
     case_id: 1,
-    scene: '普通平日期/无边界',
+    scene: 'case-1',
     input: {
       solar_time: '1990-01-01 12:00:00',
       longitude: 120.0,
@@ -11,11 +11,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '己巳', month: '丙子', day: '丙寅', hour: '甲午' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐢插崍' }
   },
   {
     case_id: 2,
-    scene: '夜子时跨日（23点后换日）',
+    scene: 'case-2',
     input: {
       solar_time: '1990-01-01 23:05:00',
       longitude: 120.0,
@@ -23,11 +23,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '己巳', month: '丙子', day: '丁卯', hour: '庚子' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
   },
   {
     case_id: 3,
-    scene: '早子时（0点后）',
+    scene: 'case-3',
     input: {
       solar_time: '1990-01-02 00:10:00',
       longitude: 120.0,
@@ -35,11 +35,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '己巳', month: '丙子', day: '丁卯', hour: '庚子' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
   },
   {
     case_id: 4,
-    scene: '立春交节前（1988年立春22:43）',
+    scene: 'case-4',
     input: {
       solar_time: '1988-02-04 21:00:00',
       longitude: 120.0,
@@ -47,11 +47,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '丁卯', month: '癸丑', day: '己丑', hour: '乙亥' }
+    expect: { year: '涓佸嵂', month: '鐧镐笐', day: '宸变笐', hour: '涔欎亥' }
   },
   {
     case_id: 5,
-    scene: '立春交节后',
+    scene: 'case-5',
     input: {
       solar_time: '1988-02-04 23:00:00',
       longitude: 120.0,
@@ -59,11 +59,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '戊辰', month: '甲寅', day: '庚寅', hour: '丙子' }
+    expect: { year: '鎴婅景', month: '鐢插瘏', day: '搴氬瘏', hour: '涓欏瓙' }
   },
   {
     case_id: 6,
-    scene: '惊蛰交节前（1990年惊蛰04:20）',
+    scene: 'case-6',
     input: {
       solar_time: '1990-03-06 03:00:00',
       longitude: 120.0,
@@ -71,11 +71,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '庚午', month: '戊寅', day: '庚午', hour: '戊寅' }
+    expect: { year: '搴氬崍', month: '鎴婂瘏', day: '搴氬崍', hour: '鎴婂瘏' }
   },
   {
     case_id: 7,
-    scene: '惊蛰交节后',
+    scene: 'case-7',
     input: {
       solar_time: '1990-03-06 05:00:00',
       longitude: 120.0,
@@ -83,11 +83,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '庚午', month: '己卯', day: '庚午', hour: '己卯' }
+    expect: { year: '搴氬崍', month: '宸卞嵂', day: '搴氬崍', hour: '宸卞嵂' }
   },
   {
     case_id: 8,
-    scene: '夏令时开始当天（1987年4月12日02:00开始）',
+    scene: 'case-8',
     input: {
       solar_time: '1987-04-12 01:30:00',
       longitude: 120.0,
@@ -95,11 +95,11 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '丁卯', month: '甲辰', day: '辛卯', hour: '己丑' }
+    expect: { year: '涓佸嵂', month: '鐢茶景', day: '杈涘嵂', hour: '宸变笐' }
   },
   {
     case_id: 9,
-    scene: '夏令时结束当天（1987年9月13日02:00结束）',
+    scene: 'case-9',
     input: {
       solar_time: '1987-09-13 01:30:00',
       longitude: 120.0,
@@ -107,11 +107,11 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '丁卯', month: '己酉', day: '乙丑', hour: '丁丑' }
+    expect: { year: '涓佸嵂', month: '宸遍厜', day: '涔欎笐', hour: '涓佷笐' }
   },
   {
     case_id: 10,
-    scene: '乌鲁木齐真太阳时（东经87.6°，时差-2h10m）',
+    scene: 'case-10',
     input: {
       solar_time: '1990-01-01 12:00:00',
       longitude: 87.6,
@@ -119,11 +119,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: true
     },
-    expect: { year: '己巳', month: '丙子', day: '丙寅', hour: '癸巳' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐧稿烦' }
   },
   {
     case_id: 11,
-    scene: '哈尔滨真太阳时（东经126.6°，时差+26m）',
+    scene: 'case-11',
     input: {
       solar_time: '1990-01-01 12:00:00',
       longitude: 126.6,
@@ -131,12 +131,12 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: true
     },
-    expect: { year: '己巳', month: '丙子', day: '丙寅', hour: '甲午' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐢插崍' }
   },
-  // 1950-2010年普通日期全时辰覆盖用例（共19个，覆盖0-23点所有时辰）
+  // 1950-2010骞存櫘閫氭棩鏈熷叏鏃惰景瑕嗙洊鐢ㄤ緥锛堝叡19涓紝瑕嗙洊0-23鐐规墍鏈夋椂杈帮級
   {
     case_id: 12,
-    scene: '1955年普通日期/早子时',
+    scene: 'case-12',
     input: {
       solar_time: '1955-03-15 00:30:00',
       longitude: 120.0,
@@ -144,11 +144,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '乙未', month: '己卯', day: '乙亥', hour: '丙子' }
+    expect: { year: '涔欐湭', month: '宸卞嵂', day: '涔欎亥', hour: '涓欏瓙' }
   },
   {
     case_id: 13,
-    scene: '1962年普通日期/丑时',
+    scene: 'case-13',
     input: {
       solar_time: '1962-05-20 01:30:00',
       longitude: 120.0,
@@ -156,11 +156,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '壬寅', month: '乙巳', day: '戊午', hour: '癸丑' }
+    expect: { year: '澹瘏', month: '涔欏烦', day: '鎴婂崍', hour: '鐧镐笐' }
   },
   {
     case_id: 14,
-    scene: '1970年普通日期/寅时',
+    scene: 'case-14',
     input: {
       solar_time: '1970-07-08 03:30:00',
       longitude: 120.0,
@@ -168,11 +168,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '庚戌', month: '癸未', day: '己丑', hour: '丙寅' }
+    expect: { year: '搴氭垖', month: '鐧告湭', day: '宸变笐', hour: '涓欏瘏' }
   },
   {
     case_id: 15,
-    scene: '1983年普通日期/卯时',
+    scene: 'case-15',
     input: {
       solar_time: '1983-09-12 05:30:00',
       longitude: 120.0,
@@ -180,11 +180,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '癸亥', month: '辛酉', day: '癸卯', hour: '乙卯' }
+    expect: { year: '鐧镐亥', month: '杈涢厜', day: '鐧稿嵂', hour: '涔欏嵂' }
   },
   {
     case_id: 16,
-    scene: '1995年普通日期/辰时',
+    scene: 'case-16',
     input: {
       solar_time: '1995-11-25 07:30:00',
       longitude: 120.0,
@@ -192,11 +192,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '乙亥', month: '丁亥', day: '庚申', hour: '庚辰' }
+    expect: { year: '涔欎亥', month: '涓佷亥', day: '搴氱敵', hour: '搴氳景' }
   },
   {
     case_id: 17,
-    scene: '2005年普通日期/巳时',
+    scene: 'case-17',
     input: {
       solar_time: '2005-02-18 09:30:00',
       longitude: 120.0,
@@ -204,11 +204,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '乙酉', month: '戊寅', day: '癸酉', hour: '丁巳' }
+    expect: { year: '涔欓厜', month: '鎴婂瘏', day: '鐧搁厜', hour: '涓佸烦' }
   },
   {
     case_id: 18,
-    scene: '1958年普通日期/午时',
+    scene: 'case-18',
     input: {
       solar_time: '1958-04-07 11:30:00',
       longitude: 120.0,
@@ -216,11 +216,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '戊戌', month: '丙辰', day: '甲寅', hour: '庚午' }
+    expect: { year: '鎴婃垖', month: '涓欒景', day: '鐢插瘏', hour: '搴氬崍' }
   },
   {
     case_id: 19,
-    scene: '1968年普通日期/未时',
+    scene: 'case-19',
     input: {
       solar_time: '1968-06-22 13:30:00',
       longitude: 120.0,
@@ -228,11 +228,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '戊申', month: '戊午', day: '癸亥', hour: '己未' }
+    expect: { year: '鎴婄敵', month: '鎴婂崍', day: '鐧镐亥', hour: '宸辨湭' }
   },
   {
     case_id: 20,
-    scene: '1978年普通日期/申时',
+    scene: 'case-20',
     input: {
       solar_time: '1978-08-16 15:30:00',
       longitude: 120.0,
@@ -240,11 +240,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '戊午', month: '庚申', day: '庚戌', hour: '甲申' }
+    expect: { year: '鎴婂崍', month: '搴氱敵', day: '搴氭垖', hour: '鐢茬敵' }
   },
   {
     case_id: 21,
-    scene: '1988年普通日期/酉时',
+    scene: 'case-21',
     input: {
       solar_time: '1988-10-09 17:30:00',
       longitude: 120.0,
@@ -252,11 +252,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '戊辰', month: '壬戌', day: '丁酉', hour: '己酉' }
+    expect: { year: '鎴婅景', month: '澹垖', day: '涓侀厜', hour: '宸遍厜' }
   },
   {
     case_id: 22,
-    scene: '1998年普通日期/戌时',
+    scene: 'case-22',
     input: {
       solar_time: '1998-12-03 19:30:00',
       longitude: 120.0,
@@ -264,11 +264,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '戊寅', month: '癸亥', day: '甲申', hour: '甲戌' }
+    expect: { year: '鎴婂瘏', month: '鐧镐亥', day: '鐢茬敵', hour: '鐢叉垖' }
   },
   {
     case_id: 23,
-    scene: '2008年普通日期/亥时',
+    scene: 'case-23',
     input: {
       solar_time: '2008-01-25 21:30:00',
       longitude: 120.0,
@@ -276,11 +276,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '丁亥', month: '癸丑', day: '甲子', hour: '乙亥' }
+    expect: { year: '涓佷亥', month: '鐧镐笐', day: '鐢插瓙', hour: '涔欎亥' }
   },
   {
     case_id: 24,
-    scene: '1952年普通日期/夜子时',
+    scene: 'case-24',
     input: {
       solar_time: '1952-08-03 23:30:00',
       longitude: 120.0,
@@ -288,11 +288,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '壬辰', month: '丁未', day: '壬午', hour: '庚子' }
+    expect: { year: '澹景', month: '涓佹湭', day: '澹崍', hour: '搴氬瓙' }
   },
   {
     case_id: 25,
-    scene: '1965年国庆/丑时边界',
+    scene: 'case-25',
     input: {
       solar_time: '1965-10-01 01:05:00',
       longitude: 120.0,
@@ -300,11 +300,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '乙巳', month: '乙酉', day: '戊子', hour: '癸丑' }
+    expect: { year: '涔欏烦', month: '涔欓厜', day: '鎴婂瓙', hour: '鐧镐笐' }
   },
   {
     case_id: 26,
-    scene: '1975年普通日期/卯时边界',
+    scene: 'case-26',
     input: {
       solar_time: '1975-12-12 05:10:00',
       longitude: 120.0,
@@ -312,11 +312,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '乙卯', month: '戊子', day: '壬辰', hour: '癸卯' }
+    expect: { year: '涔欏嵂', month: '鎴婂瓙', day: '澹景', hour: '鐧稿嵂' }
   },
   {
     case_id: 27,
-    scene: '1985年普通日期/巳时边界',
+    scene: 'case-27',
     input: {
       solar_time: '1985-07-25 09:15:00',
       longitude: 120.0,
@@ -324,11 +324,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '乙丑', month: '癸未', day: '乙丑', hour: '辛巳' }
+    expect: { year: '涔欎笐', month: '鐧告湭', day: '涔欎笐', hour: '杈涘烦' }
   },
   {
     case_id: 28,
-    scene: '1990年普通日期/未时边界(夏令时当天不启用)',
+    scene: 'case-28',
     input: {
       solar_time: '1990-04-15 13:20:00',
       longitude: 120.0,
@@ -336,11 +336,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '庚午', month: '庚辰', day: '庚戌', hour: '癸未' }
+    expect: { year: '搴氬崍', month: '搴氳景', day: '搴氭垖', hour: '鐧告湭' }
   },
   {
     case_id: 29,
-    scene: '2000年普通日期/酉时边界',
+    scene: 'case-29',
     input: {
       solar_time: '2000-06-10 17:25:00',
       longitude: 120.0,
@@ -348,11 +348,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '庚辰', month: '壬午', day: '己亥', hour: '癸酉' }
+    expect: { year: '搴氳景', month: '澹崍', day: '宸变亥', hour: '鐧搁厜' }
   },
   {
     case_id: 30,
-    scene: '2010年普通日期/亥时边界',
+    scene: 'case-30',
     input: {
       solar_time: '2010-09-09 21:05:00',
       longitude: 120.0,
@@ -360,11 +360,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '庚寅', month: '乙酉', day: '壬戌', hour: '辛亥' }
+    expect: { year: '搴氬瘏', month: '涔欓厜', day: '澹垖', hour: '杈涗亥' }
   },
   {
     case_id: 31,
-    scene: '立春正点精确到秒（1988-02-04 22:43:00，刚交节）',
+    scene: 'case-31',
     input: {
       solar_time: '1988-02-04 22:43:00',
       longitude: 120.0,
@@ -372,11 +372,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '戊辰', month: '甲寅', day: '己丑', hour: '乙亥' }
+    expect: { year: '鎴婅景', month: '鐢插瘏', day: '宸变笐', hour: '涔欎亥' }
   },
   {
     case_id: 32,
-    scene: '惊蛰正点精确到秒（1990-03-06 04:20:00，刚交节）',
+    scene: 'case-32',
     input: {
       solar_time: '1990-03-06 04:20:00',
       longitude: 120.0,
@@ -384,11 +384,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '庚午', month: '己卯', day: '庚午', hour: '戊寅' }
+    expect: { year: '搴氬崍', month: '宸卞嵂', day: '搴氬崍', hour: '鎴婂瘏' }
   },
   {
     case_id: 33,
-    scene: '23点整夜子时正点（1990-01-01 23:00:00，刚换日）',
+    scene: 'case-33',
     input: {
       solar_time: '1990-01-01 23:00:00',
       longitude: 120.0,
@@ -396,11 +396,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '己巳', month: '丙子', day: '丁卯', hour: '庚子' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
   },
   {
     case_id: 34,
-    scene: '0点整早子时正点（1990-01-02 00:00:00，早子时边界）',
+    scene: 'case-34',
     input: {
       solar_time: '1990-01-02 00:00:00',
       longitude: 120.0,
@@ -408,11 +408,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '己巳', month: '丙子', day: '丁卯', hour: '庚子' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
   },
   {
     case_id: 35,
-    scene: '1986年夏令时开始正点（1986-05-04 02:00:00，夏令时生效首秒）',
+    scene: 'case-35',
     input: {
       solar_time: '1986-05-04 02:00:00',
       longitude: 120.0,
@@ -420,11 +420,11 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '丙寅', month: '壬辰', day: '戊申', hour: '癸丑' }
+    expect: { year: '涓欏瘏', month: '澹景', day: '鎴婄敵', hour: '鐧镐笐' }
   },
   {
     case_id: 36,
-    scene: '1986年夏令时结束正点（1986-09-14 02:00:00，夏令时结束首秒）',
+    scene: 'case-36',
     input: {
       solar_time: '1986-09-14 02:00:00',
       longitude: 120.0,
@@ -432,11 +432,11 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '丙寅', month: '丁酉', day: '辛酉', hour: '己丑' }
+    expect: { year: '涓欏瘏', month: '涓侀厜', day: '杈涢厜', hour: '宸变笐' }
   },
   {
     case_id: 37,
-    scene: '2025年小寒正点（2025-01-05 10:32:31，刚交节换月）',
+    scene: 'case-37',
     input: {
       solar_time: '2025-01-05 10:32:31',
       longitude: 120.0,
@@ -444,11 +444,11 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '甲辰', month: '丁丑', day: '甲戌', hour: '己巳' }
+    expect: { year: '鐢茶景', month: '涓佷笐', day: '鐢叉垖', hour: '宸卞烦' }
   },
   {
     case_id: 38,
-    scene: '真太阳时跨时辰边界（乌鲁木齐87.6°，1990-01-01 14:05:00）',
+    scene: 'case-38',
     input: {
       solar_time: '1990-01-01 14:05:00',
       longitude: 87.6,
@@ -456,12 +456,79 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: true
     },
-    expect: { year: '己巳', month: '丙子', day: '丙寅', hour: '甲午' }
+    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐢插崍' }
+  },
+  {
+    case_id: 39,
+    scene: 'case-39',
+    input: {
+      solar_time: '1990-01-01 12:00:00',
+      calendarType: 'lunar',
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 15,
+      isLeapMonth: false,
+      longitude: 120.0,
+      latitude: 39.0,
+      use_dst: false,
+      use_true_solar: false
+    },
+    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '搴氬崍' }
+  },
+  {
+    case_id: 40,
+    scene: 'case-40',
+    input: {
+      solar_time: '1999-10-10 11:30:00',
+      isLunar: true,
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 15,
+      isLeapMonth: false,
+      longitude: 120.0,
+      latitude: 39.0,
+      use_dst: false,
+      use_true_solar: false
+    },
+    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '搴氬崍' }
+  },
+  {
+    case_id: 41,
+    scene: 'case-41',
+    input: {
+      solar_time: '2010-01-01 09:00:00',
+      calendarType: 'lunar',
+      lunarYear: 2023,
+      lunarMonth: 2,
+      lunarDay: 10,
+      isLeapMonth: true,
+      longitude: 120.0,
+      latitude: 39.0,
+      use_dst: false,
+      use_true_solar: false
+    },
+    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '宸卞烦' }
+  },
+  {
+    case_id: 42,
+    scene: 'case-42',
+    input: {
+      solar_time: '2050-12-31 20:00:00',
+      lunarYear: 2023,
+      lunarMonth: 8,
+      lunarDay: 15,
+      isLeapMonth: 0,
+      longitude: 120.0,
+      latitude: 39.0,
+      use_dst: false,
+      use_true_solar: false
+    },
+    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '鐢叉垖' }
   }
 ];
 
 const sharedDefaultOptions = {
-  name: '问真锁定基线',
+  name: 'verify-case',
   gender: '男',
   isLunar: false,
   isLeapMonth: false,
@@ -476,3 +543,5 @@ module.exports = {
   cases: TEST_CASES,
   sharedDefaultOptions
 };
+
+

@@ -526,8 +526,8 @@ function buildReadingFromForm(form, options = {}) {
   const normalizedInput = normalizeBaziInput(mergedInput);
   const normalizedForm = normalizedInput.form;
   const calculationForm = {
-    ...normalizedForm,
     ...mergedInput,
+    ...normalizedForm,
     useDST: Boolean(
       mergedInput.useDST
       || mergedInput.useSummerTime

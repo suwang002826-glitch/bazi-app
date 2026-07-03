@@ -12,7 +12,7 @@ const baziRuleConfig = {
     trueSolarReferenceLatitude: 39,
     chinaSummerTime: 'enabled_only_1986_1991_official_schedule',
     chinaSummerTimeDefaultEnabled: 'auto_detect_within_range',
-    lunarConversionScope: 'data_pack_acceptance_seed'
+    lunarConversionScope: 'data_pack_1901_2100'
   }
 };
 

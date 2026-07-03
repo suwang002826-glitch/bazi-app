@@ -582,6 +582,64 @@ function calculateDaYun(birthDate, gender, yearStem, monthStem, monthBranch, ter
   };
 }
 
+function calculateLiuNianLiuYue(birthDate, dayStem, termsData, maxAge = 80) {
+  const birthYear = birthDate.getUTCFullYear();
+  const liuNianList = [];
+  const jieOrder = ['立春', '惊蛰', '清明', '立夏', '芒种', '小暑', '立秋', '白露', '寒露', '立冬', '大雪', '小寒'];
+  const monthBranches = ['寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑'];
+
+  for (let age = 0; age <= maxAge; age++) {
+    const year = birthYear + age;
+    const lichun = getSolarTermTime(year, '立春', termsData);
+    const liuNianPillar = getYearPillar(lichun, termsData);
+    const nextLichun = getSolarTermTime(year + 1, '立春', termsData);
+    const liuYueList = [];
+
+    for (let i = 0; i < 12; i++) {
+      const jieName = jieOrder[i];
+      const jieYear = i <= 10 ? year : year + 1;
+      const jieTime = getSolarTermTime(jieYear, jieName, termsData);
+      const monthPillar = getMonthPillar(jieTime, liuNianPillar.stem, termsData);
+      
+      let nextJieTime;
+      if (i < 11) {
+        const nextJieYear = i < 10 ? year : year + 1;
+        nextJieTime = getSolarTermTime(nextJieYear, jieOrder[i+1], termsData);
+      } else {
+        nextJieTime = nextLichun;
+      }
+
+      liuYueList.push({
+        name: `${monthBranches[i]}月`,
+        jieName,
+        stem: monthPillar.stem,
+        branch: monthPillar.branch,
+        ganZhi: `${monthPillar.stem}${monthPillar.branch}`,
+        naYin: getNaYin(monthPillar.stem, monthPillar.branch),
+        tenGod: getTenGod(dayStem, monthPillar.stem),
+        startDate: jieTime.toISOString().split('T')[0],
+        endDate: new Date(nextJieTime.getTime() - 86400000).toISOString().split('T')[0]
+      });
+    }
+
+    liuNianList.push({
+      year,
+      age,
+      stem: liuNianPillar.stem,
+      branch: liuNianPillar.branch,
+      ganZhi: `${liuNianPillar.stem}${liuNianPillar.branch}`,
+      naYin: getNaYin(liuNianPillar.stem, liuNianPillar.branch),
+      tenGod: getTenGod(dayStem, liuNianPillar.stem),
+      lichunDate: lichun.toISOString().split('T')[0],
+      startDate: lichun.toISOString().split('T')[0],
+      endDate: new Date(nextLichun.getTime() - 86400000).toISOString().split('T')[0],
+      months: liuYueList
+    });
+  }
+
+  return liuNianList;
+}
+
 function getZiHourLabel(date, useEarlyLateZi) {
   if (!useEarlyLateZi) return '子';
   const hour = date.getUTCHours();
@@ -684,6 +742,8 @@ function buildBaziChart(input, options = {}) {
     dayPillar.stem
   );
 
+  const liuNian = calculateLiuNianLiuYue(readingDate, dayPillar.stem, normalized.termsData);
+
   const pillars = [yearPillar, monthPillar, dayPillar, hourPillar];
   const elementCount = countElements(pillars);
 
@@ -720,7 +780,8 @@ function buildBaziChart(input, options = {}) {
       day: getNaYin(dayPillar.stem, dayPillar.branch),
       hour: getNaYin(hourPillar.stem, hourPillar.branch)
     },
-    daYun
+    daYun,
+    liuNian
   };
 }
 
@@ -772,7 +833,8 @@ module.exports = {
   getHourPillar,
   getTenGod,
   getNaYin,
-  calculateDaYun
+  calculateDaYun,
+  calculateLiuNianLiuYue
 };
 
 
