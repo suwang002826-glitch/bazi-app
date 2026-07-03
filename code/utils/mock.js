@@ -1318,6 +1318,71 @@ function getChangedLines(lines) {
   });
 }
 
+const naJiaByTrigram = {
+  乾: {
+    inner: { stem: '甲', branches: ['子', '寅', '辰'] },
+    outer: { stem: '壬', branches: ['午', '申', '戌'] }
+  },
+  震: {
+    inner: { stem: '庚', branches: ['子', '寅', '辰'] },
+    outer: { stem: '庚', branches: ['午', '申', '戌'] }
+  },
+  坎: {
+    inner: { stem: '戊', branches: ['寅', '辰', '午'] },
+    outer: { stem: '戊', branches: ['申', '戌', '子'] }
+  },
+  艮: {
+    inner: { stem: '丙', branches: ['辰', '午', '申'] },
+    outer: { stem: '丙', branches: ['戌', '子', '寅'] }
+  },
+  巽: {
+    inner: { stem: '辛', branches: ['丑', '亥', '酉'] },
+    outer: { stem: '辛', branches: ['未', '巳', '卯'] }
+  },
+  离: {
+    inner: { stem: '己', branches: ['卯', '丑', '亥'] },
+    outer: { stem: '己', branches: ['酉', '未', '巳'] }
+  },
+  兑: {
+    inner: { stem: '丁', branches: ['巳', '卯', '丑'] },
+    outer: { stem: '丁', branches: ['亥', '酉', '未'] }
+  },
+  坤: {
+    inner: { stem: '乙', branches: ['未', '巳', '卯'] },
+    outer: { stem: '癸', branches: ['丑', '亥', '酉'] }
+  }
+};
+
+const shiIndexByPalaceSequence = {
+  本宫: 5,
+  一世: 0,
+  二世: 1,
+  三世: 2,
+  四世: 3,
+  五世: 4,
+  游魂: 3,
+  归魂: 2
+};
+
+function getShiIndex(hex) {
+  if (Object.prototype.hasOwnProperty.call(shiIndexByPalaceSequence, hex.palaceSequence)) {
+    return shiIndexByPalaceSequence[hex.palaceSequence];
+  }
+  return hex.upper.name === hex.lower.name ? 5 : 0;
+}
+
+function getNaJiaForLine(hex, index) {
+  const isOuter = index >= 3;
+  const trigramName = isOuter ? hex.upper.name : hex.lower.name;
+  const table = naJiaByTrigram[trigramName] || naJiaByTrigram.乾;
+  const side = isOuter ? table.outer : table.inner;
+  const localIndex = isOuter ? index - 3 : index;
+  return {
+    stem: side.stem,
+    branch: side.branches[localIndex]
+  };
+}
+
 function buildSixGods(dayStem) {
   const startMap = { 甲: 0, 乙: 0, 丙: 1, 丁: 1, 戊: 2, 己: 3, 庚: 4, 辛: 4, 壬: 5, 癸: 5 };
   const start = startMap[dayStem] || 0;
@@ -1585,14 +1650,12 @@ function buildHexagramAnalysis(lines, changedLineDetails, focus, focusLine, movi
   return { useGod, useGodStrength, shiYing, moving, movingPriority, fuFei, riskSummary, yingQi, decision };
 }
 
-function buildYaoLine(raw, index, baseElement, dayStem, shiIndex, yingIndex) {
+function buildYaoLine(raw, index, hex, dayStem, shiIndex, yingIndex) {
   const meta = getLineMeta(raw);
-  const branch = meta.yinYang
-    ? ['子', '寅', '辰', '午', '申', '戌'][index]
-    : ['丑', '卯', '巳', '未', '酉', '亥'][index];
+  const baseElement = hex.palace.element;
+  const { stem, branch } = getNaJiaForLine(hex, index);
   const relation = getSixRelation(baseElement, branchElements[branch]);
   const sixGod = buildSixGods(dayStem)[index];
-  const stem = heavenlyStems[(heavenlyStems.indexOf(dayStem) + index + 10) % 10];
   return {
     raw,
     value: meta.yinYang,
@@ -1638,9 +1701,9 @@ function buildFuShenProfile(lineDetails, focus, baseElement, dayStem, seed) {
 }
 
 function buildPalaceFuShenProfile(lineDetails, focus, baseHex, dayStem, shiIndex, yingIndex, seed) {
-  const palaceLines = getPalacePureLines(baseHex.palace.name).map((value, index) => (
-    buildYaoLine(value, index, baseHex.palace.element, dayStem, shiIndex, yingIndex)
-  ));
+  const pureLines = getPalacePureLines(baseHex.palace.name);
+  const pureHex = getHexagram(pureLines);
+  const palaceLines = pureLines.map((value, index) => buildYaoLine(value, index, pureHex, dayStem, shiIndex, yingIndex));
   const sourceLine = palaceLines.find((line) => line.relation === focus)
     || palaceLines.find((line) => !lineDetails.some((item) => item.relation === line.relation))
     || palaceLines[Math.abs(seed) % palaceLines.length]
@@ -1686,17 +1749,19 @@ function buildHexagram(question, lines = [], category, method, castTime) {
   const changedLines = getChangedLines(normalizedLines);
   const changedHex = getHexagram(changedLines);
   const baseElement = baseHex.palace.element;
-  const shiIndex = baseHex.index % 6;
+  const shiIndex = getShiIndex(baseHex);
   const yingIndex = (shiIndex + 3) % 6;
   const lineDetails = normalizedLines.map((value, index) => {
-    const line = buildYaoLine(value, index, baseElement, dayPillar.stem, shiIndex, yingIndex);
+    const line = buildYaoLine(value, index, baseHex, dayPillar.stem, shiIndex, yingIndex);
     return {
       ...line,
       seasonState: getLineSeasonState(line.branch, monthPillar.branch, dayPillar.branch, voidBranches)
     };
   });
   const changedLineDetails = changedLines.map((value, index) => {
-    const line = buildYaoLine(value, index, baseElement, dayPillar.stem, shiIndex, yingIndex);
+    const changedShiIndex = getShiIndex(changedHex);
+    const changedYingIndex = (changedShiIndex + 3) % 6;
+    const line = buildYaoLine(value, index, changedHex, dayPillar.stem, changedShiIndex, changedYingIndex);
     return {
       ...line,
       seasonState: getLineSeasonState(line.branch, monthPillar.branch, dayPillar.branch, voidBranches)
