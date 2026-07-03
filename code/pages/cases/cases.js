@@ -216,6 +216,16 @@ function decorateRecord(item) {
   return decorateBaziRecord(item, result);
 }
 
+function compareByDisplayName(a, b) {
+  const left = String(a.displayName || '').trim();
+  const right = String(b.displayName || '').trim();
+  try {
+    return left.localeCompare(right, 'zh-Hans-CN', { sensitivity: 'base' });
+  } catch (error) {
+    return left.localeCompare(right);
+  }
+}
+
 Page({
   data: {
     allCases: [],
@@ -272,7 +282,11 @@ Page({
           item.payload && item.payload.question
         ].some((value) => String(value || '').includes(query));
       });
-    return filtered.map(decorateRecord);
+    const decorated = filtered.map(decorateRecord);
+    if (category === '八字') {
+      return decorated.sort(compareByDisplayName);
+    }
+    return decorated;
   },
 
   onSearchInput(event) {

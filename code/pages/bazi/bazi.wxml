@@ -114,13 +114,6 @@
         <text class="row-symbol">›</text>
       </view>
 
-      <view class="entry-row picker-row">
-        <text class="entry-label">分组</text>
-        <picker mode="selector" range="{{groupOptions}}" value="{{groupIndex}}" bindchange="onGroupChange">
-          <view class="picker-value">{{form.group}}</view>
-        </picker>
-        <text class="row-symbol">›</text>
-      </view>
     </view>
 
     <view class="solar-row">
