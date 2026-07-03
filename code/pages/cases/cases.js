@@ -59,6 +59,30 @@ const ZODIAC_ICON_BY_BRANCH = {
 };
 
 const ZODIAC_CDN_BASE = '';
+const ALPHABET_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const SURNAME_INITIALS = {
+  赵: 'Z', 钱: 'Q', 孙: 'S', 李: 'L', 周: 'Z', 吴: 'W', 郑: 'Z', 王: 'W',
+  冯: 'F', 陈: 'C', 褚: 'C', 卫: 'W', 蒋: 'J', 沈: 'S', 韩: 'H', 杨: 'Y',
+  朱: 'Z', 秦: 'Q', 尤: 'Y', 许: 'X', 何: 'H', 吕: 'L', 施: 'S', 张: 'Z',
+  孔: 'K', 曹: 'C', 严: 'Y', 华: 'H', 金: 'J', 魏: 'W', 陶: 'T', 姜: 'J',
+  戚: 'Q', 谢: 'X', 邹: 'Z', 喻: 'Y', 柏: 'B', 水: 'S', 窦: 'D', 章: 'Z',
+  云: 'Y', 苏: 'S', 潘: 'P', 葛: 'G', 奚: 'X', 范: 'F', 彭: 'P', 郎: 'L',
+  鲁: 'L', 韦: 'W', 昌: 'C', 马: 'M', 苗: 'M', 凤: 'F', 花: 'H', 方: 'F',
+  俞: 'Y', 任: 'R', 袁: 'Y', 柳: 'L', 鲍: 'B', 史: 'S', 唐: 'T', 费: 'F',
+  廉: 'L', 岑: 'C', 薛: 'X', 雷: 'L', 贺: 'H', 倪: 'N', 汤: 'T', 滕: 'T',
+  殷: 'Y', 罗: 'L', 毕: 'B', 郝: 'H', 邬: 'W', 安: 'A', 常: 'C', 乐: 'Y',
+  于: 'Y', 时: 'S', 傅: 'F', 皮: 'P', 卞: 'B', 齐: 'Q', 康: 'K', 伍: 'W',
+  余: 'Y', 元: 'Y', 卜: 'B', 顾: 'G', 孟: 'M', 平: 'P', 黄: 'H', 和: 'H',
+  穆: 'M', 萧: 'X', 尹: 'Y', 欧: 'O', 叶: 'Y', 田: 'T', 杜: 'D', 丁: 'D',
+  邓: 'D', 郭: 'G', 白: 'B', 刘: 'L', 梁: 'L', 宋: 'S', 林: 'L', 徐: 'X',
+  胡: 'H', 高: 'G', 郭: 'G', 肖: 'X', 曾: 'Z', 赖: 'L', 龚: 'G', 文: 'W',
+  熊: 'X', 谭: 'T', 蔡: 'C', 侯: 'H', 邱: 'Q', 石: 'S', 夏: 'X', 钟: 'Z',
+  姚: 'Y', 邵: 'S', 黎: 'L', 崔: 'C', 程: 'C', 戴: 'D', 陆: 'L', 廖: 'L',
+  江: 'J', 夏: 'X', 汪: 'W', 范: 'F', 董: 'D', 方: 'F', 蔡: 'C', 邹: 'Z',
+  段: 'D', 龙: 'L', 侯: 'H', 邵: 'S', 程: 'C', 史: 'S', 毛: 'M', 万: 'W',
+  殷: 'Y', 牛: 'N', 尹: 'Y', 岳: 'Y', 易: 'Y', 贺: 'H', 赖: 'L', 龚: 'G',
+  未: 'W'
+};
 
 function getZodiacIconSrc(iconKey) {
   if (ZODIAC_CDN_BASE) {
@@ -226,13 +250,55 @@ function compareByDisplayName(a, b) {
   }
 }
 
+function getRecordInitial(name) {
+  const text = String(name || '').trim();
+  const first = text[0] || '';
+  if (/^[A-Za-z]$/.test(first)) return first.toUpperCase();
+  if (SURNAME_INITIALS[first]) return SURNAME_INITIALS[first];
+  if (/^[\d]$/.test(first)) return 'Z';
+  return 'Z';
+}
+
+function buildSections(records, category) {
+  if (category !== '八字') {
+    return records.length ? [{ letter: '', showHeader: false, items: records }] : [];
+  }
+  const groups = {};
+  records.forEach((item) => {
+    const letter = getRecordInitial(item.displayName);
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(item);
+  });
+  return ALPHABET_LETTERS
+    .filter((letter) => groups[letter] && groups[letter].length)
+    .map((letter) => ({
+      letter,
+      showHeader: true,
+      items: groups[letter].sort(compareByDisplayName)
+    }));
+}
+
+function buildAlphabetEntries(sections) {
+  const available = {};
+  sections.forEach((section) => {
+    if (section.letter) available[section.letter] = true;
+  });
+  return ALPHABET_LETTERS.map((letter) => ({
+    letter,
+    available: Boolean(available[letter])
+  }));
+}
+
 Page({
   data: {
     allCases: [],
     cases: [],
+    sections: [],
     query: '',
     categories: ['八字', '六爻', '奇门'],
     activeCategory: '八字',
+    alphabetEntries: ALPHABET_LETTERS.map((letter) => ({ letter, available: false })),
+    activeLetter: '',
     openedDeleteId: null,
     touchStartX: 0,
     touchStartY: 0,
@@ -246,9 +312,14 @@ Page({
 
   loadData() {
     const source = buildReplaySource();
+    const cases = this.filterAndDecorate(source, this.data.query, this.data.activeCategory);
+    const sections = buildSections(cases, this.data.activeCategory);
     this.setData({
       allCases: source,
-      cases: this.filterAndDecorate(source, this.data.query, this.data.activeCategory),
+      cases,
+      sections,
+      alphabetEntries: buildAlphabetEntries(sections),
+      activeLetter: sections[0] && sections[0].letter ? sections[0].letter : '',
       openedDeleteId: null
     });
   },
@@ -291,18 +362,28 @@ Page({
 
   onSearchInput(event) {
     const query = event.detail.value.trim();
+    const cases = this.filterAndDecorate(this.data.allCases, query, this.data.activeCategory);
+    const sections = buildSections(cases, this.data.activeCategory);
     this.setData({
       query,
-      cases: this.filterAndDecorate(this.data.allCases, query, this.data.activeCategory)
+      cases,
+      sections,
+      alphabetEntries: buildAlphabetEntries(sections),
+      activeLetter: sections[0] && sections[0].letter ? sections[0].letter : ''
     });
   },
 
   onCategoryTap(event) {
     const category = event.currentTarget.dataset.category;
+    const cases = this.filterAndDecorate(this.data.allCases, this.data.query, category);
+    const sections = buildSections(cases, category);
     this.setData({
       activeCategory: category,
       openedDeleteId: null,
-      cases: this.filterAndDecorate(this.data.allCases, this.data.query, category)
+      cases,
+      sections,
+      alphabetEntries: buildAlphabetEntries(sections),
+      activeLetter: sections[0] && sections[0].letter ? sections[0].letter : ''
     });
   },
 
@@ -311,12 +392,28 @@ Page({
       itemList: this.data.categories,
       success: (res) => {
         const category = this.data.categories[res.tapIndex] || '八字';
+        const cases = this.filterAndDecorate(this.data.allCases, this.data.query, category);
+        const sections = buildSections(cases, category);
         this.setData({
           activeCategory: category,
           openedDeleteId: null,
-          cases: this.filterAndDecorate(this.data.allCases, this.data.query, category)
+          cases,
+          sections,
+          alphabetEntries: buildAlphabetEntries(sections),
+          activeLetter: sections[0] && sections[0].letter ? sections[0].letter : ''
         });
       }
+    });
+  },
+
+  onAlphabetTap(event) {
+    const letter = event.currentTarget.dataset.letter;
+    const available = event.currentTarget.dataset.available;
+    if (available === false || available === 'false') return;
+    this.setData({ activeLetter: letter });
+    wx.pageScrollTo({
+      selector: `#letter-${letter}`,
+      duration: 120
     });
   },
 
