@@ -601,8 +601,9 @@
 }
 
 .qimen-radio.active .radio-dot {
-  border-color: #24c6b8;
-  background: #24c6b8;
+  border-color: rgba(217, 191, 113, .92);
+  background: linear-gradient(135deg, #ead78f, #c4a35c);
+  box-shadow: 0 0 0 4rpx rgba(217, 191, 113, .08);
 }
 
 .qimen-page .field {
