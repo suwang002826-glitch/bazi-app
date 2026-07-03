@@ -1,6 +1,12 @@
 <view class="page liuyao-page">
   <x-pattern />
 
+  <view class="tool-title-hero">
+    <view class="tool-title">六爻</view>
+    <view class="tool-subtitle">一事一问 · 纳甲起卦</view>
+    <view class="tool-stamp">起卦</view>
+  </view>
+
   <view class="section cast-panel">
     <view class="section-kicker">一事一问</view>
     <view class="section-title">问事与起卦</view>

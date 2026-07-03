@@ -1,6 +1,12 @@
 <view class="page qimen-page">
   <x-pattern />
 
+  <view class="tool-title-hero">
+    <view class="tool-title">奇门</view>
+    <view class="tool-subtitle">时空起局 · 九宫研判</view>
+    <view class="tool-stamp">起局</view>
+  </view>
+
   <view class="section input-panel">
     <view class="section-kicker">一事一局</view>
     <view class="section-title">问事与起局</view>

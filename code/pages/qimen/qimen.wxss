@@ -5,6 +5,49 @@
     linear-gradient(180deg, #071016 0%, #071823 58%, #08131a 100%);
 }
 
+.tool-title-hero {
+  position: relative;
+  min-height: 226rpx;
+  padding: calc(58rpx + env(safe-area-inset-top)) 44rpx 44rpx;
+  text-align: center;
+}
+
+.tool-title {
+  position: relative;
+  z-index: 1;
+  color: #f2f0e4;
+  font-size: 62rpx;
+  font-weight: 900;
+  letter-spacing: 8rpx;
+  line-height: 1.08;
+}
+
+.tool-subtitle {
+  position: relative;
+  z-index: 1;
+  margin-top: 20rpx;
+  color: rgba(242, 240, 228, .64);
+  font-size: 27rpx;
+  font-weight: 800;
+  letter-spacing: 3rpx;
+}
+
+.tool-stamp {
+  position: absolute;
+  z-index: 1;
+  top: calc(72rpx + env(safe-area-inset-top));
+  right: 128rpx;
+  width: 42rpx;
+  min-height: 50rpx;
+  padding: 4rpx 0;
+  border: 2rpx solid rgba(217, 191, 113, .34);
+  color: #d9bf71;
+  font-size: 18rpx;
+  font-weight: 900;
+  line-height: 22rpx;
+  text-align: center;
+}
+
 .tool-hero {
   overflow: hidden;
   border-color: rgba(153, 198, 190, .24);
