@@ -43,46 +43,43 @@
       </view>
     </view>
 
-    <view class="entry-row picker-row">
+    <view wx:if="{{!form.isLunar}}" class="entry-row picker-row">
       <view>
-        <text class="entry-label">出生时间</text>
-        <text class="entry-hint">请选择出生时间</text>
+        <text class="entry-label">公历生日</text>
+        <text class="entry-hint">请选择公历年月日</text>
       </view>
-      <view class="picker-value dual-picker">
-        <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
-          <view>{{form.birthDate}}</view>
-        </picker>
-        <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
-          <view>{{form.birthTime}}</view>
-        </picker>
-      </view>
+      <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
+        <view class="picker-value">{{form.birthDate}}</view>
+      </picker>
+      <text class="row-symbol">›</text>
     </view>
 
-    <view wx:if="{{form.isLunar}}" class="entry-row lunar-input-row">
+    <view wx:if="{{form.isLunar}}" class="entry-row picker-row lunar-picker-row">
       <view>
-        <text class="entry-label">农历日期</text>
-        <text class="entry-hint">切换农历后，需要补充以下字段</text>
+        <text class="entry-label">农历生日</text>
+        <text class="entry-hint">{{lunarCoverageText}}</text>
       </view>
-      <view class="lunar-input-grid">
-        <view class="entry-input-wrap">
-          <text class="mini-label">农历年</text>
-          <input class="entry-input" type="number" maxlength="4" placeholder="1999" value="{{form.lunarYear}}" bindinput="onLunarYearInput" />
-        </view>
-        <view class="entry-input-wrap">
-          <text class="mini-label">农历月</text>
-          <input class="entry-input" type="number" maxlength="2" placeholder="8" value="{{form.lunarMonth}}" bindinput="onLunarMonthInput" />
-        </view>
-        <view class="entry-input-wrap">
-          <text class="mini-label">农历日</text>
-          <input class="entry-input" type="number" maxlength="2" placeholder="15" value="{{form.lunarDay}}" bindinput="onLunarDayInput" />
-        </view>
+      <picker
+        mode="multiSelector"
+        range="{{lunarPickerRange}}"
+        value="{{lunarPickerValue}}"
+        bindcolumnchange="onLunarPickerColumnChange"
+        bindchange="onLunarPickerChange"
+      >
+        <view class="picker-value lunar-picker-value">{{form.lunarYearMonthDayText}}</view>
+      </picker>
+      <text class="row-symbol">›</text>
+    </view>
+
+    <view class="entry-row picker-row">
+      <view>
+        <text class="entry-label">出生时辰</text>
+        <text class="entry-hint">请选择出生时间</text>
       </view>
-      <view class="entry-row">
-        <view class="option-switch">
-          <text>闰月</text>
-          <switch checked="{{form.isLeapMonth}}" disabled="{{!form.isLunar}}" bindchange="onLeapMonthSwitch" color="#e8c98a" />
-        </view>
-      </view>
+      <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
+        <view class="picker-value">{{form.birthTime}}</view>
+      </picker>
+      <text class="row-symbol">›</text>
     </view>
 
     <view class="entry-row picker-row">
@@ -115,7 +112,8 @@
 
     <view class="solar-row">
       <view>
-        <view>北京时间：{{form.birthDate}} {{form.birthTime}}</view>
+        <view wx:if="{{form.isLunar}}">农历生日：{{form.lunarYearMonthDayText}} {{form.birthTime}}</view>
+        <view wx:else>公历生日：{{form.birthDate}} {{form.birthTime}}</view>
         <view>出生地经纬：北纬{{form.latitude}} 东经{{form.longitude}}</view>
         <view wx:if="{{form.locationSource}}">坐标来源：{{form.locationSource}}</view>
         <view>真太阳时：{{form.useTrueSolarTime ? '开启' : '关闭'}}</view>

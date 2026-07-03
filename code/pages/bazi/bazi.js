@@ -1,12 +1,26 @@
 const { buildReadingFromForm } = require('../../utils/bazi/pageAdapter');
-const preciseSolarTerms = require('../../data-packs/solar-terms/solarTerms-precise-2025.json');
+const preciseSolarTerms = require('../../data-packs/solar-terms/solarTerms-precise-1900-2100.json');
 const { createBaziPlate } = require('../../utils/baziPlate');
 const cityLocations = require('../../data-packs/city-locations.json');
+const lunarConversions = require('../../data-packs/lunar/lunar-conversions-1901-2100');
 
 const app = getApp();
 
 const DEFAULT_DISCLAIMER = '排盘结果仅供参考，不作为投资、医疗、法律等高风险决策依据。';
 const DEFAULT_REGION = ['北京市', '北京市', '东城区'];
+const DEFAULT_LUNAR_SELECTION = {
+  lunarYear: 2000,
+  lunarMonth: 1,
+  lunarDay: 1,
+  isLeapMonth: false
+};
+const LUNAR_MONTH_NAMES = ['', '正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
+const LUNAR_DAY_NAMES = [
+  '',
+  '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
+  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+  '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十'
+];
 
 function normalizeLocationToken(text) {
   return String(text || '')
@@ -97,11 +111,124 @@ function isPositiveInt(value) {
   return Number.isInteger(n) && n > 0;
 }
 
+function buildLunarIndex(records = []) {
+  const byYear = {};
+  const years = [];
+
+  records.forEach((record) => {
+    if (!record || !isPositiveInt(record.lunarYear)) return;
+    if (!byYear[record.lunarYear]) {
+      byYear[record.lunarYear] = {
+        months: [],
+        byMonthKey: {}
+      };
+      years.push(record.lunarYear);
+    }
+
+    const yearEntry = byYear[record.lunarYear];
+    const key = `${record.lunarMonth}-${record.isLeapMonth ? 'leap' : 'normal'}`;
+    if (!yearEntry.byMonthKey[key]) {
+      yearEntry.byMonthKey[key] = {
+        lunarMonth: record.lunarMonth,
+        isLeapMonth: Boolean(record.isLeapMonth),
+        days: []
+      };
+      yearEntry.months.push(yearEntry.byMonthKey[key]);
+    }
+
+    yearEntry.byMonthKey[key].days.push(record.lunarDay);
+  });
+
+  years.sort((a, b) => a - b);
+  years.forEach((year) => {
+    byYear[year].months.sort((a, b) => {
+      if (a.lunarMonth !== b.lunarMonth) return a.lunarMonth - b.lunarMonth;
+      if (a.isLeapMonth === b.isLeapMonth) return 0;
+      return a.isLeapMonth ? 1 : -1;
+    });
+    byYear[year].months.forEach((month) => {
+      month.days = Array.from(new Set(month.days)).sort((a, b) => a - b);
+    });
+  });
+
+  return { years, byYear };
+}
+
+const LUNAR_INDEX = buildLunarIndex(lunarConversions.records || []);
+const LUNAR_COVERAGE_TEXT = LUNAR_INDEX.years.length
+  ? `已覆盖${LUNAR_INDEX.years[0]}-${LUNAR_INDEX.years[LUNAR_INDEX.years.length - 1]}年`
+  : '农历数据未加载';
+
+function formatLunarMonth(month, isLeapMonth) {
+  return `${isLeapMonth ? '闰' : ''}${LUNAR_MONTH_NAMES[month] || `${month}月`}`;
+}
+
+function formatLunarDay(day) {
+  return LUNAR_DAY_NAMES[day] || `${day}日`;
+}
+
+function formatLunarText(year, month, day, isLeapMonth) {
+  return `${year}年 ${formatLunarMonth(month, isLeapMonth)} ${formatLunarDay(day)}`;
+}
+
+function getLunarMonths(year) {
+  const yearEntry = LUNAR_INDEX.byYear[year];
+  return yearEntry ? yearEntry.months : [];
+}
+
+function buildLunarPickerState(selection = DEFAULT_LUNAR_SELECTION) {
+  const years = LUNAR_INDEX.years;
+  const fallbackYearIndex = Math.max(0, years.indexOf(DEFAULT_LUNAR_SELECTION.lunarYear));
+  let yearIndex = years.indexOf(Number(selection.lunarYear));
+  if (yearIndex < 0) yearIndex = fallbackYearIndex;
+
+  const year = years[yearIndex] || DEFAULT_LUNAR_SELECTION.lunarYear;
+  const months = getLunarMonths(year);
+  let monthIndex = months.findIndex((item) => (
+    item.lunarMonth === Number(selection.lunarMonth)
+    && item.isLeapMonth === Boolean(selection.isLeapMonth)
+  ));
+  if (monthIndex < 0) {
+    monthIndex = months.findIndex((item) => item.lunarMonth === Number(selection.lunarMonth));
+  }
+  if (monthIndex < 0) monthIndex = 0;
+
+  const month = months[monthIndex] || {
+    lunarMonth: DEFAULT_LUNAR_SELECTION.lunarMonth,
+    isLeapMonth: false,
+    days: [DEFAULT_LUNAR_SELECTION.lunarDay]
+  };
+  let dayIndex = month.days.indexOf(Number(selection.lunarDay));
+  if (dayIndex < 0) dayIndex = Math.min(month.days.length - 1, Math.max(0, Number(selection.lunarDay) - 1));
+  if (dayIndex < 0) dayIndex = 0;
+
+  const day = month.days[dayIndex] || DEFAULT_LUNAR_SELECTION.lunarDay;
+
+  return {
+    year,
+    lunarMonth: month.lunarMonth,
+    lunarDay: day,
+    isLeapMonth: month.isLeapMonth,
+    range: [
+      years.map((item) => `${item}年`),
+      months.map((item) => formatLunarMonth(item.lunarMonth, item.isLeapMonth)),
+      month.days.map((item) => formatLunarDay(item))
+    ],
+    value: [yearIndex, monthIndex, dayIndex],
+    text: formatLunarText(year, month.lunarMonth, day, month.isLeapMonth)
+  };
+}
+
+const DEFAULT_LUNAR_PICKER = buildLunarPickerState(DEFAULT_LUNAR_SELECTION);
+
 Page({
   data: {
     genderOptions: ['男', '女'],
     calendarModes: ['公历', '农历'],
     activeCalendarMode: '公历',
+    lunarCoverageText: LUNAR_COVERAGE_TEXT,
+    lunarPickerRange: DEFAULT_LUNAR_PICKER.range,
+    lunarPickerValue: DEFAULT_LUNAR_PICKER.value,
     saveCase: true,
     isGenerating: false,
     form: {
@@ -120,10 +247,10 @@ Page({
       isLunar: false,
       isLeapMonth: false,
       calendarType: 'solar',
-      lunarYear: '',
-      lunarMonth: '',
-      lunarDay: '',
-      lunarYearMonthDayText: '',
+      lunarYear: DEFAULT_LUNAR_PICKER.year,
+      lunarMonth: DEFAULT_LUNAR_PICKER.lunarMonth,
+      lunarDay: DEFAULT_LUNAR_PICKER.lunarDay,
+      lunarYearMonthDayText: DEFAULT_LUNAR_PICKER.text,
       useEarlyLateZi: false
     },
     disclaimer: app.globalData.disclaimer || DEFAULT_DISCLAIMER
@@ -152,17 +279,19 @@ Page({
   onCalendarModeTap(event) {
     const mode = event.currentTarget.dataset.mode;
     const isLunar = mode === '农历';
-    this.setData({
+    const patch = {
       activeCalendarMode: mode,
       'form.isLunar': isLunar,
       'form.calendarType': isLunar ? 'lunar' : 'solar',
       'form.isLeapMonth': isLunar ? this.data.form.isLeapMonth : false
-    });
+    };
+    if (isLunar) Object.assign(patch, this.buildLunarPickerPatch(this.data.form));
+    this.setData(patch);
     if (isLunar) {
       wx.showToast({
-        title: '已切换到农历输入，请补充农历年月日',
+        title: '已切换到农历输入',
         icon: 'none',
-        duration: 1600
+        duration: 1200
       });
     }
   },
@@ -224,28 +353,70 @@ Page({
 
   onLunarSwitch(event) {
     const isLunar = Boolean(event.detail.value);
-    this.setData({
+    const patch = {
       'form.isLunar': isLunar,
       'form.calendarType': isLunar ? 'lunar' : 'solar',
       activeCalendarMode: isLunar ? '农历' : '公历',
       'form.isLeapMonth': isLunar ? this.data.form.isLeapMonth : false
-    });
+    };
+    if (isLunar) Object.assign(patch, this.buildLunarPickerPatch(this.data.form));
+    this.setData(patch);
   },
 
   onLeapMonthSwitch(event) {
     this.setData({ 'form.isLeapMonth': event.detail.value });
   },
 
-  onLunarYearInput(event) {
-    this.setData({ 'form.lunarYear': event.detail.value });
+  buildLunarPickerPatch(selection) {
+    const state = buildLunarPickerState(selection);
+    return {
+      lunarPickerRange: state.range,
+      lunarPickerValue: state.value,
+      'form.lunarYear': state.year,
+      'form.lunarMonth': state.lunarMonth,
+      'form.lunarDay': state.lunarDay,
+      'form.isLeapMonth': state.isLeapMonth,
+      'form.lunarYearMonthDayText': state.text
+    };
   },
 
-  onLunarMonthInput(event) {
-    this.setData({ 'form.lunarMonth': event.detail.value });
+  onLunarPickerColumnChange(event) {
+    const pickerValue = this.data.lunarPickerValue.slice();
+    pickerValue[event.detail.column] = event.detail.value;
+    const year = LUNAR_INDEX.years[pickerValue[0]] || DEFAULT_LUNAR_SELECTION.lunarYear;
+    const months = getLunarMonths(year);
+    const month = months[pickerValue[1]] || months[0] || {
+      lunarMonth: DEFAULT_LUNAR_SELECTION.lunarMonth,
+      isLeapMonth: false,
+      days: [DEFAULT_LUNAR_SELECTION.lunarDay]
+    };
+    const day = month.days[pickerValue[2]] || month.days[0] || DEFAULT_LUNAR_SELECTION.lunarDay;
+
+    this.setData(this.buildLunarPickerPatch({
+      lunarYear: year,
+      lunarMonth: month.lunarMonth,
+      lunarDay: day,
+      isLeapMonth: month.isLeapMonth
+    }));
   },
 
-  onLunarDayInput(event) {
-    this.setData({ 'form.lunarDay': event.detail.value });
+  onLunarPickerChange(event) {
+    const pickerValue = event.detail.value || this.data.lunarPickerValue;
+    const year = LUNAR_INDEX.years[pickerValue[0]] || DEFAULT_LUNAR_SELECTION.lunarYear;
+    const months = getLunarMonths(year);
+    const month = months[pickerValue[1]] || months[0] || {
+      lunarMonth: DEFAULT_LUNAR_SELECTION.lunarMonth,
+      isLeapMonth: false,
+      days: [DEFAULT_LUNAR_SELECTION.lunarDay]
+    };
+    const day = month.days[pickerValue[2]] || month.days[0] || DEFAULT_LUNAR_SELECTION.lunarDay;
+
+    this.setData(this.buildLunarPickerPatch({
+      lunarYear: year,
+      lunarMonth: month.lunarMonth,
+      lunarDay: day,
+      isLeapMonth: month.isLeapMonth
+    }));
   },
 
   onSaveSwitch(event) {

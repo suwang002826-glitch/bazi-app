@@ -1,6 +1,9 @@
 const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
 const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 
+// 默认加载1900-2100年精确节气数据包，外部传入数据仍保持最高优先级。
+const DEFAULT_SOLAR_TERMS = require('../../data-packs/solar-terms/solarTerms-precise-1900-2100.json');
+
 const STEM_META = {
   甲: { element: '木', yinYang: '阳' },
   乙: { element: '木', yinYang: '阴' },
@@ -286,8 +289,11 @@ function getSolarTermFromData(termsData, termName, year) {
 }
 
 function getSolarTermTime(year, termName, termsData) {
-  const fromData = getSolarTermFromData(termsData, termName, year);
-  if (fromData) return fromData;
+  // 优先级：传入的自定义termsData > 默认精确数据包 > 近似算法兜底
+  const fromCustomData = getSolarTermFromData(termsData, termName, year);
+  if (fromCustomData) return fromCustomData;
+  const fromDefaultData = getSolarTermFromData(DEFAULT_SOLAR_TERMS, termName, year);
+  if (fromDefaultData) return fromDefaultData;
   const term = JIE_TERMS.find((item) => item.name === termName);
   if (!term) {
     throw new Error(`Unknown solar term: ${termName}`);

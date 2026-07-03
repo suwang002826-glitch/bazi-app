@@ -1,3 +1,5 @@
+const preciseSolarTerms = require('../code/data-packs/solar-terms/solarTerms-precise-1900-2100.json');
+
 const TEST_CASES = [
   {
     case_id: 1,
@@ -466,17 +468,7 @@ const sharedDefaultOptions = {
   use_dst: false,
   use_true_solar: false,
   use_early_late_zi: false,
-  termsData: {
-    1988: {
-      立春: '1988-02-04T22:43:00.000Z'
-    },
-    1990: {
-      惊蛰: '1990-03-06T04:20:00.000Z'
-    },
-    2025: {
-      小寒: '2025-01-05T10:32:31.000Z'
-    }
-  }
+  termsData: preciseSolarTerms
 };
 
 module.exports = {

@@ -12,7 +12,7 @@ const {
 const { buildReadingFromForm } = require(path.join(__dirname, '../code/utils/bazi/pageAdapter.js'));
 
 // 加载精确节气数据
-const termsData = require(path.join(__dirname, '../code/data-packs/solar-terms/solarTerms-precise-2025.json'));
+const termsData = require(path.join(__dirname, '../code/data-packs/solar-terms/solarTerms-precise-1900-2100.json'));
 
 function toDate(year, month, day, hour, minute, second = 0) {
   return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
@@ -64,23 +64,25 @@ console.log('--- 1. 年柱计算（立春换岁边界） ---');
 // 而toDate是new Date(Date.UTC(...))，也就是说，输入的北京时间被直接当成UTC时间处理了？不对，不对，北京时间是UTC+8，比如北京时间22:43，UTC是14:43？哦不对，不对，等一下，这里我搞错了？不对，看之前的测试用例，比如1988-02-04 22:43:00，这个是北京时间，代码里直接转成UTC的22:43？那这样的话，节气数据里的时间也是存的北京时间对应的UTC？不对，看solarTerms-precise-2025.json里的1988年立春是"1988-02-04T22:43:00.000Z"，也就是UTC时间22:43，对应北京时间是第二天6:43？不对啊，这不对啊，1988年立春的北京时间是1988年2月4日22:43，那UTC时间应该是1988年2月4日14:43啊？哦，哦，原来代码里是把北京时间直接当UTC来处理，相当于整个引擎用的是“UTC时区下的北京时间数值”，也就是把北京时间的时分秒直接放在UTC的时分秒位置，这样计算的时候不需要考虑时区偏移，因为节气数据也存的是同样的“UTC下的北京时间数值”，这样比较的时候是对的。哦，原来如此，所以我测试的时候，直接把北京时间的年月日时分秒传给toDate当UTC参数就对了，和代码里的处理一致。
 
 // 立春前1秒：1988-02-04 22:42:59 → 丁卯年
-const beforeLichun1988 = toDate(1988, 2, 4, 22, 42, 59);
+const lichun1988Time = new Date(termsData['1988']['立春']);
+const beforeLichun1988 = new Date(lichun1988Time.getTime() - 1000);
 test('年柱', '1988立春前1秒为丁卯年', getYearPillar(beforeLichun1988, termsData), { stem: '丁', branch: '卯' });
 
 // 立春正点：1988-02-04 22:43:00 → 戊辰年
-const onLichun1988 = toDate(1988, 2, 4, 22, 43, 0);
+const onLichun1988 = new Date(lichun1988Time.getTime());
 test('年柱', '1988立春正点为戊辰年', getYearPillar(onLichun1988, termsData), { stem: '戊', branch: '辰' });
 
 // 立春后1秒：1988-02-04 22:43:01 → 戊辰年
-const afterLichun1988 = toDate(1988, 2, 4, 22, 43, 1);
+const afterLichun1988 = new Date(lichun1988Time.getTime() + 1000);
 test('年柱', '1988立春后1秒为戊辰年', getYearPillar(afterLichun1988, termsData), { stem: '戊', branch: '辰' });
 
 // 2025年立春：2025-02-03 22:10:13
-const beforeLichun2025 = toDate(2025, 2, 3, 22, 10, 12);
+const lichun2025Time = new Date(termsData['2025']['立春']);
+const beforeLichun2025 = new Date(lichun2025Time.getTime() - 1000);
 // 2025立春前：甲辰年
 test('年柱', '2025立春前为甲辰年', getYearPillar(beforeLichun2025, termsData), { stem: '甲', branch: '辰' });
-const afterLichun2025 = toDate(2025, 2, 3, 22, 10, 14);
-test('年柱', '2025立春后为乙巳年', getYearPillar(afterLichun2025, termsData), { stem: '乙', branch: '巳' });
+const onLichun2025 = new Date(lichun2025Time.getTime());
+test('年柱', '2025立春后为乙巳年', getYearPillar(onLichun2025, termsData), { stem: '乙', branch: '巳' });
 
 // 普通日期：2025-07-03 → 乙巳年
 const normalDate2025 = toDate(2025, 7, 3, 12, 0, 0);
@@ -92,32 +94,34 @@ test('年柱', '2025年中为乙巳年', getYearPillar(normalDate2025, termsData
 console.log('\n--- 2. 月柱计算（节气换月边界） ---');
 // 1990年惊蛰：1990-03-06 04:20:00，1990年是庚午年，乙庚之年戊为头，正月寅月是戊寅，二月卯月是己卯
 // 惊蛰前1秒：04:19:59 → 戊寅月（寅月）
-const beforeJingzhe1990 = toDate(1990, 3, 6, 4, 19, 59);
+const jingzhe1990Time = new Date(termsData['1990']['惊蛰']);
+const beforeJingzhe1990 = new Date(jingzhe1990Time.getTime() - 1000);
 const yearPillarBeforeJingzhe = getYearPillar(beforeJingzhe1990, termsData);
 test('月柱', '1990惊蛰前年柱为庚午', yearPillarBeforeJingzhe, { stem: '庚', branch: '午' });
 test('月柱', '1990惊蛰前1秒为戊寅月', getMonthPillar(beforeJingzhe1990, yearPillarBeforeJingzhe.stem, termsData).branch, '寅');
 test('月柱', '1990惊蛰前1秒月干为戊', getMonthPillar(beforeJingzhe1990, yearPillarBeforeJingzhe.stem, termsData).stem, '戊');
 
 // 惊蛰正点：04:20:00 → 己卯月（卯月）
-const onJingzhe1990 = toDate(1990, 3, 6, 4, 20, 0);
+const onJingzhe1990 = new Date(jingzhe1990Time.getTime());
 const yearPillarOnJingzhe = getYearPillar(onJingzhe1990, termsData);
 test('月柱', '1990惊蛰正点为己卯月', getMonthPillar(onJingzhe1990, yearPillarOnJingzhe.stem, termsData).branch, '卯');
 test('月柱', '1990惊蛰正点月干为己', getMonthPillar(onJingzhe1990, yearPillarOnJingzhe.stem, termsData).stem, '己');
 
 // 惊蛰后1秒：04:20:01 → 己卯月
-const afterJingzhe1990 = toDate(1990, 3, 6, 4, 20, 1);
+const afterJingzhe1990 = new Date(jingzhe1990Time.getTime() + 1000);
 const yearPillarAfterJingzhe = getYearPillar(afterJingzhe1990, termsData);
 test('月柱', '1990惊蛰后1秒为己卯月', getMonthPillar(afterJingzhe1990, yearPillarAfterJingzhe.stem, termsData).branch, '卯');
 
 // 2025年清明：2025-04-04 20:48:21，2025是乙巳年，乙庚之年戊为头，三月辰月是庚辰月
-const beforeQingming2025 = toDate(2025, 4, 4, 20, 48, 20);
+const qingming2025Time = new Date(termsData['2025']['清明']);
+const beforeQingming2025 = new Date(qingming2025Time.getTime() - 1000);
 const yearPillarBeforeQingming = getYearPillar(beforeQingming2025, termsData);
 // 正月寅：立春-惊蛰
 // 二月卯：惊蛰-清明
 // 三月辰：清明-立夏
 // 所以清明前是卯月（己卯月，乙年正月戊寅，二月己卯，三月庚辰）
 test('月柱', '2025清明前为己卯月（卯月）', getMonthPillar(beforeQingming2025, yearPillarBeforeQingming.stem, termsData).branch, '卯');
-const afterQingming2025 = toDate(2025, 4, 4, 20, 48, 22);
+const afterQingming2025 = new Date(qingming2025Time.getTime() + 1000);
 const yearPillarAfterQingming = getYearPillar(afterQingming2025, termsData);
 test('月柱', '2025清明后为庚辰月（辰月）', getMonthPillar(afterQingming2025, yearPillarAfterQingming.stem, termsData).branch, '辰');
 test('月柱', '2025清明后月干为庚', getMonthPillar(afterQingming2025, yearPillarAfterQingming.stem, termsData).stem, '庚');

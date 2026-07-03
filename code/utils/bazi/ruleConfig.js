@@ -1,7 +1,7 @@
 const baziRuleConfig = {
   ruleProfileVersion: 'bazi-rule-profile@v0.2',
   algorithmVersion: 'bazi-local-engine@0.2',
-  calendarDataVersion: 'solarTerms-precise-2025.json',
+  calendarDataVersion: 'solarTerms-precise-1900-2100.json',
   policies: {
     yearBoundary: 'liching_exact_time',
     monthBoundary: 'jie12_exact_second',

@@ -2,7 +2,7 @@
 const assert = require('assert');
 
 const { buildReadingFromForm } = require(path.join(__dirname, '../code/utils/bazi/pageAdapter.js'));
-const preciseSolarTerms = require(path.join(__dirname, '../code/data-packs/solar-terms/solarTerms-precise-2025.json'));
+const preciseSolarTerms = require(path.join(__dirname, '../code/data-packs/solar-terms/solarTerms-precise-1900-2100.json'));
 
 const PILLAR_LABELS = ['年柱', '月柱', '日柱', '时柱'];
 
