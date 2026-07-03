@@ -2,22 +2,74 @@ const { buildQimenChart } = require('../../utils/mock');
 
 const app = getApp();
 
+const pad = (value) => String(value).padStart(2, '0');
+
+const formatDate = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+
+const formatTime = (date) => `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+
+const qimenOptionConfig = [
+  {
+    label: '排盘方式',
+    key: 'panMethod',
+    options: ['转盘', '飞盘']
+  },
+  {
+    label: '寄宫方式',
+    key: 'palaceMethod',
+    options: ['坤宫', '阳艮阴坤']
+  },
+  {
+    label: '起局方式',
+    key: 'startMethod',
+    options: ['拆补', '茅山', '置闰', '自选局数']
+  },
+  {
+    label: '暗干起法',
+    key: 'hiddenStemMethod',
+    options: ['值使门起', '门地盘起']
+  },
+  {
+    label: '时间类型',
+    key: 'timeType',
+    options: ['北京时间', '真太阳时']
+  }
+];
+
+function createDefaultForm() {
+  const now = new Date();
+  return {
+    question: '',
+    date: formatDate(now),
+    time: formatTime(now),
+    category: '事业',
+    panMethod: '转盘',
+    palaceMethod: '坤宫',
+    startMethod: '拆补',
+    hiddenStemMethod: '值使门起',
+    timeType: '北京时间'
+  };
+}
+
 Page({
   data: {
     categoryOptions: ['事业', '财务', '感情', '健康', '出行', '其他'],
     categoryIndex: 0,
-    form: {
-      question: '',
-      date: '2026-06-29',
-      time: '09:30',
-      category: '事业'
-    },
+    form: createDefaultForm(),
+    qimenRows: [],
     disclaimer: app.globalData.disclaimer
+  },
+
+  onLoad() {
+    this.refreshQimenRows();
   },
 
   onShow() {
     const restore = app.globalData.restoreQimenReading;
-    if (!restore) return;
+    if (!restore) {
+      this.refreshQimenRows();
+      return;
+    }
     app.globalData.restoreQimenReading = null;
     if (restore.result) {
       app.globalData.currentQimenReading = restore;
@@ -25,9 +77,14 @@ Page({
       wx.navigateTo({ url: '/pages/qimen-result/qimen-result' });
       return;
     }
+    const form = {
+      ...createDefaultForm(),
+      ...(restore.form || {})
+    };
     this.setData({
-      form: restore.form || this.data.form,
-      categoryIndex: Number.isInteger(restore.categoryIndex) ? restore.categoryIndex : 0
+      form,
+      categoryIndex: Number.isInteger(restore.categoryIndex) ? restore.categoryIndex : 0,
+      qimenRows: this.buildQimenRows(form)
     });
   },
 
@@ -53,22 +110,51 @@ Page({
 
   useCurrentTime() {
     const now = new Date();
-    const pad = (value) => String(value).padStart(2, '0');
     this.setData({
-      'form.date': `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
-      'form.time': `${pad(now.getHours())}:${pad(now.getMinutes())}`
+      'form.date': formatDate(now),
+      'form.time': formatTime(now)
     });
   },
 
+  onQimenOptionTap(event) {
+    const key = event.currentTarget.dataset.key;
+    const value = event.currentTarget.dataset.value;
+    if (!key || !value) return;
+    const form = {
+      ...this.data.form,
+      [key]: value
+    };
+    this.setData({
+      form,
+      qimenRows: this.buildQimenRows(form)
+    });
+  },
+
+  refreshQimenRows() {
+    this.setData({
+      qimenRows: this.buildQimenRows(this.data.form)
+    });
+  },
+
+  buildQimenRows(form) {
+    return qimenOptionConfig.map((row) => ({
+      ...row,
+      options: row.options.map((option) => ({
+        value: option,
+        active: form[row.key] === option
+      }))
+    }));
+  },
+
   generateChart() {
-    if (!this.data.form.question.trim()) {
-      wx.showToast({ title: '请先填写所问事项', icon: 'none' });
-      return;
-    }
-    const result = buildQimenChart(this.data.form);
+    const form = {
+      ...this.data.form,
+      question: this.data.form.question.trim() || '未命名事项'
+    };
+    const result = buildQimenChart(form);
     const selectedPalace = result.cells.find((item) => item.number === result.focus.palace) || result.cells[0];
     const reading = {
-      form: this.data.form,
+      form,
       categoryIndex: this.data.categoryIndex,
       result,
       selectedPalace
