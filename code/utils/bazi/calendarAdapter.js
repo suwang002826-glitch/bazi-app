@@ -6,7 +6,7 @@ const {
 
 function normalizeCalendarType(value) {
   const raw = String(value || 'solar').trim().toLowerCase();
-  if (['lunar', '农历', 'nongli', 'lunarleap', 'lunar_leap', '农历闰月'].includes(raw)) {
+  if (['lunar', '农历', 'nongli', 'lunarleap', 'lunar_leap', 'lunarleapmonth', '农历闰月'].includes(raw)) {
     return 'lunar';
   }
   return 'solar';
@@ -28,7 +28,16 @@ function hasLunarDateFields(input = {}) {
   return input.lunarYear !== undefined
     || input.lunarMonth !== undefined
     || input.lunarDay !== undefined
-    || input.isLeapMonth !== undefined;
+    || input.isLeapMonth === true
+    || input.isLeapMonth === 'true'
+    || input.isLeapMonth === 1
+    || input.isLeapMonth === '1';
+}
+
+function normalizeCalendarIntent(input = {}) {
+  if (input.isLunar === true) return 'lunar';
+  if (hasLunarDateFields(input)) return 'lunar';
+  return normalizeCalendarType(input.calendarType || input.calendarMode);
 }
 
 function createOutsideCoverageError(lunarInput) {
@@ -48,9 +57,8 @@ function createOutsideCoverageError(lunarInput) {
 }
 
 function resolveCalendar(input = {}) {
-  const calendarType = hasLunarDateFields(input)
-    ? 'lunar'
-    : normalizeCalendarType(input.calendarType || input.calendarMode);
+  const calendarType = normalizeCalendarIntent(input);
+  const hasLunar = hasLunarDateFields(input);
   if (calendarType !== 'lunar') {
     return {
       birthDate: input.birthDate,
@@ -61,6 +69,26 @@ function resolveCalendar(input = {}) {
         calendarDataVersion: baziRuleConfig.calendarDataVersion
       },
       warnings: []
+    };
+  }
+
+  if (!hasLunar) {
+    return {
+      birthDate: input.birthDate,
+      conversion: {
+        calendarType: 'solar',
+        solarDate: input.birthDate,
+        source: 'lunar_mode_missing_fields',
+        calendarDataVersion: baziRuleConfig.calendarDataVersion,
+        note: 'lunar mode is enabled but lunar date fields are missing; fallback to direct solar input.'
+      },
+      warnings: [
+        {
+          code: 'LUNAR_MODE_MISSING_FIELDS',
+          level: 'warning',
+          message: 'lunar mode missing fields; fallback to direct solar input.'
+        }
+      ]
     };
   }
 

@@ -84,8 +84,8 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-09-29',
-    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.01',
-    expectedConversionSource: 'data-pack:lunar-conversions-2023',
+    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.03',
+    expectedConversionSource: 'data-pack:lunar-conversions-1901-2100',
     expected: ['癸卯', '辛酉', '庚寅', '丙戌'],
     note: '第三轮要求农历输入从 data-pack 转换，不再读取代码内置白名单。'
   },
@@ -106,8 +106,8 @@ const acceptanceCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-03-31',
-    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.01',
-    expectedConversionSource: 'data-pack:lunar-conversions-2023',
+    expectedCalendarDataVersion: 'lunar-data-pack@2026.07.03',
+    expectedConversionSource: 'data-pack:lunar-conversions-1901-2100',
     expected: ['癸卯', '乙卯', '戊子', '丁巳'],
     note: '第三轮要求农历闰月输入从 data-pack 转换，不再读取代码内置白名单。'
   }
@@ -121,9 +121,9 @@ const unsupportedLunarCases = [
       name: 'BZI-NEG-001',
       gender: '女',
       calendarType: 'lunar',
-      lunarYear: 2023,
-      lunarMonth: 8,
-      lunarDay: 16,
+      lunarYear: 1900,
+      lunarMonth: 1,
+      lunarDay: 1,
       isLeapMonth: false,
       birthTime: '20:00',
       birthPlace: '北京',
@@ -151,7 +151,7 @@ const implicitLunarCases = [
       useTrueSolarTime: false
     },
     expectedSolarDate: '2023-09-29',
-    expectedConversionSource: 'data-pack:lunar-conversions-2023'
+    expectedConversionSource: 'data-pack:lunar-conversions-1901-2100'
   }
 ];
 
@@ -175,7 +175,7 @@ function assertDataPackRegistry() {
   const coverage = getLunarDataPackCoverage();
   assert.strictEqual(coverage.calendarDataVersion, lunarManifest.calendarDataVersion);
   assert.strictEqual(coverage.status, lunarManifest.status);
-  assert.strictEqual(coverage.completeLunarCalendar, false);
+  assert.strictEqual(coverage.completeLunarCalendar, true);
   assert.deepStrictEqual(
     coverage.packIds.slice().sort(),
     lunarManifest.packs.map((pack) => pack.dataPackId).sort()
@@ -191,10 +191,10 @@ function assertUnsupportedLunarInputs() {
         assert.strictEqual(error.code, item.expectedErrorCode);
         assert.strictEqual(error.details.calendarDataVersion, lunarManifest.calendarDataVersion);
         assert.strictEqual(error.details.status, lunarManifest.status);
-        assert.strictEqual(error.details.completeLunarCalendar, false);
+        assert.strictEqual(error.details.completeLunarCalendar, true);
         assert.ok(
           Array.isArray(error.details.availablePackIds)
-            && error.details.availablePackIds.includes('lunar-conversions-2023'),
+            && error.details.availablePackIds.includes('lunar-conversions-1901-2100'),
           'outside coverage errors must include available pack ids'
         );
         return true;

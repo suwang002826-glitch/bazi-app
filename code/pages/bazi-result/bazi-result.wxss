@@ -33,6 +33,20 @@
   letter-spacing: 4rpx;
 }
 
+.share-button {
+  width: 110rpx;
+  height: 58rpx;
+  margin: 0;
+  padding: 0;
+  border: 1rpx solid rgba(242, 240, 228, .2);
+  border-radius: 999rpx;
+  background: transparent;
+  color: #f2f0e4;
+  font-size: 24rpx;
+  line-height: 58rpx;
+  text-align: center;
+}
+
 .empty-state {
   margin: 42rpx 24rpx;
   padding: 34rpx;
@@ -1062,6 +1076,36 @@
   line-height: 1.35;
 }
 
+.pillar-hidden-lines {
+  display: grid;
+  gap: 6rpx;
+}
+
+.pillar-hidden-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+
+.hidden-role {
+  color: #6f66bc;
+  font-size: 20rpx;
+  font-weight: 900;
+}
+
+.hidden-stem-item {
+  color: rgba(34, 37, 89, .86);
+  font-size: 20rpx;
+  font-weight: 900;
+}
+
+.hidden-god {
+  color: #6f7a7d;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
 .detail-ribbon,
 .spirit-ribbon {
   margin-top: 18rpx;
@@ -1446,6 +1490,18 @@
 
 .bazi-result-page .pillar-meta,
 .bazi-result-page .detail-values text {
+  color: rgba(242, 240, 228, .72);
+}
+
+.bazi-result-page .hidden-role {
+  color: rgba(217, 191, 113, .9);
+}
+
+.bazi-result-page .hidden-stem-item {
+  color: #f2f0e4;
+}
+
+.bazi-result-page .hidden-god {
   color: rgba(242, 240, 228, .72);
 }
 

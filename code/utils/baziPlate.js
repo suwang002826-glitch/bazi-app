@@ -223,7 +223,7 @@ function createBaziPlate(result) {
   const branchElements = pillars.map((pillar) => (pillar.element || '').split('/')[1].trim());
   const rows = [
     {
-      label: '主星',
+      label: '十神',
       cells: pillars.map((pillar) => createTextCell(pillar.stemTenGod))
     },
     {
@@ -349,7 +349,7 @@ function createProfessionalColumn(label, source, sourceType, result) {
     label,
     sourceType,
     value: source.value,
-    mainStar: isDayPillar ? '元男' : (source.tenGod || source.stemTenGod || getTenGod(dayStem, pillar.stem)),
+    mainStar: isDayPillar ? '日主' : (source.tenGod || source.stemTenGod || getTenGod(dayStem, pillar.stem)),
     stem: pillar.stem,
     branch: pillar.branch,
     stemElement: source.stemElement || stemElementMap[pillar.stem],
@@ -429,7 +429,7 @@ function createProfessionalDetail(result, options = {}) {
     ...natalColumns
   ].filter(Boolean);
   const rows = [
-    { label: '主星', cells: columns.map((item) => createTextCell(item.mainStar)) },
+    { label: '十神', cells: columns.map((item) => createTextCell(item.mainStar)) },
     { label: '天干', strong: true, cells: columns.map((item) => createStemCell(item.stem, item.stemElement)) },
     { label: '地支', strong: true, cells: columns.map((item) => createStemCell(item.branch, item.branchElement)) },
     { label: '藏干', cells: columns.map((item) => createRichCell(item.hiddenLines.length ? item.hiddenLines : [{ stem: '—', tenGod: '', className: 'plain' }])) },

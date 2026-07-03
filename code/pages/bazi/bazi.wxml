@@ -4,16 +4,16 @@
     <view class="hero-cloud hero-cloud-right"></view>
     <view class="hero-title">八字排盘</view>
     <view class="hero-subtitle">道家命理 · 专业排盘</view>
-    <view class="hero-stamp">玄问</view>
+    <view class="hero-stamp">小周神算</view>
   </view>
 
   <view class="entry-card">
     <view class="entry-card-head">
       <view>
-        <view class="form-kicker">出生档案</view>
-        <view class="form-title">生成八字命盘</view>
+        <view class="form-kicker">出生信息</view>
+        <view class="form-title">生成八字盘</view>
       </view>
-      <view class="form-badge">真太阳时校正</view>
+      <view class="form-badge">{{form.isLunar ? '农历模式' : '公历模式'}}</view>
     </view>
 
     <view class="entry-row name-row">
@@ -46,7 +46,7 @@
     <view class="entry-row picker-row">
       <view>
         <text class="entry-label">出生时间</text>
-        <text class="entry-hint">必填</text>
+        <text class="entry-hint">请选择出生时间</text>
       </view>
       <view class="picker-value dual-picker">
         <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
@@ -58,6 +58,33 @@
       </view>
     </view>
 
+    <view wx:if="{{form.isLunar}}" class="entry-row lunar-input-row">
+      <view>
+        <text class="entry-label">农历日期</text>
+        <text class="entry-hint">切换农历后，需要补充以下字段</text>
+      </view>
+      <view class="lunar-input-grid">
+        <view class="entry-input-wrap">
+          <text class="mini-label">农历年</text>
+          <input class="entry-input" type="number" maxlength="4" placeholder="1999" value="{{form.lunarYear}}" bindinput="onLunarYearInput" />
+        </view>
+        <view class="entry-input-wrap">
+          <text class="mini-label">农历月</text>
+          <input class="entry-input" type="number" maxlength="2" placeholder="8" value="{{form.lunarMonth}}" bindinput="onLunarMonthInput" />
+        </view>
+        <view class="entry-input-wrap">
+          <text class="mini-label">农历日</text>
+          <input class="entry-input" type="number" maxlength="2" placeholder="15" value="{{form.lunarDay}}" bindinput="onLunarDayInput" />
+        </view>
+      </view>
+      <view class="entry-row">
+        <view class="option-switch">
+          <text>闰月</text>
+          <switch checked="{{form.isLeapMonth}}" disabled="{{!form.isLunar}}" bindchange="onLeapMonthSwitch" color="#e8c98a" />
+        </view>
+      </view>
+    </view>
+
     <view class="entry-row picker-row">
       <text class="entry-label">出生地点</text>
       <picker mode="region" value="{{form.region}}" bindchange="onRegionChange">
@@ -66,16 +93,33 @@
       <text class="row-symbol">›</text>
     </view>
 
-    <view class="entry-row picker-row">
-      <text class="entry-label">分组</text>
-      <view class="picker-value">全部</view>
+    <view class="entry-row">
+      <view>
+        <text class="entry-label">农历输入</text>
+        <text class="entry-hint">{{form.isLunar ? '已开启' : '未开启（仅公历）'}}</text>
+      </view>
+      <view class="switch-column">
+        <view class="option-switch">
+          <text>农历日期</text>
+          <switch checked="{{form.isLunar}}" bindchange="onLunarSwitch" color="#e8c98a" />
+        </view>
+      </view>
+    </view>
+
+    <view class="entry-row">
+      <view>
+        <text class="entry-label">时辰修正</text>
+        <text class="entry-hint">真太阳时默认按出生地经纬度推算</text>
+      </view>
     </view>
 
     <view class="solar-row">
       <view>
         <view>北京时间：{{form.birthDate}} {{form.birthTime}}</view>
+        <view>出生地经纬：北纬{{form.latitude}} 东经{{form.longitude}}</view>
+        <view wx:if="{{form.locationSource}}">坐标来源：{{form.locationSource}}</view>
         <view>真太阳时：{{form.useTrueSolarTime ? '开启' : '关闭'}}</view>
-        <view>地址经纬：北纬39.9288 东经{{form.longitude}}</view>
+        <view>早晚子时：{{form.useEarlyLateZi ? '开启' : '关闭'}}</view>
       </view>
       <view class="switch-column">
         <view class="option-switch">
@@ -83,13 +127,14 @@
           <switch checked="{{form.useTrueSolarTime}}" bindchange="onTrueSolarSwitch" color="#e8c98a" />
         </view>
         <view class="option-switch">
-          <text>保存</text>
-          <switch checked="{{saveCase}}" bindchange="onSaveSwitch" color="#e8c98a" />
+          <text>早晚子时</text>
+          <switch checked="{{form.useEarlyLateZi}}" bindchange="onEarlyLateZiSwitch" color="#e8c98a" />
         </view>
       </view>
     </view>
 
-    <button class="start-button" loading="{{isGenerating}}" disabled="{{isGenerating}}" bindtap="generateReading">立即排盘</button>
-    <view class="start-helper">请尽量使用准确出生时间与出生地，后续命例复盘会以此为准。</view>
+    <button class="start-button" loading="{{isGenerating}}" disabled="{{isGenerating}}" bindtap="generateReading">开始排盘</button>
+    <view class="start-helper">请尽量使用准确出生时间与出生地，经度会影响真太阳时修正。</view>
   </view>
 </view>
+
