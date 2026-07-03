@@ -6,6 +6,8 @@ This directory contains the first backend service boundary for the bazi product.
 
 `POST /bazi/calculate`
 
+`GET /bazi/calendar/coverage`
+
 The request follows the frontend contract in `bazi-backend-api-contract.md`:
 
 - `calendarType: "solar"` uses `birthTime` as the Gregorian birth time.
@@ -16,6 +18,18 @@ The response returns:
 
 - `result`
 - `baziPlate`
+
+## Lunar Range
+
+The backend calculate endpoint can use the Hong Kong Observatory lunar
+conversion pack for verified lunar inputs from 1901 to 2100.
+
+The Mini Program must call the backend for this range. The full HKO range pack
+is not bundled into the Mini Program package.
+
+1900 is intentionally not opened in the UI yet because the current authority
+source ledger starts at HKO 1901. Add 1900 only after a traceable authority
+source is recorded and validated.
 
 ## Local Run
 

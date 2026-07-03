@@ -1,7 +1,9 @@
 const { createBaziPlate } = require('../../utils/baziPlate');
 const {
   requestBaziCalculation,
+  requestBaziCoverage,
   requestBaziHealth,
+  isBaziLunarRangeReady,
   shouldUseRemoteBaziApi
 } = require('../../utils/baziApiClient');
 const {
@@ -11,7 +13,7 @@ const {
 
 const app = getApp();
 
-const LUNAR_YEAR_OPTIONS = Array.from({ length: 201 }, (_, index) => String(1900 + index));
+const LUNAR_YEAR_OPTIONS = Array.from({ length: 200 }, (_, index) => String(1901 + index));
 const LUNAR_MONTH_OPTIONS = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月'];
 const LUNAR_DAY_OPTIONS = [
   '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
@@ -316,6 +318,13 @@ Page({
       });
       return;
     }
+    if (error && error.code === 'BAZI_LUNAR_RANGE_NOT_READY') {
+      wx.showToast({
+        title: error.message || '请启动最新版后端，再使用1901-2100农历排盘',
+        icon: 'none'
+      });
+      return;
+    }
     if (error && error.code === 'BAZI_API_NETWORK_ERROR') {
       wx.showToast({
         title: '连接后端失败，请确认服务已启动',
@@ -326,6 +335,24 @@ Page({
     wx.showToast({
       title: error && error.message ? error.message : '排盘服务暂不可用',
       icon: 'none'
+    });
+  },
+
+  ensureLunarRangeReady(readingInput) {
+    if (readingInput.calendarType !== 'lunar') {
+      return Promise.resolve();
+    }
+
+    return requestBaziCoverage({
+      wxApi: wx,
+      config: app.globalData.baziApi
+    }).then((coverage) => {
+      if (isBaziLunarRangeReady(coverage)) {
+        return;
+      }
+      const error = new Error('请启动最新版后端，再使用1901-2100农历排盘');
+      error.code = 'BAZI_LUNAR_RANGE_NOT_READY';
+      throw error;
     });
   },
 
@@ -362,7 +389,7 @@ Page({
     return requestBaziHealth({
       wxApi: wx,
       config: app.globalData.baziApi
-    }).then(() => requestBaziCalculation({
+    }).then(() => this.ensureLunarRangeReady(readingInput)).then(() => requestBaziCalculation({
       wxApi: wx,
       config: app.globalData.baziApi,
       input: readingInput,

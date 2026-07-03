@@ -100,6 +100,8 @@ async function testRemoteEntry() {
         enabled: true,
         baseUrl: 'https://api.example.com',
         calculatePath: '/bazi/calculate',
+        healthPath: '/health',
+        coveragePath: '/bazi/calendar/coverage',
         timeout: 15000,
         provider: 'backend'
       }
@@ -117,6 +119,26 @@ async function testRemoteEntry() {
   const wxApi = {
     request(options) {
       calls.requests.push(options);
+      if (options.url === 'https://api.example.com/health') {
+        options.success({ statusCode: 200, data: { ok: true, service: 'bazi-backend' } });
+        return;
+      }
+      if (options.url === 'https://api.example.com/bazi/calendar/coverage') {
+        options.success({
+          statusCode: 200,
+          data: {
+            ok: true,
+            lunar: {
+              backendRangePack: {
+                dataPackId: 'hko-lunar-conversions-1901-2100',
+                coverage: { gregorianYears: [1901, 2100] },
+                usagePolicy: { calculateEndpointUse: 'enabled-for-backend-runtime-preview' }
+              }
+            }
+          }
+        });
+        return;
+      }
       options.success({
         statusCode: 200,
         data: {
@@ -161,18 +183,33 @@ async function testRemoteEntry() {
   };
 
   const page = loadBaziPage(app, wxApi);
+  assert.strictEqual(page.data.lunarPickerRange[0][0], '1901');
+  assert.strictEqual(page.data.lunarPickerRange[0][page.data.lunarPickerRange[0].length - 1], '2100');
   page.setData({
     'form.name': '张三',
-    'form.useTrueSolarTime': true
+    'form.useTrueSolarTime': true,
+    activeCalendarMode: page.data.calendarModes[1],
+    'form.calendarType': 'lunar',
+    'form.lunarYear': '2027',
+    'form.lunarMonth': '11',
+    'form.lunarDay': '22'
   });
   await page.generateReading();
 
-  assert.strictEqual(calls.requests.length, 2);
+  assert.strictEqual(calls.requests.length, 3);
   assert.strictEqual(calls.requests[0].url, 'https://api.example.com/health');
   assert.strictEqual(calls.requests[0].method, 'GET');
-  assert.strictEqual(calls.requests[1].url, 'https://api.example.com/bazi/calculate');
-  assert.ok(calls.requests[1].data.name);
-  assert.strictEqual(calls.requests[1].data.timeMode, 'trueSolarTime');
+  assert.strictEqual(calls.requests[1].url, 'https://api.example.com/bazi/calendar/coverage');
+  assert.strictEqual(calls.requests[1].method, 'GET');
+  assert.strictEqual(calls.requests[2].url, 'https://api.example.com/bazi/calculate');
+  assert.ok(calls.requests[2].data.name);
+  assert.strictEqual(calls.requests[2].data.timeMode, 'trueSolarTime');
+  assert.deepStrictEqual(calls.requests[2].data.lunarDate, {
+    year: 2027,
+    month: 11,
+    day: 22,
+    isLeapMonth: false
+  });
   assert.strictEqual(calls.navigations.length, 1);
   assert.strictEqual(calls.history.length, 1);
   assert.strictEqual(calls.cases.length, 1);
@@ -252,6 +289,8 @@ async function testRealDeviceLoopbackConfigShowsWarning() {
         enabled: true,
         baseUrl: 'http://127.0.0.1:8787',
         calculatePath: '/bazi/calculate',
+        healthPath: '/health',
+        coveragePath: '/bazi/calendar/coverage',
         timeout: 15000,
         provider: 'backend-local'
       }
@@ -286,6 +325,60 @@ async function testRealDeviceLoopbackConfigShowsWarning() {
   assert.strictEqual(calls.toasts.length, 1);
   assert.match(calls.toasts[0].title, /127\.0\.0\.1|局域网|灞€鍩熺綉/);
   assert.match(page.data.baziApiWarning, /127\.0\.0\.1|局域网|灞€鍩熺綉/);
+  assert.strictEqual(page.data.isGenerating, false);
+}
+
+async function testLunarRangePreflightBlocksOldBackend() {
+  const calls = { requests: [], toasts: [], navigations: [] };
+  const app = {
+    globalData: {
+      disclaimer: 'test disclaimer',
+      currentBaziReading: null,
+      engineVersion: 'backend-api-2026.07.02',
+      baziApi: {
+        enabled: true,
+        baseUrl: 'https://api.example.com',
+        calculatePath: '/bazi/calculate',
+        healthPath: '/health',
+        coveragePath: '/bazi/calendar/coverage',
+        timeout: 15000,
+        provider: 'backend'
+      }
+    },
+    addHistory() {},
+    addCase() {},
+    formatDateTime(date) { return date.toISOString().slice(0, 19).replace('T', ' '); }
+  };
+  const wxApi = {
+    getDeviceInfo() { return { platform: 'devtools' }; },
+    request(options) {
+      calls.requests.push(options);
+      if (options.url === 'https://api.example.com/health') {
+        options.success({ statusCode: 200, data: { ok: true } });
+        return;
+      }
+      if (options.url === 'https://api.example.com/bazi/calendar/coverage') {
+        options.success({
+          statusCode: 200,
+          data: { ok: true, lunar: { backendRangePack: { dataPackId: 'old-pack', coverage: { gregorianYears: [2023, 2023] }, usagePolicy: { calculateEndpointUse: 'disabled' } } } }
+        });
+        return;
+      }
+      options.success({ statusCode: 200, data: { result: { title: 'should not calculate', pillars: [] } } });
+    },
+    showToast(options) { calls.toasts.push(options); },
+    navigateTo(options) { calls.navigations.push(options); },
+    setStorageSync() {}
+  };
+  const page = loadBaziPage(app, wxApi);
+  page.setData({ activeCalendarMode: page.data.calendarModes[1], 'form.calendarType': 'lunar', 'form.lunarYear': '2027', 'form.lunarMonth': '11', 'form.lunarDay': '22' });
+  await page.generateReading();
+  assert.strictEqual(calls.requests.length, 2);
+  assert.strictEqual(calls.requests[0].url, 'https://api.example.com/health');
+  assert.strictEqual(calls.requests[1].url, 'https://api.example.com/bazi/calendar/coverage');
+  assert.strictEqual(calls.navigations.length, 0);
+  assert.strictEqual(calls.toasts.length, 1);
+  assert.ok(calls.toasts[0].title);
   assert.strictEqual(page.data.isGenerating, false);
 }
 
@@ -360,6 +453,7 @@ await testRemoteEntry();
 await testDisabledConfigDoesNotFallback();
 await testRealDeviceLoopbackConfigShowsWarning();
 await testHealthCheckBlocksCalculateWhenBackendIsOffline();
+await testLunarRangePreflightBlocksOldBackend();
 console.log('PASS bazi API page entry');
 }
 

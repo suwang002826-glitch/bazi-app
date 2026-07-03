@@ -184,6 +184,42 @@ async function withServer(run) {
 }
 
 {
+  const reading = calculateBazi({
+    ...solarRequest,
+    calendarType: 'lunar',
+    lunarDate: {
+      year: 2027,
+      month: 11,
+      day: 22,
+      isLeapMonth: false
+    },
+    birthTime: '2027-11-22 08:00:00',
+    timeMode: 'beijingTime'
+  });
+  assert.strictEqual(reading.result.calendarConversion.solarDate, '2027-12-19');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.dataPackId, 'hko-lunar-conversions-1901-2100');
+  assert.strictEqual(reading.result.pillars.length, 4);
+  assert.strictEqual(reading.baziPlate.columns.length, 4);
+}
+
+{
+  const reading = calculateBazi({
+    ...solarRequest,
+    calendarType: 'lunar',
+    lunarDate: {
+      year: 2100,
+      month: 1,
+      day: 1,
+      isLeapMonth: false
+    },
+    birthTime: '2100-01-01 08:00:00',
+    timeMode: 'beijingTime'
+  });
+  assert.strictEqual(reading.result.calendarConversion.solarDate, '2100-02-09');
+  assert.strictEqual(reading.result.calendarProviderInfo.lunar.dataPackId, 'hko-lunar-conversions-1901-2100');
+}
+
+{
   assert.throws(
     () => normalizeCalculateRequest({ ...solarRequest, birthTime: 'bad-time' }),
     (error) => {
