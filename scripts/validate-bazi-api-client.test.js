@@ -4,6 +4,8 @@ const {
   normalizeBaziApiResponse,
   requestBaziCalculation,
   requestBaziHealth,
+  requestBaziCoverage,
+  isBaziLunarRangeReady,
   shouldUseRemoteBaziApi
 } = require('../code/utils/baziApiClient');
 const {
@@ -85,6 +87,8 @@ const solarInput = {
   };
   assert.strictEqual(buildBaziHealthUrl(phoneConfig), 'http://127.0.0.1:8787/health');
   assert.strictEqual(buildBaziCoverageUrl(phoneConfig), 'http://127.0.0.1:8787/bazi/calendar/coverage');
+  assert.strictEqual(isBaziLunarRangeReady({ lunar: { backendRangePack: { dataPackId: 'hko-lunar-conversions-1901-2100', coverage: { gregorianYears: [1901, 2100] }, usagePolicy: { calculateEndpointUse: 'enabled-for-backend-runtime-preview' } } } }), true);
+  assert.strictEqual(isBaziLunarRangeReady({ lunar: { backendRangePack: { dataPackId: 'old-pack', coverage: { gregorianYears: [2023, 2023] }, usagePolicy: { calculateEndpointUse: 'disabled' } } } }), false);
   assert.strictEqual(isLoopbackBaziApiUrl('http://127.0.0.1:8787'), true);
   assert.strictEqual(isLoopbackBaziApiUrl('http://localhost:8787'), true);
   assert.strictEqual(isLoopbackBaziApiUrl('http://192.168.1.23:8787'), false);
@@ -160,6 +164,42 @@ async function testRequest() {
   assert.strictEqual(requests[0].data.birthTime, '2000-01-01 08:00:00');
 }
 
+async function testCoverageRequest() {
+  const requests = [];
+  const wxApi = {
+    request(options) {
+      requests.push(options);
+      options.success({
+        statusCode: 200,
+        data: {
+          ok: true,
+          lunar: {
+            backendRangePack: {
+              dataPackId: 'hko-lunar-conversions-1901-2100',
+              coverage: { gregorianYears: [1901, 2100] },
+              usagePolicy: { calculateEndpointUse: 'enabled-for-backend-runtime-preview' }
+            }
+          }
+        }
+      });
+    }
+  };
+  const coverage = await requestBaziCoverage({
+    wxApi,
+    config: {
+      enabled: true,
+      baseUrl: 'https://api.example.com/',
+      coveragePath: '/bazi/calendar/coverage',
+      timeout: 15000
+    }
+  });
+  assert.strictEqual(isBaziLunarRangeReady(coverage), true);
+  assert.strictEqual(requests.length, 1);
+  assert.strictEqual(requests[0].url, 'https://api.example.com/bazi/calendar/coverage');
+  assert.strictEqual(requests[0].method, 'GET');
+  assert.strictEqual(requests[0].timeout, 15000);
+}
+
 async function testHealthRequest() {
   const requests = [];
   const wxApi = {
@@ -187,7 +227,7 @@ async function testHealthRequest() {
   assert.strictEqual(requests[0].timeout, 15000);
 }
 
-Promise.all([testRequest(), testHealthRequest()])
+Promise.all([testRequest(), testHealthRequest(), testCoverageRequest()])
   .then(() => console.log('PASS bazi API client contract'))
   .catch((error) => {
     console.error(error);

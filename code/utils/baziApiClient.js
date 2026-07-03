@@ -5,6 +5,7 @@ const DEFAULT_BAZI_API_CONFIG = {
   baseUrl: '',
   calculatePath: '/bazi/calculate',
   healthPath: '/health',
+  coveragePath: '/bazi/calendar/coverage',
   timeout: 15000,
   provider: 'local'
 };
@@ -110,6 +111,28 @@ function shouldUseRemoteBaziApi(config = {}) {
   return Boolean(config.enabled && String(config.baseUrl || '').trim());
 }
 
+function isBaziLunarRangeReady(coverage = {}, options = {}) {
+  const expectedStartYear = Number(options.startYear || 1901);
+  const expectedEndYear = Number(options.endYear || 2100);
+  const rangePack = coverage
+    && coverage.lunar
+    && coverage.lunar.backendRangePack;
+  const range = rangePack
+    && rangePack.coverage
+    && rangePack.coverage.gregorianYears;
+  const usagePolicy = rangePack && rangePack.usagePolicy;
+
+  return Boolean(
+    rangePack
+      && rangePack.dataPackId === 'hko-lunar-conversions-1901-2100'
+      && Array.isArray(range)
+      && Number(range[0]) <= expectedStartYear
+      && Number(range[1]) >= expectedEndYear
+      && usagePolicy
+      && usagePolicy.calculateEndpointUse === 'enabled-for-backend-runtime-preview'
+  );
+}
+
 function joinUrl(baseUrl, path) {
   const base = String(baseUrl || '').replace(/\/+$/, '');
   const route = String(path || DEFAULT_BAZI_API_CONFIG.calculatePath).replace(/^\/?/, '/');
@@ -197,11 +220,48 @@ function requestBaziHealth({ wxApi, config = {} }) {
   });
 }
 
+function requestBaziCoverage({ wxApi, config = {} }) {
+  const runtimeConfig = {
+    ...DEFAULT_BAZI_API_CONFIG,
+    ...config
+  };
+  if (!shouldUseRemoteBaziApi(runtimeConfig)) {
+    const error = new Error('后端排盘服务未配置，请先启动后端服务');
+    error.code = 'BAZI_API_DISABLED';
+    return Promise.reject(error);
+  }
+
+  return new Promise((resolve, reject) => {
+    wxApi.request({
+      url: joinUrl(runtimeConfig.baseUrl, runtimeConfig.coveragePath),
+      method: 'GET',
+      timeout: runtimeConfig.timeout,
+      success(response) {
+        if (!response || response.statusCode < 200 || response.statusCode >= 300) {
+          const error = new Error('后端农历覆盖范围检查失败，请确认服务已更新');
+          error.code = 'BAZI_API_COVERAGE_ERROR';
+          error.statusCode = response && response.statusCode;
+          reject(error);
+          return;
+        }
+        resolve(response.data || {});
+      },
+      fail() {
+        const error = new Error('后端农历覆盖范围检查失败，请确认服务已启动');
+        error.code = 'BAZI_API_COVERAGE_ERROR';
+        reject(error);
+      }
+    });
+  });
+}
+
 module.exports = {
   DEFAULT_BAZI_API_CONFIG,
   buildBaziCalculateRequest,
+  isBaziLunarRangeReady,
   normalizeBaziApiResponse,
   requestBaziCalculation,
+  requestBaziCoverage,
   requestBaziHealth,
   shouldUseRemoteBaziApi
 };

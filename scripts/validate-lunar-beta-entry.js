@@ -72,6 +72,8 @@ function loadBaziPage(options = {}) {
         enabled: true,
         baseUrl: 'https://api.example.test',
         calculatePath: '/bazi/calculate',
+        healthPath: '/health',
+        coveragePath: '/bazi/calendar/coverage',
         timeout: 15000,
         provider: 'backend-test'
       }
@@ -93,6 +95,29 @@ function loadBaziPage(options = {}) {
       calls.requests.push(requestOptions);
       if (typeof options.request === 'function') {
         options.request(requestOptions);
+        return;
+      }
+      if (requestOptions.url === 'https://api.example.test/health') {
+        requestOptions.success({
+          statusCode: 200,
+          data: { ok: true, service: 'bazi-backend' }
+        });
+        return;
+      }
+      if (requestOptions.url === 'https://api.example.test/bazi/calendar/coverage') {
+        requestOptions.success({
+          statusCode: 200,
+          data: {
+            ok: true,
+            lunar: {
+              backendRangePack: {
+                dataPackId: 'hko-lunar-conversions-1901-2100',
+                coverage: { gregorianYears: [1901, 2100] },
+                usagePolicy: { calculateEndpointUse: 'enabled-for-backend-runtime-preview' }
+              }
+            }
+          }
+        });
         return;
       }
       requestOptions.success({
@@ -177,12 +202,14 @@ assert(
   tapCalendarMode(page, '农历');
   await page.generateReading();
 
-  assert.strictEqual(calls.requests.length, 2);
+  assert.strictEqual(calls.requests.length, 3);
   assert.strictEqual(calls.requests[0].url, 'https://api.example.test/health');
   assert.strictEqual(calls.requests[0].method, 'GET');
-  assert.strictEqual(calls.requests[1].url, 'https://api.example.test/bazi/calculate');
-  assert.strictEqual(calls.requests[1].data.calendarType, 'lunar');
-  assert.deepStrictEqual(calls.requests[1].data.lunarDate, {
+  assert.strictEqual(calls.requests[1].url, 'https://api.example.test/bazi/calendar/coverage');
+  assert.strictEqual(calls.requests[1].method, 'GET');
+  assert.strictEqual(calls.requests[2].url, 'https://api.example.test/bazi/calculate');
+  assert.strictEqual(calls.requests[2].data.calendarType, 'lunar');
+  assert.deepStrictEqual(calls.requests[2].data.lunarDate, {
     year: 2023,
     month: 8,
     day: 15,
@@ -207,6 +234,22 @@ assert(
         });
         return;
       }
+      if (requestOptions.url === 'https://api.example.test/bazi/calendar/coverage') {
+        requestOptions.success({
+          statusCode: 200,
+          data: {
+            ok: true,
+            lunar: {
+              backendRangePack: {
+                dataPackId: 'hko-lunar-conversions-1901-2100',
+                coverage: { gregorianYears: [1901, 2100] },
+                usagePolicy: { calculateEndpointUse: 'enabled-for-backend-runtime-preview' }
+              }
+            }
+          }
+        });
+        return;
+      }
       requestOptions.success({
         statusCode: 400,
         data: {
@@ -226,7 +269,7 @@ assert(
   tapCalendarMode(page, '农历');
   await page.generateReading();
 
-  assert.strictEqual(calls.requests.length, 2);
+  assert.strictEqual(calls.requests.length, 3);
   assert.strictEqual(calls.navigations.length, 0);
   assert.strictEqual(app.globalData.currentBaziReading, null);
   assert.strictEqual(page.data.isGenerating, false);

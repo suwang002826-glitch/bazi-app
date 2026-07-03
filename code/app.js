@@ -1,7 +1,7 @@
 App({
   globalData: {
     appName: '玄门命理',
-    engineVersion: 'backend-api-2026.07.02',
+    engineVersion: 'backend-api-2026.07.03-lunar-range-preflight',
     baziApi: {
       enabled: true,
       baseUrl: 'http://127.0.0.1:8787',
