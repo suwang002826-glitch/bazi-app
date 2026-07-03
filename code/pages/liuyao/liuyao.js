@@ -12,10 +12,10 @@ const manualLineOrder = [
 ];
 
 const manualYaoOptions = [
-  { name: '老阴', value: 6 },
-  { name: '少阴', value: 8 },
-  { name: '少阳', value: 7 },
-  { name: '老阳', value: 9 }
+  { name: '少阴', value: 8, symbol: '— —', coin: '2背1字' },
+  { name: '少阳', value: 7, symbol: '———', coin: '1背2字' },
+  { name: '老阴', value: 6, symbol: '— — ×', coin: '0背3字' },
+  { name: '老阳', value: 9, symbol: '——— ○', coin: '3背0字' }
 ];
 
 const emptyManualLines = () => Array.from({ length: 6 }, () => null);
@@ -36,7 +36,8 @@ Page({
     linePreviews: [],
     manualLines: emptyManualLines(),
     manualRows: [],
-    manualYaoOptionNames: manualYaoOptions.map((item) => item.name),
+    manualYaoOptions,
+    manualOpenIndex: -1,
     manualSelectedCount: 0,
     numberSeed: '',
     currentTimeLabel: '',
@@ -69,6 +70,7 @@ Page({
       linePreviews: restore.linePreviews || this.buildLinePreviews(restore.lines || []),
       manualLines,
       manualRows: this.buildManualRows(manualLines),
+      manualOpenIndex: -1,
       manualSelectedCount: this.countManualLines(manualLines)
     });
   },
@@ -84,6 +86,7 @@ Page({
       linePreviews: [],
       manualLines: emptyManualLines(),
       manualRows: this.buildManualRows(emptyManualLines()),
+      manualOpenIndex: -1,
       manualSelectedCount: 0
     });
     this.refreshCurrentTimeLabel();
@@ -97,11 +100,36 @@ Page({
     this.setData({ numberSeed: event.detail.value });
   },
 
-  onManualYaoChange(event) {
+  toggleManualDropdown(event) {
     const rowIndex = Number(event.currentTarget.dataset.index);
-    const optionIndex = Number(event.detail.value);
+    this.setData({
+      manualOpenIndex: this.data.manualOpenIndex === rowIndex ? -1 : rowIndex
+    });
+  },
+
+  clearManualYao(event) {
+    const rowIndex = Number(event.currentTarget.dataset.index);
     const row = manualLineOrder[rowIndex];
-    const option = manualYaoOptions[optionIndex];
+    if (!row) return;
+
+    const manualLines = this.data.manualLines.slice();
+    manualLines[row.lineIndex] = null;
+    const complete = this.isManualComplete(manualLines);
+    this.setData({
+      manualLines,
+      manualRows: this.buildManualRows(manualLines),
+      manualOpenIndex: -1,
+      manualSelectedCount: this.countManualLines(manualLines),
+      lines: complete ? manualLines.slice() : [],
+      linePreviews: complete ? this.buildLinePreviews(manualLines) : []
+    });
+  },
+
+  selectManualYao(event) {
+    const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+    const value = Number(event.currentTarget.dataset.value);
+    const row = manualLineOrder[rowIndex];
+    const option = manualYaoOptions.find((item) => item.value === value);
     if (!row || !option) return;
 
     const manualLines = this.data.manualLines.slice();
@@ -110,6 +138,7 @@ Page({
     this.setData({
       manualLines,
       manualRows: this.buildManualRows(manualLines),
+      manualOpenIndex: -1,
       manualSelectedCount: this.countManualLines(manualLines),
       lines: complete ? manualLines.slice() : [],
       linePreviews: complete ? this.buildLinePreviews(manualLines) : []
@@ -182,6 +211,7 @@ Page({
       linePreviews: [],
       manualLines,
       manualRows: this.buildManualRows(manualLines),
+      manualOpenIndex: -1,
       manualSelectedCount: 0
     });
   },
@@ -205,9 +235,11 @@ Page({
       const optionIndex = manualYaoOptions.findIndex((item) => item.value === value);
       return {
         label: row.label,
+        value,
         selected: optionIndex >= 0,
-        optionIndex: optionIndex >= 0 ? optionIndex : 0,
-        display: optionIndex >= 0 ? manualYaoOptions[optionIndex].name : '请选择'
+        display: optionIndex >= 0 ? manualYaoOptions[optionIndex].name : '请选择',
+        symbol: optionIndex >= 0 ? manualYaoOptions[optionIndex].symbol : '',
+        coin: optionIndex >= 0 ? manualYaoOptions[optionIndex].coin : ''
       };
     });
   },
@@ -217,6 +249,7 @@ Page({
     this.setData({
       manualLines,
       manualRows: this.buildManualRows(manualLines),
+      manualOpenIndex: -1,
       manualSelectedCount: 0
     });
   },

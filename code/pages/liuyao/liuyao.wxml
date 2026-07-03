@@ -46,21 +46,50 @@
         <view
           class="manual-select-row"
           wx:for="{{manualRows}}"
+          wx:for-item="row"
+          wx:for-index="rowIndex"
           wx:key="label"
         >
-          <text class="manual-select-label">{{item.label}}</text>
-          <picker
-            mode="selector"
-            range="{{manualYaoOptionNames}}"
-            value="{{item.optionIndex}}"
-            bindchange="onManualYaoChange"
-            data-index="{{index}}"
-          >
-            <view class="manual-select-value {{item.selected ? 'selected' : ''}}">
-              <text>{{item.display}}</text>
+          <text class="manual-select-label">{{row.label}}</text>
+          <view class="manual-select-control">
+            <view
+              class="manual-select-value {{row.selected ? 'selected' : ''}} {{manualOpenIndex === rowIndex ? 'open' : ''}}"
+              bindtap="toggleManualDropdown"
+              data-index="{{rowIndex}}"
+            >
+              <view class="manual-selected-main">
+                <text>{{row.display}}</text>
+                <text wx:if="{{row.selected}}" class="manual-selected-detail">{{row.symbol}}（{{row.coin}}）</text>
+              </view>
               <text class="manual-select-arrow">›</text>
             </view>
-          </picker>
+            <view wx:if="{{manualOpenIndex === rowIndex}}" class="manual-dropdown">
+              <view
+                class="manual-option {{row.selected ? '' : 'active'}}"
+                bindtap="clearManualYao"
+                data-index="{{rowIndex}}"
+              >
+                <text>请选择</text>
+                <text wx:if="{{!row.selected}}" class="manual-check">✓</text>
+              </view>
+              <view
+                class="manual-option {{row.value === option.value ? 'active' : ''}}"
+                wx:for="{{manualYaoOptions}}"
+                wx:for-item="option"
+                wx:key="value"
+                bindtap="selectManualYao"
+                data-row-index="{{rowIndex}}"
+                data-value="{{option.value}}"
+              >
+                <view class="manual-option-main">
+                  <text class="manual-option-name">{{option.name}}</text>
+                  <text class="manual-option-symbol">{{option.symbol}}</text>
+                  <text class="manual-option-coin">（{{option.coin}}）</text>
+                </view>
+                <text wx:if="{{row.value === option.value}}" class="manual-check">✓</text>
+              </view>
+            </view>
+          </view>
         </view>
       </view>
       <button class="primary cast-primary" bindtap="castManual">生成卦象</button>
