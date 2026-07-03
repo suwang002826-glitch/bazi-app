@@ -1812,8 +1812,70 @@ const qimenFocus = {
   其他: { door: '值使', star: '值符', note: '综合问事先看值符值使、日干时干与用门。' }
 };
 
+const qimenSolarTerms = [
+  { key: '小寒', angle: 285, month: 1, day: 6, index: 0, dun: '阳遁', ju: [2, 8, 5] },
+  { key: '大寒', angle: 300, month: 1, day: 20, index: 1, dun: '阳遁', ju: [3, 9, 6] },
+  { key: '立春', angle: 315, month: 2, day: 4, index: 2, dun: '阳遁', ju: [8, 5, 2] },
+  { key: '雨水', angle: 330, month: 2, day: 19, index: 3, dun: '阳遁', ju: [9, 6, 3] },
+  { key: '惊蛰', angle: 345, month: 3, day: 6, index: 4, dun: '阳遁', ju: [1, 7, 4] },
+  { key: '春分', angle: 0, month: 3, day: 21, index: 5, dun: '阳遁', ju: [3, 9, 6] },
+  { key: '清明', angle: 15, month: 4, day: 5, index: 6, dun: '阳遁', ju: [4, 1, 7] },
+  { key: '谷雨', angle: 30, month: 4, day: 20, index: 7, dun: '阳遁', ju: [5, 2, 8] },
+  { key: '立夏', angle: 45, month: 5, day: 6, index: 8, dun: '阳遁', ju: [4, 1, 7] },
+  { key: '小满', angle: 60, month: 5, day: 21, index: 9, dun: '阳遁', ju: [5, 2, 8] },
+  { key: '芒种', angle: 75, month: 6, day: 6, index: 10, dun: '阳遁', ju: [6, 3, 9] },
+  { key: '夏至', angle: 90, month: 6, day: 21, index: 11, dun: '阴遁', ju: [9, 3, 6] },
+  { key: '小暑', angle: 105, month: 7, day: 7, index: 12, dun: '阴遁', ju: [8, 2, 5] },
+  { key: '大暑', angle: 120, month: 7, day: 23, index: 13, dun: '阴遁', ju: [7, 1, 4] },
+  { key: '立秋', angle: 135, month: 8, day: 8, index: 14, dun: '阴遁', ju: [2, 5, 8] },
+  { key: '处暑', angle: 150, month: 8, day: 23, index: 15, dun: '阴遁', ju: [1, 4, 7] },
+  { key: '白露', angle: 165, month: 9, day: 8, index: 16, dun: '阴遁', ju: [9, 3, 6] },
+  { key: '秋分', angle: 180, month: 9, day: 23, index: 17, dun: '阴遁', ju: [7, 1, 4] },
+  { key: '寒露', angle: 195, month: 10, day: 8, index: 18, dun: '阴遁', ju: [6, 9, 3] },
+  { key: '霜降', angle: 210, month: 10, day: 23, index: 19, dun: '阴遁', ju: [5, 8, 2] },
+  { key: '立冬', angle: 225, month: 11, day: 7, index: 20, dun: '阴遁', ju: [6, 9, 3] },
+  { key: '小雪', angle: 240, month: 11, day: 22, index: 21, dun: '阴遁', ju: [5, 8, 2] },
+  { key: '大雪', angle: 255, month: 12, day: 7, index: 22, dun: '阴遁', ju: [4, 7, 1] },
+  { key: '冬至', angle: 270, month: 12, day: 22, index: 23, dun: '阳遁', ju: [1, 7, 4] }
+];
+
 function parseDateTimeValue(dateText, timeText) {
   return makeDate(parseBirthDateTime(dateText, timeText));
+}
+
+function findQimenSolarTermTime(calendarYear, term) {
+  const providerYear = term.month === 1 ? calendarYear - 1 : calendarYear;
+  return findSolarTermTime(providerYear, term);
+}
+
+function buildQimenTermTimeline(year) {
+  const list = [];
+  [year - 1, year, year + 1].forEach((targetYear) => {
+    qimenSolarTerms.forEach((term) => {
+      list.push({ ...term, date: findQimenSolarTermTime(targetYear, term) });
+    });
+  });
+  return list.sort((a, b) => a.date - b.date);
+}
+
+function getActiveQimenTerm(date) {
+  const timeline = buildQimenTermTimeline(date.getFullYear());
+  let active = timeline[0];
+  timeline.forEach((term) => {
+    if (term.date <= date) active = term;
+  });
+  return active;
+}
+
+function getAdjacentQimenTerm(date, direction) {
+  const timeline = buildQimenTermTimeline(date.getFullYear());
+  if (direction > 0) {
+    return timeline.find((term) => term.date > date) || timeline[timeline.length - 1];
+  }
+  for (let i = timeline.length - 1; i >= 0; i -= 1) {
+    if (timeline[i].date < date) return timeline[i];
+  }
+  return timeline[0];
 }
 
 function getQimenYuan(dayIndex) {
@@ -1824,12 +1886,11 @@ function getQimenYuan(dayIndex) {
 }
 
 function getQimenDun(activeTerm) {
-  const yangIndexes = new Set([10, 11, 0, 1, 2, 3, 4]);
-  return yangIndexes.has(activeTerm.index) ? '阳遁' : '阴遁';
+  return activeTerm.dun;
 }
 
 function getQimenJu(activeTerm, yuan) {
-  return ((activeTerm.index * 3 + yuan.index) % 9) + 1;
+  return activeTerm.ju[yuan.index];
 }
 
 function toChineseNumber(value) {
@@ -1959,8 +2020,8 @@ function buildQimenChart(form) {
   const monthPillar = getMonthPillar(readingDate, heavenlyStems.indexOf(yearPillar.stem));
   const dayPillar = getDayPillar(readingDate);
   const hourPillar = getHourPillar(readingDate, heavenlyStems.indexOf(dayPillar.stem));
-  const activeTerm = getActiveJie(readingDate);
-  const nextTerm = getAdjacentJie(readingDate, 1);
+  const activeTerm = getActiveQimenTerm(readingDate);
+  const nextTerm = getAdjacentQimenTerm(readingDate, 1);
   const yuan = getQimenYuan(dayPillar.index);
   const dun = getQimenDun(activeTerm);
   const ju = getQimenJu(activeTerm, yuan);
@@ -1999,6 +2060,8 @@ function buildQimenChart(form) {
       ju: juText,
       juNumber: ju,
       juText,
+      layoutDirection: dun === '阳遁' ? '阳遁顺布' : '阴遁逆布',
+      termJuPattern: activeTerm.ju.join('、'),
       plateStyle: '时家奇门',
       voidText: voidBranches.join('、'),
       xunShou,
@@ -2024,8 +2087,8 @@ function buildQimenChart(form) {
     layers: [
       {
         title: '起局依据',
-        original: `${activeTerm.key}节气、${yuan.name}、${dun}${ju}局，日柱${dayPillar.value}，时柱${hourPillar.value}。`,
-        plain: '奇门先以节气定阴阳遁和局数，再看日时干、值符值使与用宫。',
+        original: `${activeTerm.key}节气三元局数为${activeTerm.ju.join('、')}，当前为${yuan.name}，取${dun}${ju}局，日柱${dayPillar.value}，时柱${hourPillar.value}。`,
+        plain: `奇门先以二十四节气定阴阳遁和局数：冬至后至芒种用阳遁顺布，夏至后至大雪用阴遁逆布；再看日时干、值符值使与用宫。当前采用${dun === '阳遁' ? '顺布' : '逆布'}。`,
         action: '测试版已使用本地节气时刻搜索；正式版建议继续接权威历法服务校验。'
       },
       {
@@ -2042,7 +2105,7 @@ function buildQimenChart(form) {
       }
     ],
     engineInfo: [
-      '测试版使用节气、三元、阴阳遁、局数、日时干与九宫盘生成奇门结构。',
+      '测试版使用二十四节气三元局数表、阴阳遁顺逆、日时干与九宫盘生成奇门结构。',
       '九星、八门、八神、天地盘三奇六仪已进入盘面，但完整拆补/置闰法、转盘/飞盘口径仍需后续校验。',
       '奇门结果用于问事、择机和复盘参考，不作绝对预测。'
     ],

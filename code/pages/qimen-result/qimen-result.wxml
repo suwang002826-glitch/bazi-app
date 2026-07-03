@@ -59,6 +59,8 @@
           <view><text>旬首</text><text>{{result.calendar.xunShou}}</text></view>
           <view><text>马星</text><text>{{result.calendar.horseBranch}} · {{result.calendar.horsePalaceText}}</text></view>
           <view><text>局数</text><text>{{result.calendar.ju}}</text></view>
+          <view><text>顺逆</text><text>{{result.calendar.layoutDirection}}</text></view>
+          <view><text>三元</text><text>{{result.calendar.termJuPattern}}</text></view>
         </view>
       </view>
       <view class="pro-row">
