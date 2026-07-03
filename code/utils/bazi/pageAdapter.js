@@ -166,6 +166,66 @@ function buildPillarItem(label, pillar, stemGod, dayStem) {
   };
 }
 
+function resolveFormGender(form = {}) {
+  if (form.gender !== undefined && form.gender !== null) return form.gender;
+  if (form.sex !== undefined && form.sex !== null) return form.sex;
+  return '男';
+}
+
+function buildLuckCyclesFromDaYun(coreResult, form = {}) {
+  const daYun = coreResult && coreResult.daYun;
+  if (!daYun || !Array.isArray(daYun.list) || daYun.list.length === 0) {
+    return {
+      cycles: [],
+      direction: '',
+      startAge: null,
+      startMonth: null,
+      startDay: null,
+      targetJie: '',
+      startDate: ''
+    };
+  }
+
+  const cycles = daYun.list.map((item) => {
+    const startAge = Number.isFinite(item.startAge) ? item.startAge : 0;
+    const endAge = Number.isFinite(item.endAge) ? item.endAge : startAge + 9;
+    const startYear = Number.isFinite(item.startYear) ? item.startYear : 0;
+    const endYear = Number.isFinite(item.endYear) ? item.endYear : startYear + 9;
+
+    return {
+      label: item.label || `${item.index + 1}步大运`,
+      value: `${item.stem || ''}${item.branch || ''}`,
+      fullStemBranch: `${item.stem || ''}${item.branch || ''}`,
+      stem: item.stem || '',
+      branch: item.branch || '',
+      startAge,
+      endAge,
+      startYear,
+      endYear,
+      ageRange: `${startAge}-${endAge}岁`,
+      yearRange: `${startYear}-${endYear}`,
+      tenGod: item.tenGod || '',
+      naYin: item.naYin || '',
+      xunVoidBranches: item.xunVoidBranches || [],
+      xunVoidText: item.xunVoidText || '',
+      direction: daYun.direction || '',
+      index: item.index
+    };
+  });
+
+  return {
+    cycles,
+    direction: daYun.direction || '',
+    startAge: daYun.startAge,
+    startMonth: daYun.startMonth,
+    startDay: daYun.startDay,
+    targetJie: daYun.targetJie || '',
+    startDate: daYun.startDate || '',
+    diffDays: daYun.diffDays || 0,
+    label: `起运:${daYun.startAge || 0}岁${resolveFormGender(form)}`
+  };
+}
+
 function normalizeElementCount(rawCount = {}) {
   return {
     金: Number(rawCount.金 || 0),
@@ -329,6 +389,7 @@ function buildLegacyBaziResult(coreResult, form = {}) {
   ];
 
   const destinyLabel = getDestinyLabel(form.gender);
+  const luck = buildLuckCyclesFromDaYun(coreResult, form);
   const trueSolarApplied = Boolean(coreResult.trueSolarTime && coreResult.trueSolarTime.applied);
 
   const professional = {
@@ -412,7 +473,7 @@ function buildLegacyBaziResult(coreResult, form = {}) {
     },
     pillars,
     distribution,
-    luck: { cycles: [] },
+    luck,
     flowYears,
     flowMonths,
     professional,
@@ -493,6 +554,7 @@ function buildReadingFromForm(form, options = {}) {
     birthTime: calculationForm.birthTime,
     longitude: calculationForm.longitude,
     latitude: calculationForm.latitude,
+    gender: resolveFormGender(calculationForm),
     useTrueSolarTime: calculationForm.useTrueSolarTime,
     useEarlyLateZi: calculationForm.useEarlyLateZi,
     termsData: calculationForm.termsData || null

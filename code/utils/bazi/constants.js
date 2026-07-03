@@ -7,7 +7,8 @@ const RULES = {
   defaultDST: false,
   defaultEarlyLateZi: false,
   defaultLongitude: 120.0,
-  defaultLatitude: 39.0
+  defaultLatitude: 39.0,
+  defaultGender: null
 };
 
 module.exports = {

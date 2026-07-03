@@ -418,6 +418,170 @@ function getNaYin(stem, branch) {
   return NA_YIN_MAP[`${stem}${branch}`] || `${stem}${branch}`;
 }
 
+// 大运排盘相关函数
+const JIE_ORDER = ['小寒', '立春', '惊蛰', '清明', '立夏', '芒种', '小暑', '立秋', '白露', '寒露', '立冬', '大雪'];
+
+function getNextJie(date, termsData) {
+  const year = date.getUTCFullYear();
+  for (let y = year; y <= year + 1; y++) {
+    for (const jieName of JIE_ORDER) {
+      const jieTime = getSolarTermTime(y, jieName, termsData);
+      if (jieTime.getTime() > date.getTime()) {
+        return { name: jieName, date: jieTime };
+      }
+    }
+  }
+  throw new Error('Cannot find next jie');
+}
+
+function getPrevJie(date, termsData) {
+  const year = date.getUTCFullYear();
+  for (let y = year; y >= year - 1; y--) {
+    for (let i = JIE_ORDER.length - 1; i >= 0; i--) {
+      const jieName = JIE_ORDER[i];
+      const jieTime = getSolarTermTime(y, jieName, termsData);
+      if (jieTime.getTime() <= date.getTime()) {
+        return { name: jieName, date: jieTime };
+      }
+    }
+  }
+  throw new Error('Cannot find prev jie');
+}
+
+function normalizeGender(gender) {
+  if (gender === undefined || gender === null) return null;
+  const value = String(gender).trim().toLowerCase();
+  if (['男', 'male', 'm', '1', 'true', '阳', '阳男', '阳干', '阳命', '阳性', 'man', 'boy'].includes(value)) {
+    return true;
+  }
+  if (['女', 'female', 'f', '0', 'false', '阴', '阴女', '阴干', '阴命', '阴性', 'woman', 'girl'].includes(value)) {
+    return false;
+  }
+  return null;
+}
+
+const GZ_INDEX_BY_PAIR = (() => {
+  const map = {};
+  for (let index = 0; index < 60; index += 1) {
+    const stem = STEMS[index % 10];
+    const branch = BRANCHES[index % 12];
+    if (!map[stem]) map[stem] = {};
+    map[stem][branch] = index;
+  }
+  return map;
+})();
+
+function getGanZhiIndex(stem, branch) {
+  const stemMap = GZ_INDEX_BY_PAIR[stem];
+  if (!stemMap) return -1;
+  const value = stemMap[branch];
+  return Number.isInteger(value) ? value : -1;
+}
+
+function getXunVoidBranchesByGanZhi(stem, branch) {
+  const idx = getGanZhiIndex(stem, branch);
+  if (idx < 0) return [];
+  const cycleIndex = Math.floor(idx / 10) * 10;
+  const inCycle = [];
+  for (let i = 0; i < 10; i += 1) {
+    inCycle.push(BRANCHES[(cycleIndex + i) % 12]);
+  }
+  return BRANCHES.filter((item) => !inCycle.includes(item));
+}
+
+function calculateStartYunTime(birthDate, gender, yearStem, termsData) {
+  const normalizedGender = normalizeGender(gender);
+  const yearStemYang = STEM_META[yearStem].yinYang === '阳';
+  if (normalizedGender === null) return null;
+
+  const isMale = normalizedGender;
+  const isShun = (yearStemYang && isMale) || (!yearStemYang && !isMale);
+
+  const targetJie = isShun ? getNextJie(birthDate, termsData) : getPrevJie(birthDate, termsData);
+  const diffMs = isShun 
+    ? targetJie.date.getTime() - birthDate.getTime()
+    : birthDate.getTime() - targetJie.date.getTime();
+
+  const totalHours = diffMs / (1000 * 60 * 60);
+  const totalChen = Math.floor(totalHours / 2);
+
+  const startYear = Math.floor(totalChen / 36);
+  const remainingChenAfterYear = totalChen % 36;
+  const startMonth = Math.floor(remainingChenAfterYear / 3);
+  const remainingChenAfterMonth = remainingChenAfterYear % 3;
+  const startDay = remainingChenAfterMonth * 10;
+
+  const startYunDate = new Date(birthDate.getTime());
+  startYunDate.setUTCFullYear(startYunDate.getUTCFullYear() + startYear);
+  startYunDate.setUTCMonth(startYunDate.getUTCMonth() + startMonth);
+  startYunDate.setUTCDate(startYunDate.getUTCDate() + startDay);
+
+  return {
+    direction: isShun ? '顺' : '逆',
+    targetJie: targetJie.name,
+    diffDays: Number((totalHours / 24).toFixed(2)),
+    startAge: startYear,
+    startMonth,
+    startDay,
+    startDate: startYunDate.toISOString().split('T')[0]
+  };
+}
+
+function generateDaYunGanZhi(monthStem, monthBranch, direction, count = 8) {
+  const result = [];
+  let currentStemIndex = STEMS.indexOf(monthStem);
+  let currentBranchIndex = BRANCHES.indexOf(monthBranch);
+  const step = direction === '顺' ? 1 : -1;
+
+  for (let i = 0; i < count; i++) {
+    currentStemIndex = (currentStemIndex + step + 10) % 10;
+    currentBranchIndex = (currentBranchIndex + step + 12) % 12;
+    const stem = STEMS[currentStemIndex];
+    const branch = BRANCHES[currentBranchIndex];
+    result.push({
+      stem,
+      branch,
+      ganZhi: `${stem}${branch}`,
+      index: i
+    });
+  }
+  return result;
+}
+
+function calculateDaYun(birthDate, gender, yearStem, monthStem, monthBranch, termsData, dayStem) {
+  const startInfo = calculateStartYunTime(birthDate, gender, yearStem, termsData);
+  if (!startInfo) return null;
+  const dayMasterStem = dayStem || getDayPillar(birthDate).stem;
+  const startCalendarYear = Number(startInfo.startDate.slice(0, 4));
+  const daYunList = generateDaYunGanZhi(monthStem, monthBranch, startInfo.direction);
+
+  daYunList.forEach((item, index) => {
+    const startAge = startInfo.startAge + index * 10;
+    const startYear = startCalendarYear + index * 10;
+    const endAge = startAge + 9;
+    const endYear = startYear + 9;
+    const xunVoidBranches = getXunVoidBranchesByGanZhi(item.stem, item.branch);
+    item.index = index;
+    item.label = `第${index + 1}步大运`;
+    item.startAge = startAge;
+    item.endAge = endAge;
+    item.startYear = startYear;
+    item.endYear = endYear;
+    item.ageRange = `${startAge}-${endAge}岁`;
+    item.yearRange = `${startYear}-${endYear}`;
+    item.naYin = getNaYin(item.stem, item.branch);
+    item.tenGod = getTenGod(dayMasterStem, item.stem);
+    item.xunVoidBranches = xunVoidBranches;
+    item.xunVoidText = xunVoidBranches.length ? xunVoidBranches.join('、') : '无';
+    item.fullStemBranch = `${item.stem}${item.branch}`;
+  });
+
+  return {
+    ...startInfo,
+    list: daYunList
+  };
+}
+
 function getZiHourLabel(date, useEarlyLateZi) {
   if (!useEarlyLateZi) return '子';
   const hour = date.getUTCHours();
@@ -464,6 +628,9 @@ function countElements(pillars) {
 
 function buildBaziChart(input, options = {}) {
   const requestedDST = isDSTRequested(options);
+  const genderValue = options.gender !== undefined && options.gender !== null
+    ? options.gender
+    : (input.gender !== undefined && input.gender !== null ? input.gender : RULES.defaultGender);
   const optionsWithDefaults = {
     useTrueSolarTime: options.useTrueSolarTime,
     useEarlyLateZi: Boolean(options.useEarlyLateZi),
@@ -471,6 +638,7 @@ function buildBaziChart(input, options = {}) {
     locationSource: options.locationSource || input.birthPlace || '',
     locationMode: options.locationMode || '',
     locationType: options.locationType || '',
+    gender: genderValue,
     termsData: options.termsData || input.termsData || null,
     useSummerTime: requestedDST,
     applyDST: requestedDST
@@ -482,6 +650,7 @@ function buildBaziChart(input, options = {}) {
       : RULES.defaultTrueSolarTime,
     useEarlyLateZi: optionsWithDefaults.useEarlyLateZi,
     longitude: input.longitude,
+    gender: optionsWithDefaults.gender,
     termsData: optionsWithDefaults.termsData,
     applyDST: optionsWithDefaults.useSummerTime,
     isUnknownBeijing: optionsWithDefaults.useUnknownBeijing || isUnknownBeijingMode(optionsWithDefaults)
@@ -504,6 +673,16 @@ function buildBaziChart(input, options = {}) {
   const dayPillar = getDayPillar(readingDate, { useEarlyLateZi: normalized.useEarlyLateZi });
   const hourStemBasePillar = getHourStemBasePillar(readingDate, dayPillar, { useEarlyLateZi: normalized.useEarlyLateZi });
   const hourPillar = getHourPillar(readingDate, hourStemBasePillar.stem);
+
+  const daYun = calculateDaYun(
+    readingDate,
+    normalized.gender,
+    yearPillar.stem,
+    monthPillar.stem,
+    monthPillar.branch,
+    normalized.termsData,
+    dayPillar.stem
+  );
 
   const pillars = [yearPillar, monthPillar, dayPillar, hourPillar];
   const elementCount = countElements(pillars);
@@ -540,7 +719,8 @@ function buildBaziChart(input, options = {}) {
       month: getNaYin(monthPillar.stem, monthPillar.branch),
       day: getNaYin(dayPillar.stem, dayPillar.branch),
       hour: getNaYin(hourPillar.stem, hourPillar.branch)
-    }
+    },
+    daYun
   };
 }
 
@@ -591,7 +771,8 @@ module.exports = {
   getDayPillar,
   getHourPillar,
   getTenGod,
-  getNaYin
+  getNaYin,
+  calculateDaYun
 };
 
 
