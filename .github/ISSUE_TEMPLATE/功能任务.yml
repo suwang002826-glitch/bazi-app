@@ -1,5 +1,5 @@
 name: 功能任务
-description: 新增或优化小程序功能
+description: 用于新增页面、功能或排盘能力
 title: "功能："
 labels: ["功能"]
 body:
@@ -7,8 +7,8 @@ body:
     id: goal
     attributes:
       label: 目标
-      description: 这次要完成什么？
-      placeholder: 例如：优化八字排盘结果页
+      description: 这张任务卡要完成什么？
+      placeholder: 例如：制作出生信息输入页面
     validations:
       required: true
   - type: textarea
@@ -17,9 +17,9 @@ body:
       label: 范围
       description: 这次只做哪些内容？
       placeholder: |
-        - 修改页面文案
-        - 增加结果区块
-        - 调整手机端布局
+        - 姓名输入
+        - 性别选择
+        - 公历日期选择
     validations:
       required: true
   - type: textarea
@@ -28,14 +28,15 @@ body:
       label: 验收标准
       description: 另一位协作者如何判断完成？
       placeholder: |
-        1. 微信开发者工具可预览
-        2. 页面无明显错位
-        3. 文案全部为简体中文
+        1. 页面全部中文
+        2. 手机端不横向滚动
+        3. 输入后可以看到结果
     validations:
       required: true
   - type: textarea
     id: notes
     attributes:
       label: 备注
+      description: 规则、样例或设计补充
     validations:
       required: false

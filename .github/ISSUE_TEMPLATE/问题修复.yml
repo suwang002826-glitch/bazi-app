@@ -1,0 +1,38 @@
+name: 问题修复
+description: 用于记录排盘错误、界面问题或使用异常
+title: "修复："
+labels: ["修复"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题描述
+      description: 发生了什么？
+      placeholder: 例如：某个出生时间的时柱和对照样例不一致
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 如何再次看到这个问题？
+      placeholder: |
+        1. 输入出生时间
+        2. 点击保存命盘
+        3. 查看结果
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+      description: 正确情况下应该是什么？
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 对照来源
+      description: 截图、样例、书籍或网站来源
+    validations:
+      required: false
