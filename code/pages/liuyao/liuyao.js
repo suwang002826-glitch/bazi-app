@@ -1,6 +1,24 @@
-const { buildHexagram, buildTimeLines, lineToPreview, randomYao } = require('../../utils/mock');
+const { buildHexagram, buildTimeLines, lineToPreview } = require('../../utils/mock');
 
 const app = getApp();
+
+const manualLineOrder = [
+  { label: '上爻', lineIndex: 5 },
+  { label: '五爻', lineIndex: 4 },
+  { label: '四爻', lineIndex: 3 },
+  { label: '三爻', lineIndex: 2 },
+  { label: '二爻', lineIndex: 1 },
+  { label: '初爻', lineIndex: 0 }
+];
+
+const manualYaoOptions = [
+  { name: '老阴', value: 6 },
+  { name: '少阴', value: 8 },
+  { name: '少阳', value: 7 },
+  { name: '老阳', value: 9 }
+];
+
+const emptyManualLines = () => Array.from({ length: 6 }, () => null);
 
 Page({
   data: {
@@ -16,12 +34,17 @@ Page({
     ],
     lines: [],
     linePreviews: [],
+    manualLines: emptyManualLines(),
+    manualRows: [],
+    manualYaoOptionNames: manualYaoOptions.map((item) => item.name),
+    manualSelectedCount: 0,
     numberSeed: '',
     currentTimeLabel: '',
     disclaimer: app.globalData.disclaimer
   },
 
   onLoad() {
+    this.resetManualRows();
     this.refreshCurrentTimeLabel();
   },
 
@@ -36,13 +59,17 @@ Page({
       wx.navigateTo({ url: '/pages/liuyao-result/liuyao-result' });
       return;
     }
+    const manualLines = this.normalizeManualLines(restore.lines || []);
     this.setData({
       question: restore.question || '',
       categoryIndex: Number.isInteger(restore.categoryIndex) ? restore.categoryIndex : 0,
       modeIndex: Number.isInteger(restore.modeIndex) ? restore.modeIndex : 0,
       numberSeed: restore.numberSeed || '',
       lines: restore.lines || [],
-      linePreviews: restore.linePreviews || this.buildLinePreviews(restore.lines || [])
+      linePreviews: restore.linePreviews || this.buildLinePreviews(restore.lines || []),
+      manualLines,
+      manualRows: this.buildManualRows(manualLines),
+      manualSelectedCount: this.countManualLines(manualLines)
     });
   },
 
@@ -54,7 +81,10 @@ Page({
     this.setData({
       modeIndex: Number(event.currentTarget.dataset.index),
       lines: [],
-      linePreviews: []
+      linePreviews: [],
+      manualLines: emptyManualLines(),
+      manualRows: this.buildManualRows(emptyManualLines()),
+      manualSelectedCount: 0
     });
     this.refreshCurrentTimeLabel();
   },
@@ -67,26 +97,42 @@ Page({
     this.setData({ numberSeed: event.detail.value });
   },
 
-  addManualLine() {
+  onManualYaoChange(event) {
+    const rowIndex = Number(event.currentTarget.dataset.index);
+    const optionIndex = Number(event.detail.value);
+    const row = manualLineOrder[rowIndex];
+    const option = manualYaoOptions[optionIndex];
+    if (!row || !option) return;
+
+    const manualLines = this.data.manualLines.slice();
+    manualLines[row.lineIndex] = option.value;
+    const complete = this.isManualComplete(manualLines);
+    this.setData({
+      manualLines,
+      manualRows: this.buildManualRows(manualLines),
+      manualSelectedCount: this.countManualLines(manualLines),
+      lines: complete ? manualLines.slice() : [],
+      linePreviews: complete ? this.buildLinePreviews(manualLines) : []
+    });
+  },
+
+  castManual() {
     if (!this.data.question.trim()) {
       wx.showToast({ title: '请先填写所问事项', icon: 'none' });
       return;
     }
 
-    if (this.data.lines.length >= 6) {
-      this.openResult(this.data.lines);
+    const manualLines = this.data.manualLines.slice();
+    if (!this.isManualComplete(manualLines)) {
+      wx.showToast({ title: '请先选满六爻', icon: 'none' });
       return;
     }
 
-    const value = randomYao();
-    const lines = [...this.data.lines, value];
     this.setData({
-      lines,
-      linePreviews: this.buildLinePreviews(lines)
+      lines: manualLines,
+      linePreviews: this.buildLinePreviews(manualLines)
     });
-    if (lines.length === 6) {
-      this.openResult(lines);
-    }
+    this.openResult(manualLines);
   },
 
   castByCurrentTime() {
@@ -130,7 +176,14 @@ Page({
   },
 
   resetCast() {
-    this.setData({ lines: [], linePreviews: [] });
+    const manualLines = emptyManualLines();
+    this.setData({
+      lines: [],
+      linePreviews: [],
+      manualLines,
+      manualRows: this.buildManualRows(manualLines),
+      manualSelectedCount: 0
+    });
   },
 
   refreshCurrentTimeLabel(date = new Date()) {
@@ -144,6 +197,45 @@ Page({
       ...lineToPreview(value),
       position: ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'][index]
     })).reverse();
+  },
+
+  buildManualRows(manualLines) {
+    return manualLineOrder.map((row) => {
+      const value = manualLines[row.lineIndex];
+      const optionIndex = manualYaoOptions.findIndex((item) => item.value === value);
+      return {
+        label: row.label,
+        selected: optionIndex >= 0,
+        optionIndex: optionIndex >= 0 ? optionIndex : 0,
+        display: optionIndex >= 0 ? manualYaoOptions[optionIndex].name : '请选择'
+      };
+    });
+  },
+
+  resetManualRows() {
+    const manualLines = emptyManualLines();
+    this.setData({
+      manualLines,
+      manualRows: this.buildManualRows(manualLines),
+      manualSelectedCount: 0
+    });
+  },
+
+  normalizeManualLines(lines) {
+    const manualLines = emptyManualLines();
+    lines.slice(0, 6).forEach((line, index) => {
+      const value = Number(line);
+      manualLines[index] = manualYaoOptions.some((item) => item.value === value) ? value : null;
+    });
+    return manualLines;
+  },
+
+  countManualLines(manualLines) {
+    return manualLines.filter((line) => manualYaoOptions.some((item) => item.value === Number(line))).length;
+  },
+
+  isManualComplete(manualLines) {
+    return this.countManualLines(manualLines) === 6;
   },
 
   createReading(lines) {

@@ -39,13 +39,31 @@
 
     <view wx:if="{{modeIndex === 0}}" class="cast-mode-panel">
       <view class="manual-progress">
-        <text>已成 {{lines.length}} / 6 爻</text>
-        <text>静心点击六次，满六爻自动成卦</text>
+        <text>已选 {{manualSelectedCount}} / 6 爻</text>
+        <text>逐爻选择，六爻齐备后成卦</text>
       </view>
-      <view wx:if="{{linePreviews.length}}" class="line-preview-row">
-        <text wx:for="{{linePreviews}}" wx:key="position">{{item.position}} {{item.text}}</text>
+      <view class="manual-select-list">
+        <view
+          class="manual-select-row"
+          wx:for="{{manualRows}}"
+          wx:key="label"
+        >
+          <text class="manual-select-label">{{item.label}}</text>
+          <picker
+            mode="selector"
+            range="{{manualYaoOptionNames}}"
+            value="{{item.optionIndex}}"
+            bindchange="onManualYaoChange"
+            data-index="{{index}}"
+          >
+            <view class="manual-select-value {{item.selected ? 'selected' : ''}}">
+              <text>{{item.display}}</text>
+              <text class="manual-select-arrow">›</text>
+            </view>
+          </picker>
+        </view>
       </view>
-      <button class="primary cast-primary" bindtap="addManualLine">{{lines.length >= 6 ? '查看卦象' : '点爻'}}</button>
+      <button class="primary cast-primary" bindtap="castManual">生成卦象</button>
     </view>
     <view wx:elif="{{modeIndex === 1}}" class="cast-mode-panel">
       <view class="mode-note">
