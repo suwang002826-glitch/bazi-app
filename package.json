@@ -7,9 +7,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node scripts/unit-test.js && node scripts/verify.js",
+    "test": "node scripts/unit-test.js && node scripts/verify.js && node scripts/verify-edge.js && node scripts/test-liunian.js",
     "test:unit": "node scripts/unit-test.js",
-    "test:verify": "node scripts/verify.js"
+    "test:verify": "node scripts/verify.js",
+    "test:edge": "node scripts/verify-edge.js",
+    "test:liunian": "node scripts/test-liunian.js",
+    "test:dayun": "node scripts/test-dayun.js"
   },
   "repository": {
     "type": "git",
