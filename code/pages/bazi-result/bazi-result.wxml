@@ -31,6 +31,31 @@
       </view>
     </view>
 
+    <view class="share-preview-card" wx:if="{{shareCard}}">
+      <view class="share-preview-head">
+        <view>
+          <view class="share-preview-kicker">分享卡片</view>
+          <view class="share-preview-title">{{shareCard.title}}</view>
+        </view>
+        <button class="share-preview-button" open-type="share" hover-class="tap-soft">分享</button>
+      </view>
+      <view class="share-preview-subtitle">{{shareCard.subtitle || '本地命例分享'}}</view>
+      <view class="share-pillar-row">
+        <view class="share-pillar" wx:for="{{shareCard.pillars}}" wx:key="key">
+          <text>{{item.label}}</text>
+          <text>{{item.value}}</text>
+        </view>
+      </view>
+      <view class="share-preview-tags" wx:if="{{shareCard.tags.length}}">
+        <text wx:for="{{shareCard.tags}}" wx:key="*this">{{item}}</text>
+      </view>
+      <view class="share-preview-actions">
+        <view class="share-preview-action" bindtap="copyShareCardText">复制摘要</view>
+        <view class="share-preview-action primary" bindtap="generateShareCardImage">{{shareImagePath ? '重新生成图' : '生成分享图'}}</view>
+      </view>
+      <view class="share-preview-note">{{shareImagePath ? '分享图已生成，点右上分享会优先使用图片。' : '生成图片后可用于微信分享卡片。'}}</view>
+    </view>
+
     <view class="destiny-brief">
       <view class="brief-head">
         <view>
@@ -332,4 +357,6 @@
       </view>
     </view>
   </view>
+
+  <canvas class="share-card-canvas" canvas-id="baziShareCanvas"></canvas>
 </view>

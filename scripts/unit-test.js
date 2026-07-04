@@ -44,6 +44,18 @@ try {
 } catch (error) {
   resultSectionsModule = {};
 }
+let historyViewModule = {};
+try {
+  historyViewModule = require(path.join(__dirname, '../code/utils/bazi/historyView.js'));
+} catch (error) {
+  historyViewModule = {};
+}
+let shareCardModule = {};
+try {
+  shareCardModule = require(path.join(__dirname, '../code/utils/bazi/shareCard.js'));
+} catch (error) {
+  shareCardModule = {};
+}
 
 const termsData = require(path.join(__dirname, '../code/data-packs/solar-terms/solarTerms-precise-1900-2100.json'));
 
@@ -763,6 +775,99 @@ if (typeof findCurrentFlowYear === 'function') {
   ], 2026);
   assertEqual(flowYear && flowYear.yearText, '2026年', 'current flow year helper should format year text');
   assertEqual(flowYear && flowYear.value, '丙午', 'current flow year helper should return matched flow year');
+}
+
+// 15) frontend UX helpers: history search and time filter
+runHeader('Frontend UX: bazi history search and filter');
+const {
+  filterBaziHistoryRecords,
+  HISTORY_TIME_FILTERS,
+  HISTORY_SORT_OPTIONS
+} = historyViewModule;
+check(typeof filterBaziHistoryRecords === 'function', 'history filter helper should be importable', 'function', typeof filterBaziHistoryRecords);
+check(Array.isArray(HISTORY_TIME_FILTERS), 'history time filters should be importable', 'array', typeof HISTORY_TIME_FILTERS);
+check(Array.isArray(HISTORY_SORT_OPTIONS), 'history sort options should be importable', 'array', typeof HISTORY_SORT_OPTIONS);
+if (typeof filterBaziHistoryRecords === 'function') {
+  const sampleHistoryRecords = [
+    {
+      id: 'recent_shanghai',
+      title: '上海命例',
+      summary: '身弱取印',
+      savedAtMs: new Date('2026-07-04T10:00:00+08:00').getTime(),
+      input: { birthDate: '1990-01-01', birthPlace: '上海市', gender: 'male', calendarType: 'solar' }
+    },
+    {
+      id: 'old_urumqi',
+      title: '乌鲁木齐真太阳时',
+      summary: '酉时校验',
+      savedAtMs: new Date('2026-05-01T10:00:00+08:00').getTime(),
+      input: { birthDate: '1988-07-15', birthPlace: '乌鲁木齐市', gender: 'female', calendarType: 'solar' }
+    },
+    {
+      id: 'recent_lunar',
+      title: '农历闰月样本',
+      summary: '闰二月',
+      savedAtMs: new Date('2026-07-03T10:00:00+08:00').getTime(),
+      input: { lunarText: '闰二月初三', birthPlace: '广州市', gender: 'male', calendarType: 'lunar' }
+    }
+  ];
+  const keywordMatched = filterBaziHistoryRecords(sampleHistoryRecords, {
+    keyword: '乌鲁木齐',
+    now: new Date('2026-07-04T12:00:00+08:00')
+  });
+  assertEqual(keywordMatched.length, 1, 'history search should match title and birth place');
+  assertEqual(keywordMatched[0].id, 'old_urumqi', 'history search should return matched case');
+
+  const recentOnly = filterBaziHistoryRecords(sampleHistoryRecords, {
+    timeFilter: '7d',
+    now: new Date('2026-07-04T12:00:00+08:00')
+  });
+  assertEqual(recentOnly.length, 2, 'history 7-day filter should hide old saved cases');
+
+  const birthAscending = filterBaziHistoryRecords(sampleHistoryRecords, {
+    sortMode: 'birth_asc',
+    now: new Date('2026-07-04T12:00:00+08:00')
+  });
+  assertEqual(birthAscending[0].id, 'old_urumqi', 'birth date ascending sort should put earliest birth date first');
+}
+
+// 16) frontend UX helpers: share card model
+runHeader('Frontend UX: bazi share card model');
+const { buildBaziShareCardModel } = shareCardModule;
+check(typeof buildBaziShareCardModel === 'function', 'share card model helper should be importable', 'function', typeof buildBaziShareCardModel);
+if (typeof buildBaziShareCardModel === 'function') {
+  const shareModel = buildBaziShareCardModel({
+    displayName: '测试命例',
+    destinyLabel: '乾造',
+    solarTime: '1990-01-01 12:00:00',
+    birthPlace: '上海市',
+    pillars: {
+      year: { fullStemBranch: '己巳' },
+      month: { fullStemBranch: '丙子' },
+      day: { fullStemBranch: '丙寅' },
+      hour: { fullStemBranch: '甲午' }
+    },
+    pillarsP0: {
+      year: { fullStemBranch: '己巳' },
+      month: { fullStemBranch: '丙子' },
+      day: { fullStemBranch: '丙寅' },
+      hour: { fullStemBranch: '甲午' }
+    },
+    luck: { cycles: [{ value: '丁丑', fullStemBranch: '丁丑', yearRange: '1995-2004', isCurrent: true }] },
+    flowYears: [{ year: 2026, value: '丙午', tenGod: '比肩', naYin: '天河水' }]
+  }, {
+    currentFlowYear: { year: 2026, value: '丙午', tenGod: '比肩', naYin: '天河水' },
+    activeLuck: { value: '丁丑', yearRange: '1995-2004' }
+  });
+  assertEqual(shareModel.pillarsText, '己巳 / 丙子 / 丙寅 / 甲午', 'share card should include four pillar text');
+  check(
+    shareModel.shareTitle.includes('测试命例') && shareModel.shareTitle.includes('己巳'),
+    'share title should include case name and first pillar',
+    'contains case name and year pillar',
+    shareModel.shareTitle
+  );
+  assertEqual(shareModel.tags.includes('大运 丁丑'), true, 'share card tags should include active luck');
+  assertEqual(shareModel.tags.includes('流年 丙午'), true, 'share card tags should include current flow year');
 }
 
 console.log(`\nUnit Test Summary: ${passed} passed, ${failed} failed`);

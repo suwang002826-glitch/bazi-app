@@ -10,6 +10,7 @@ const {
   toggleResultSection,
   findCurrentFlowYear
 } = require('../../utils/bazi/resultSections');
+const { buildBaziShareCardModel } = require('../../utils/bazi/shareCard');
 
 const RESULT_TABS = ['本命', '解盘', '大运流年', '关注点'];
 const HIDDEN_STEM_LEVELS = ['本气', '中气', '余气'];
@@ -318,6 +319,8 @@ Page({
     selectedFlowLuckIndex: 0,
     currentFlowYear: null,
     sectionExpanded: getDefaultResultSectionState(),
+    shareCard: null,
+    shareImagePath: '',
     readingInput: null,
     shareToken: ''
   },
@@ -382,6 +385,11 @@ Page({
     const flowTimelineState = buildFlowTimelineState(result, {
       luckIndex: professionalDetail.selectedLuckIndex || 0
     });
+    const currentFlowYear = findCurrentFlowYear(result.flowYears);
+    const shareCard = buildBaziShareCardModel(result, {
+      currentFlowYear,
+      activeLuck: professionalDetail.activeLuck
+    });
 
     const shareToken = reading.shareToken || this.ensureShareToken(reading);
 
@@ -396,7 +404,8 @@ Page({
       selectedYearIndex: professionalDetail.selectedYearIndex || 0,
       selectedMonthIndex: professionalDetail.selectedMonthIndex || 0,
       selectedYearOffset: professionalDetail.selectedYearOffset || 0,
-      currentFlowYear: findCurrentFlowYear(result.flowYears),
+      currentFlowYear,
+      shareCard,
       sectionExpanded: getDefaultResultSectionState(),
       ...flowTimelineState
     });
@@ -423,13 +432,109 @@ Page({
     };
   },
 
+  copyShareCardText() {
+    const card = this.data.shareCard;
+    if (!card) return;
+    const content = [
+      card.title,
+      card.subtitle,
+      `四柱：${card.pillarsText}`,
+      card.luckText ? `当前大运：${card.luckText}` : '',
+      card.flowYearText ? `当年流年：${card.flowYearText}` : '',
+      card.footer
+    ].filter(Boolean).join('\n');
+    wx.setClipboardData({
+      data: content,
+      success: () => wx.showToast({ title: '已复制分享摘要', icon: 'success' })
+    });
+  },
+
+  generateShareCardImage() {
+    const card = this.data.shareCard;
+    if (!card || !wx.createCanvasContext || !wx.canvasToTempFilePath) {
+      wx.showToast({ title: '当前环境暂不支持生成图片', icon: 'none' });
+      return;
+    }
+
+    const ctx = wx.createCanvasContext('baziShareCanvas', this);
+    const width = 600;
+    const height = 840;
+    ctx.setFillStyle('#07080e');
+    ctx.fillRect(0, 0, width, height);
+    ctx.setFillStyle('#121532');
+    ctx.fillRect(24, 24, width - 48, height - 48);
+    ctx.setStrokeStyle('#d9bf71');
+    ctx.setLineWidth(2);
+    ctx.strokeRect(24, 24, width - 48, height - 48);
+
+    ctx.setFillStyle('#d9bf71');
+    ctx.setFontSize(28);
+    ctx.fillText('八字排盘', 56, 78);
+    ctx.setFillStyle('#f2f0e4');
+    ctx.setFontSize(38);
+    ctx.fillText(card.title.slice(0, 14), 56, 132);
+    ctx.setFillStyle('rgba(242, 240, 228, 0.68)');
+    ctx.setFontSize(22);
+    ctx.fillText((card.subtitle || '本地命例分享').slice(0, 28), 56, 174);
+
+    const boxY = 226;
+    const boxW = 118;
+    card.pillars.forEach((pillar, index) => {
+      const x = 56 + index * 128;
+      ctx.setFillStyle('rgba(217, 191, 113, 0.10)');
+      ctx.fillRect(x, boxY, boxW, 148);
+      ctx.setStrokeStyle('rgba(217, 191, 113, 0.30)');
+      ctx.strokeRect(x, boxY, boxW, 148);
+      ctx.setFillStyle('rgba(242, 240, 228, 0.62)');
+      ctx.setFontSize(20);
+      ctx.fillText(pillar.label, x + 32, boxY + 34);
+      ctx.setFillStyle('#f2f0e4');
+      ctx.setFontSize(34);
+      ctx.fillText(pillar.value, x + 24, boxY + 94);
+    });
+
+    const lines = [
+      card.luckText ? `当前大运：${card.luckText}` : '',
+      card.flowYearText ? `当年流年：${card.flowYearText}` : '',
+      card.tags.length ? `标签：${card.tags.join(' · ')}` : ''
+    ].filter(Boolean);
+    ctx.setFillStyle('#f2f0e4');
+    ctx.setFontSize(26);
+    lines.forEach((line, index) => {
+      ctx.fillText(line.slice(0, 26), 56, 444 + index * 46);
+    });
+    ctx.setFillStyle('rgba(242, 240, 228, 0.54)');
+    ctx.setFontSize(22);
+    ctx.fillText(card.footer, 56, height - 76);
+
+    ctx.draw(false, () => {
+      wx.canvasToTempFilePath({
+        canvasId: 'baziShareCanvas',
+        width,
+        height,
+        destWidth: width * 2,
+        destHeight: height * 2,
+        success: (res) => {
+          this.setData({ shareImagePath: res.tempFilePath || '' });
+          wx.showToast({ title: '分享图已生成', icon: 'success' });
+        },
+        fail: () => wx.showToast({ title: '分享图生成失败', icon: 'none' })
+      }, this);
+    });
+  },
+
   onShareAppMessage() {
     const token = this.ensureShareToken(this.buildCurrentReadingSnapshot());
 
-    return {
-      title: `${this.data.result.displayName || '八字'}${this.data.result.destinyLabel || ''}排盘结果`,
+    const payload = {
+      title: (this.data.shareCard && this.data.shareCard.shareTitle)
+        || `${this.data.result.displayName || '八字'}${this.data.result.destinyLabel || ''}排盘结果`,
       path: `/pages/bazi-result/bazi-result?shareToken=${encodeURIComponent(token)}`
     };
+    if (this.data.shareImagePath) {
+      payload.imageUrl = this.data.shareImagePath;
+    }
+    return payload;
   },
 
   onResultTabChange(event) {
