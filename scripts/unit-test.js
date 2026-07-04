@@ -607,6 +607,7 @@ const {
   REQUIRED_WENZHEN_SHENSHA,
   createWenZhenShenShaSampleTemplate,
   validateWenZhenShenShaSample,
+  validateWenZhenShenShaDataset,
   summarizeWenZhenShenShaReadiness
 } = shenShaSampleModule;
 
@@ -634,6 +635,12 @@ check(
   typeof validateWenZhenShenShaSample
 );
 check(
+  typeof validateWenZhenShenShaDataset === 'function',
+  'WenZhen shensha dataset validator should be importable',
+  'function',
+  typeof validateWenZhenShenShaDataset
+);
+check(
   typeof summarizeWenZhenShenShaReadiness === 'function',
   'WenZhen shensha readiness summarizer should be importable',
   'function',
@@ -643,10 +650,63 @@ check(
 if (
   typeof createWenZhenShenShaSampleTemplate === 'function' &&
   typeof validateWenZhenShenShaSample === 'function' &&
+  typeof validateWenZhenShenShaDataset === 'function' &&
   typeof summarizeWenZhenShenShaReadiness === 'function'
 ) {
   const template = createWenZhenShenShaSampleTemplate();
   assertEqual(template.length, REQUIRED_WENZHEN_SHENSHA.length, 'sample template should cover every required shensha');
+  const tianYiSample = template.find((item) => item.spiritName === '天乙贵人');
+  check(
+    tianYiSample && tianYiSample.rule && tianYiSample.rule.classicQuote && tianYiSample.rule.classicQuote.includes('甲戊庚牛羊'),
+    'Tianyi Guiren sample metadata should preserve classic quote text',
+    'classic quote contains 甲戊庚牛羊',
+    tianYiSample && tianYiSample.rule && tianYiSample.rule.classicQuote
+  );
+  check(
+    tianYiSample && tianYiSample.rule && Array.isArray(tianYiSample.rule.interpretationKeywords) && tianYiSample.rule.interpretationKeywords.includes('化险为夷'),
+    'Tianyi Guiren sample metadata should preserve interpretation keywords without changing algorithm readiness',
+    'keywords contain 化险为夷',
+    tianYiSample && tianYiSample.rule && tianYiSample.rule.interpretationKeywords
+  );
+  const tianDeSample = template.find((item) => item.spiritName === '天德');
+  check(
+    tianDeSample && tianDeSample.rule && tianDeSample.rule.classicQuote && tianDeSample.rule.classicQuote.includes('寅月丁'),
+    'Tiande Guiren sample metadata should preserve classic quote text',
+    'classic quote contains 寅月丁',
+    tianDeSample && tianDeSample.rule && tianDeSample.rule.classicQuote
+  );
+  check(
+    tianDeSample && tianDeSample.rule && Array.isArray(tianDeSample.rule.interpretationKeywords) && tianDeSample.rule.interpretationKeywords.includes('化解危难'),
+    'Tiande Guiren sample metadata should preserve interpretation keywords without changing algorithm readiness',
+    'keywords contain 化解危难',
+    tianDeSample && tianDeSample.rule && tianDeSample.rule.interpretationKeywords
+  );
+  const yueDeSample = template.find((item) => item.spiritName === '月德');
+  check(
+    yueDeSample && yueDeSample.rule && yueDeSample.rule.classicQuote && yueDeSample.rule.classicQuote.includes('寅午戌月生者见丙'),
+    'Yuede Guiren sample metadata should preserve classic quote text',
+    'classic quote contains 寅午戌月生者见丙',
+    yueDeSample && yueDeSample.rule && yueDeSample.rule.classicQuote
+  );
+  check(
+    yueDeSample && yueDeSample.rule && Array.isArray(yueDeSample.rule.interpretationKeywords) && yueDeSample.rule.interpretationKeywords.includes('勤勉敏慧'),
+    'Yuede Guiren sample metadata should preserve interpretation keywords without changing algorithm readiness',
+    'keywords contain 勤勉敏慧',
+    yueDeSample && yueDeSample.rule && yueDeSample.rule.interpretationKeywords
+  );
+  const yiMaSample = template.find((item) => item.spiritName === '驿马');
+  check(
+    yiMaSample && yiMaSample.rule && yiMaSample.rule.classicQuote && yiMaSample.rule.classicQuote.includes('申子辰马在寅'),
+    'Yima sample metadata should preserve classic quote text',
+    'classic quote contains 申子辰马在寅',
+    yiMaSample && yiMaSample.rule && yiMaSample.rule.classicQuote
+  );
+  check(
+    yiMaSample && yiMaSample.rule && Array.isArray(yiMaSample.rule.interpretationKeywords) && yiMaSample.rule.interpretationKeywords.includes('远行'),
+    'Yima sample metadata should preserve interpretation keywords without changing algorithm readiness',
+    'keywords contain 远行',
+    yiMaSample && yiMaSample.rule && yiMaSample.rule.interpretationKeywords
+  );
   const collectedSamples = template.filter((item) => item.status === 'collected');
   const pendingSamples = template.filter((item) => item.status === 'pending_wenzhen_sample');
   check(
@@ -710,10 +770,73 @@ if (
   });
   assertEqual(validSample.ok, true, 'validator should accept complete WenZhen-backed shensha sample shape');
 
+  const negativeSample = validateWenZhenShenShaSample({
+    spiritName: '驿马',
+    rule: {
+      basis: '以问真神煞说明页和实际排盘截图为准',
+      calculation: '以年支、日支查余三支；本例四柱未出现对应驿马地支'
+    },
+    cases: [{
+      caseId: 'wz-yima-neg-001',
+      source: '问真八字',
+      screenshotRef: 'wenzhen-yima-neg-001-plate.jpg',
+      input: {
+        solarTime: '2025-06-01 23:01:00',
+        gender: '男',
+        longitude: 120,
+        latitude: 39,
+        useTrueSolarTime: false,
+        useDst: false
+      },
+      expect: {
+        pillars: {
+          year: '乙巳',
+          month: '辛巳',
+          day: '壬寅',
+          hour: '庚子'
+        },
+        spirits: [],
+        noHitReason: '年支巳查亥，日支寅查申；其余三支未见亥或申，问真未显示驿马'
+      }
+    }]
+  });
+  assertEqual(negativeSample.ok, true, 'validator should accept WenZhen-backed no-hit shensha sample with reason');
+
+  const ruleOnlyCollectingSample = {
+    spiritName: '羊刃',
+    status: 'collecting',
+    rule: {
+      basis: '以日干查四地支',
+      calculation: '问真规则页已确认查法，尚未补充实际命例，不允许进入算法开发',
+      confirmedBy: '问真八字',
+      screenshotRefs: ['wenzhen-yangren-rule-001.jpg']
+    },
+    cases: []
+  };
+  const ruleOnlyValidation = validateWenZhenShenShaSample(ruleOnlyCollectingSample);
+  assertEqual(ruleOnlyValidation.ok, true, 'validator should accept rule-only collecting shensha material with screenshots');
+  const ruleOnlyReadiness = summarizeWenZhenShenShaReadiness([ruleOnlyCollectingSample]);
+  const yangRenReadiness = ruleOnlyReadiness.items.find((item) => item.spiritName === '羊刃');
+  assertEqual(yangRenReadiness.ready, false, 'rule-only collecting shensha should not be ready for implementation');
+  assertEqual(yangRenReadiness.errors.length, 0, 'rule-only collecting shensha should not produce format errors');
+
   const readiness = summarizeWenZhenShenShaReadiness(template);
   assertEqual(readiness.ready, false, 'partial shensha template should not be ready for implementation');
   assertEqual(readiness.readyCount, collectedSamples.length, 'partial shensha template should count collected targets as ready');
   assertEqual(readiness.pendingCount, REQUIRED_WENZHEN_SHENSHA.length - collectedSamples.length, 'partial shensha template should keep unverified targets pending');
+
+  const datasetValidation = validateWenZhenShenShaDataset(template, {
+    screenshotDir: path.join(__dirname, '../docs/shensha-samples')
+  });
+  assertEqual(datasetValidation.ok, true, 'current WenZhen shensha dataset should have valid shape and screenshot references');
+  assertEqual(datasetValidation.readyCount, collectedSamples.length, 'dataset validator should report ready collected sample count');
+
+  const missingScreenshotSamples = JSON.parse(JSON.stringify(collectedSamples));
+  missingScreenshotSamples[0].cases[0].screenshotRef = 'missing-wenzhen-sample.jpg';
+  const missingScreenshotValidation = validateWenZhenShenShaDataset(missingScreenshotSamples, {
+    screenshotDir: path.join(__dirname, '../docs/shensha-samples')
+  });
+  assertEqual(missingScreenshotValidation.ok, false, 'dataset validator should reject missing screenshot references');
 }
 
 // 13) frontend UX helpers: city selector
