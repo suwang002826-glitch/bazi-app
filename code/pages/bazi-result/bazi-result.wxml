@@ -1,237 +1,400 @@
 <view class="page bazi-result-page">
   <view class="result-topbar">
     <view class="back-button" bindtap="goBack">返回</view>
-    <view class="result-title">八字排盘</view>
-    <view class="more-button"></view>
+    <view class="result-title">八字排盘结果</view>
+    <view class="more-button">
+      <button class="share-button" open-type="share" hover-class="none">分享</button>
+    </view>
   </view>
 
   <view wx:if="{{!result}}" class="empty-state">
-    <view class="empty-title">暂无排盘</view>
-    <view class="empty-copy">请先填写出生信息，再生成八字排盘。</view>
-    <button bindtap="goBack">返回填写</button>
+    <view class="empty-title">无可显示排盘结果</view>
+    <view class="empty-copy">请先返回输入页重新排盘。</view>
+    <button bindtap="goBack">返回输入页</button>
   </view>
 
-  <view wx:if="{{result}}" class="result-shell">
+  <view wx:else class="result-shell">
     <view class="bazi-profile">
       <view class="profile-seal">{{result.dayMaster.stem}}</view>
       <view class="profile-main">
-        <view class="profile-name">{{result.displayName}}</view>
-        <view class="profile-time">阳历：{{result.solarTime}}</view>
-        <view class="profile-time">校准：{{result.adjustedSolarTime}}</view>
-        <view class="profile-place">{{result.birthPlace}} · 东经 {{result.longitude}}°</view>
+        <view class="profile-name">{{result.destinyLabel || '命例'}} {{result.displayName}}</view>
+        <view class="profile-time">性别：{{result.personProfile && result.personProfile.gender ? result.personProfile.gender : (result.gender || '未知')}}</view>
+        <view class="profile-time">日历：{{result.calendarInfo && result.calendarInfo.inputText ? result.calendarInfo.inputText : result.solarTime}}</view>
+        <view class="profile-time" wx:if="{{result.calendarInfo && result.calendarInfo.outputText}}">转换：{{result.calendarInfo.outputText}}</view>
+        <view class="profile-time" wx:if="{{result.calendarInfo && result.calendarInfo.mode}}">方式：{{result.calendarInfo.mode}}</view>
+        <view class="profile-time">标准时间：{{result.adjustedSolarTime}}</view>
+        <view class="profile-place">{{result.birthPlace}}</view>
       </view>
       <view class="profile-side">
-        <view class="profile-status">{{result.professional.strength.status}}</view>
-        <view class="profile-archive" bindtap="archiveCurrentCase" hover-class="tap-soft">存档</view>
+        <view class="profile-status" bindtap="openBaziExplanation" data-topic="strength" data-value="{{result.professional && result.professional.strength ? result.professional.strength.status : '八字排盘'}}">{{result.professional && result.professional.strength ? result.professional.strength.status : '八字排盘'}}</view>
+        <view class="profile-archive" bindtap="archiveCurrentCase" hover-class="tap-soft">保存命例</view>
+      </view>
+    </view>
+
+    <view class="share-preview-card" wx:if="{{shareCard}}">
+      <view class="share-preview-head">
+        <view>
+          <view class="share-preview-kicker">分享卡片</view>
+          <view class="share-preview-title">{{shareCard.title}}</view>
+        </view>
+        <button class="share-preview-button" open-type="share" hover-class="tap-soft">分享</button>
+      </view>
+      <view class="share-preview-subtitle">{{shareCard.subtitle || '本地命例分享'}}</view>
+      <view class="share-pillar-row">
+        <view class="share-pillar" wx:for="{{shareCard.pillars}}" wx:key="key">
+          <text>{{item.label}}</text>
+          <text>{{item.value}}</text>
+        </view>
+      </view>
+      <view class="share-preview-tags" wx:if="{{shareCard.tags.length}}">
+        <text wx:for="{{shareCard.tags}}" wx:for-index="tagIndex" wx:key="tagIndex">{{item}}</text>
+      </view>
+      <view class="share-preview-actions">
+        <view class="share-preview-action" bindtap="copyShareCardText">复制摘要</view>
+        <view class="share-preview-action primary" bindtap="generateShareCardImage">{{shareImagePath ? '重新生成图' : '生成分享图'}}</view>
+      </view>
+      <view class="share-preview-note">{{shareImagePath ? '分享图已生成，点右上分享会优先使用图片。' : '生成图片后可用于微信分享卡片。'}}</view>
+    </view>
+
+    <view class="destiny-brief">
+      <view class="brief-head">
+        <view>
+          <view class="brief-kicker">基础信息</view>
+          <view class="brief-title">{{result.professional.chartSummary.oneLine}}</view>
+        </view>
+        <view class="brief-seal">{{result.dayMaster.text}}</view>
+      </view>
+      <view class="brief-grid">
+        <view class="brief-item">
+          <text>生肖</text>
+          <text>{{result.detailProfile ? result.detailProfile.zodiac : ''}}</text>
+        </view>
+        <view class="brief-item">
+          <text>节气</text>
+          <text>{{result.solarTermInfoP0 && result.solarTermInfoP0.previous && result.solarTermInfoP0.previous.name}}</text>
+        </view>
+        <view class="brief-item">
+          <text>五行</text>
+          <text>{{result.fiveElementsP0 ? result.fiveElementsP0.dominant : ''}}</text>
+        </view>
+        <view class="brief-item" bindtap="openBaziExplanation" data-topic="void" data-value="{{result.dayVoid ? result.dayVoid.text : '无'}}">
+          <text>空亡</text>
+          <text>{{result.dayVoid ? result.dayVoid.text : '无'}}</text>
+        </view>
       </view>
     </view>
 
     <view class="result-tabs">
-      <view class="result-tab {{activeResultTab === item ? 'active' : ''}}" wx:for="{{resultTabs}}" wx:key="*this" bindtap="onResultTabChange" data-tab="{{item}}">{{item}}</view>
+      <view
+        class="result-tab {{activeResultTabIndex === index ? 'active' : ''}}"
+        wx:for="{{resultTabs}}"
+        wx:key="*this"
+        wx:for-index="index"
+        bindtap="onResultTabChange"
+        data-tab-index="{{index}}"
+      >{{item}}</view>
     </view>
 
-    <view wx:if="{{isInfoTab}}" class="basic-info-page">
-      <view class="basic-info-hero">
-        <view class="basic-info-seal">{{basicInfo.seal}}</view>
-        <view class="basic-info-main">
-          <view class="basic-info-name">{{basicInfo.name}}</view>
-          <view class="basic-info-sub">命盘基础档案</view>
-        </view>
-        <view class="basic-info-chips">
-          <view class="basic-info-chip" wx:for="{{basicInfo.chips}}" wx:key="*this">{{item}}</view>
-        </view>
-      </view>
-
-      <view class="info-list-card">
-        <view class="info-row" wx:for="{{basicInfo.rows}}" wx:key="label">
-          <view class="info-label">{{item.label}}</view>
-          <view class="info-value">{{item.value}}</view>
-        </view>
-      </view>
-
-      <view class="info-section-title">命盘要点</view>
-      <view class="info-highlight-grid">
-        <view class="info-highlight-card" wx:for="{{basicInfo.highlights}}" wx:key="label">
-          <view class="highlight-label">{{item.label}}</view>
-          <view class="highlight-value">{{item.value}}</view>
-        </view>
-      </view>
-
-      <view class="info-list-card compact-info-card">
-        <view class="info-row" wx:for="{{basicInfo.palaceRows}}" wx:key="label">
-          <view class="info-label">{{item.label}}</view>
-          <view class="info-value">{{item.value}}</view>
-        </view>
-      </view>
-    </view>
-
-    <view wx:if="{{isBasicTab}}">
-      <view class="plate-board">
-        <view class="plate-head-row">
-          <view class="plate-label-cell">日期</view>
-          <view class="plate-head-cell" wx:for="{{songPlate.pillars}}" wx:key="label">{{item.label}}</view>
-        </view>
-
-        <view class="plate-row {{row.rowClass}}" wx:for="{{songPlate.tableRows}}" wx:for-item="row" wx:key="label">
-          <view class="plate-label-cell">{{row.label}}</view>
-          <view class="plate-cell" wx:for="{{row.cells}}" wx:for-item="cell" wx:key="index">
-            <block wx:if="{{row.isMain}}">
-              <view class="plate-main {{cell.className}}">{{cell.text}}</view>
-            </block>
-            <block wx:if="{{row.isHidden}}">
-              <view class="plate-hidden-wrap">
-                <view class="plate-hidden-item" wx:for="{{cell.hiddenItems}}" wx:for-item="hidden" wx:key="stem">
-                  <text class="plate-hidden-stem {{hidden.className}}">{{hidden.stem}}</text>
-                  <text class="plate-hidden-god">{{hidden.tenGod}}</text>
-                </view>
-              </view>
-            </block>
-            <block wx:if="{{row.isText}}">
-              <view class="plate-text-line" wx:for="{{cell.lines}}" wx:for-item="line" wx:key="*this">{{line}}</view>
-            </block>
-            <block wx:if="{{row.isSpirit}}">
-              <view class="plate-spirit-wrap">
-                <text class="plate-spirit-name" wx:for="{{cell.spiritItems}}" wx:for-item="spirit" wx:key="name" bindtap="openSpiritInfo" data-name="{{spirit.name}}">{{spirit.name}}</text>
-              </view>
-            </block>
-          </view>
-        </view>
-      </view>
-
-      <view class="five-element-ratio">
-        <view class="ratio-head">
+    <view wx:if="{{activeResultTabIndex === 0}}">
+      <view class="song-overview">
+        <view class="overview-head">
           <view>
-            <view class="ratio-kicker">五行比例</view>
-            <view class="ratio-title">命盘五行分布</view>
+            <view class="overview-title">核心四柱</view>
+            <view class="overview-copy">默认收起藏干、空亡、纳音等详情，减少滚动。</view>
           </view>
-          <view class="ratio-daymaster">日主 {{result.dayMaster.text}}</view>
+          <view class="fold-small-action" bindtap="onToggleResultSection" data-section-key="pillarDetails">{{sectionExpanded.pillarDetails ? '收起' : '展开详情'}}</view>
         </view>
-        <view class="ratio-row" wx:for="{{result.distribution}}" wx:key="name">
-          <view class="ratio-name">{{item.name}}</view>
-          <view class="ratio-track">
-            <view class="ratio-bar" style="width: {{item.percent}}%;"></view>
+
+        <view class="pillar-grid compact-pillar-grid">
+          <view class="pillar-card compact-pillar-card" wx:for="{{songPlate.pillars}}" wx:key="label">
+            <view class="pillar-label">{{item.label}}</view>
+            <view class="pillar-core">
+              <text class="pillar-stem">{{item.stem}}</text>
+              <text class="pillar-branch">{{item.branch}}</text>
+            </view>
+            <view class="pillar-star" bindtap="openBaziExplanation" data-topic="tenGod" data-value="{{item.star}}">{{item.star}}</view>
+            <view wx:if="{{sectionExpanded.pillarDetails}}">
+              <view class="pillar-meta" bindtap="openBaziExplanation" data-topic="naYin" data-value="{{item.nayin}}">纳音：{{item.nayin}}</view>
+              <view class="pillar-meta" bindtap="openBaziExplanation" data-topic="void" data-value="{{item.void}}">空亡：{{item.void}}</view>
+              <view class="pillar-meta" bindtap="openBaziExplanation" data-topic="hiddenStem" data-value="{{item.hidden}}">藏干：{{item.hidden}}</view>
+              <view class="pillar-hidden-lines">
+                <view class="pillar-hidden-line" wx:for="{{item.levelStems}}" wx:key="level">
+                  <text class="hidden-role">{{item.level}}</text>
+                  <text class="hidden-stem-item">{{item.stem}}{{item.element}}</text>
+                  <text class="hidden-god">{{item.tenGod}}</text>
+                </view>
+              </view>
+            </view>
           </view>
-          <view class="ratio-value">{{item.percent}}%</view>
+        </view>
+
+        <view class="current-overview-card">
+          <view class="current-overview-head">当前岁运</view>
+          <view class="current-overview-grid">
+            <view class="current-overview-item">
+              <text>当前大运</text>
+              <text>{{professionalDetail.activeLuck ? professionalDetail.activeLuck.value : '未起运'}}</text>
+              <text>{{professionalDetail.activeLuck ? professionalDetail.activeLuck.ageRange : ''}} {{professionalDetail.activeLuck ? professionalDetail.activeLuck.yearRange : ''}}</text>
+            </view>
+            <view class="current-overview-item">
+              <text>当年流年</text>
+              <text>{{currentFlowYear ? currentFlowYear.value : '无'}}</text>
+              <text>{{currentFlowYear ? currentFlowYear.yearText : ''}} {{currentFlowYear ? currentFlowYear.tenGodText : ''}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="detail-ribbon" wx:if="{{sectionExpanded.pillarDetails}}">
+          <view class="detail-row" wx:for="{{songPlate.metaRows}}" wx:key="label">
+            <view class="detail-label">{{item.label}}</view>
+            <view class="detail-values">
+              <text wx:for="{{item.values}}" wx:for-index="metaValueIndex" wx:key="metaValueIndex">{{item}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
 
-    <view wx:if="{{isProTab}}">
-      <scroll-view class="pro-table-scroll" scroll-x="true">
-        <view class="pro-table" style="width: {{professionalDetail.tableWidth}}rpx;">
-          <view class="pro-row pro-head-row">
-            <view class="pro-label">日期</view>
-            <view class="pro-head-cell" wx:for="{{professionalDetail.columns}}" wx:for-item="col" wx:key="label">{{col.label}}</view>
+    <view wx:elif="{{activeResultTabIndex === 1}}">
+      <view class="pro-summary">
+        <view class="summary-main">{{result.professional.chartSummary.oneLine}}</view>
+        <view class="summary-tags">
+          <text class="summary-tag" wx:for="{{result.professional.chartSummary.tags}}" wx:for-index="summaryTagIndex" wx:key="summaryTagIndex">{{item}}</text>
+        </view>
+        <view class="summary-note">{{result.professional.chartSummary.caution}}</view>
+      </view>
+
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="professionalDetails">
+          <view>
+            <view class="fold-title">专业细盘</view>
+            <view class="fold-subtitle">十神、藏干、纳音、空亡等字段</view>
           </view>
-          <view class="pro-row {{row.className}}" wx:for="{{professionalDetail.rows}}" wx:for-item="row" wx:key="label">
-            <view class="pro-label">{{row.label}}</view>
-            <view class="pro-cell {{cell.displayClassName}}" wx:for="{{row.cells}}" wx:for-item="cell" wx:for-index="cellIndex" wx:key="cellIndex">
-              <view wx:if="{{cell.hasRichLines}}" class="hidden-rich-wrap">
-                <view wx:if="{{cell.hidden1Show}}" class="hidden-stem-line">
-                  <text class="hidden-stem {{cell.hidden1Class}}">{{cell.hidden1Stem}}</text>
-                  <text class="hidden-god">{{cell.hidden1God}}</text>
-                </view>
-                <view wx:if="{{cell.hidden2Show}}" class="hidden-stem-line">
-                  <text class="hidden-stem {{cell.hidden2Class}}">{{cell.hidden2Stem}}</text>
-                  <text class="hidden-god">{{cell.hidden2God}}</text>
-                </view>
-                <view wx:if="{{cell.hidden3Show}}" class="hidden-stem-line">
-                  <text class="hidden-stem {{cell.hidden3Class}}">{{cell.hidden3Stem}}</text>
-                  <text class="hidden-god">{{cell.hidden3God}}</text>
-                </view>
-              </view>
-              <view wx:if="{{cell.lines.length}}">
-                <text class="cell-line" wx:for="{{cell.lines}}" wx:for-item="line" wx:key="*this">{{line}}</text>
-              </view>
-              <view wx:if="{{cell.text}}">
-                <text class="cell-main">{{cell.text}}</text>
-                <text wx:if="{{cell.elementIcon}}" class="element-icon">{{cell.elementIcon}}</text>
-              </view>
+          <view class="fold-action">{{sectionExpanded.professionalDetails ? '收起' : '展开'}}</view>
+        </view>
+        <view class="pro-table-scroll" wx:if="{{sectionExpanded.professionalDetails}}">
+          <view class="pro-table">
+            <view class="pro-row pro-head-row">
+              <view class="pro-label">柱位</view>
+              <view class="pro-head-cell">十神</view>
+              <view class="pro-head-cell">藏干</view>
+              <view class="pro-head-cell">纳音</view>
+              <view class="pro-head-cell">空亡</view>
+              <view class="pro-head-cell">神煞</view>
+              <view class="pro-head-cell">副星</view>
+            </view>
+            <view class="pro-row" wx:for="{{songPlate.pillars}}" wx:key="label">
+              <view class="pro-label">{{item.label}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="tenGod" data-value="{{item.star}}">{{item.star}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="hiddenStem" data-value="{{item.hidden}}">{{item.hidden}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="naYin" data-value="{{item.nayin}}">{{item.nayin}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="void" data-value="{{item.void}}">{{item.void}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="spirit" data-value="{{item.spirits}}">{{item.spirits || '未接入'}}</view>
+              <view class="pro-cell">{{item.subStar}}</view>
             </view>
           </view>
         </view>
-      </scroll-view>
-
-      <view class="current-flow-card">
-        <view class="current-flow-kicker">当前查看</view>
-        <view class="current-flow-title">{{professionalDetail.activeLuck.yearRange}} {{professionalDetail.activeLuck.value}}大运 · {{professionalDetail.selectedFlowYear.year}} {{professionalDetail.selectedFlowYear.value}}流年 · {{professionalDetail.selectedMonth.monthTitle}} {{professionalDetail.selectedMonth.value}}流月</view>
-        <view class="current-flow-hint">左右滑动查看完整大运、流年、流月</view>
       </view>
 
-      <view class="flow-block with-fade">
-        <view class="side-label"><text>大</text><text>运</text></view>
-        <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
-          <view class="luck-strip" style="width: {{professionalDetail.luckStripWidth}}rpx; min-width: {{professionalDetail.luckStripWidth}}rpx;">
-            <view class="luck-cell" wx:for="{{professionalDetail.luckCycles}}" wx:key="yearRange" bindtap="onLuckTap" data-index="{{index}}">
-              <view class="luck-year">{{item.yearStart}}</view>
-              <view class="luck-age">{{item.ageRange}}</view>
-              <view class="luck-value">{{item.stem}}{{item.branch}}</view>
-            </view>
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="spirits">
+          <view>
+            <view class="fold-title">神煞占位区</view>
+            <view class="fold-subtitle">待问真样本验证后开放</view>
           </view>
-        </scroll-view>
+          <view class="fold-action">{{sectionExpanded.spirits ? '收起' : '展开'}}</view>
+        </view>
+        <view class="fold-body" wx:if="{{sectionExpanded.spirits}}">
+          当前神煞算法仍处于样本采集阶段。未通过问真八字样本验证前，不显示自定义神煞结果，也不作为 AI 断语依据。
+        </view>
       </view>
-
-      <view class="flow-block with-fade">
-        <view class="flow-side"><view class="flow-side-top">始于</view><view class="side-label"><text>流</text><text>年</text></view><view class="flow-side-bottom">止于</view></view>
-        <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
-          <view class="flow-year-table" style="width: {{professionalDetail.flowYearStripWidth}}rpx; min-width: {{professionalDetail.flowYearStripWidth}}rpx;">
-            <view class="flow-year-col" wx:for="{{professionalDetail.flowYears}}" wx:key="year" bindtap="onFlowYearTap" data-index="{{index}}">
-              <view class="flow-year">{{item.year}}</view>
-              <view class="flow-year-line" wx:for="{{item.miniPillars}}" wx:for-item="line" wx:for-index="lineIndex" wx:key="year" catchtap="onFlowYearItemTap" data-index="{{index}}" data-offset="{{lineIndex}}">
-                <text class="flow-year-line-year">{{line.year}}</text>
-                <text class="flow-year-line-value">{{line.value}}</text>
-              </view>
-              <view class="flow-year-end">{{item.endYear}}</view>
-            </view>
-          </view>
-        </scroll-view>
-      </view>
-
-      <view class="flow-block with-fade">
-        <view class="side-label"><text>流</text><text>月</text></view>
-        <scroll-view class="flow-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
-          <view class="month-strip" style="width: {{professionalDetail.flowMonthStripWidth}}rpx; min-width: {{professionalDetail.flowMonthStripWidth}}rpx;">
-            <view class="month-cell" wx:for="{{professionalDetail.flowMonths}}" wx:key="label" bindtap="onFlowMonthTap" data-index="{{index}}">
-              <view class="month-label">{{item.monthTitle}}</view>
-              <view class="month-date">{{item.dateShort}}</view>
-              <view class="month-value">{{item.value}}</view>
-              <view class="month-god">{{item.tenGod}}</view>
-            </view>
-          </view>
-        </scroll-view>
-      </view>
-
-      <view class="selected-flow-card" wx:if="{{professionalDetail.selectedMonth}}">
-        <view class="selected-flow-title">{{professionalDetail.selectedMonth.label}} · {{professionalDetail.selectedMonth.value}} · {{professionalDetail.selectedMonth.tenGod}}</view>
-        <view class="selected-flow-line">{{professionalDetail.selectedMonth.influenceSummary}}</view>
-        <view class="selected-flow-line">合冲刑害：{{professionalDetail.selectedMonth.interactionSummary}}</view>
-      </view>
-
-      <view class="element-state-row"><text wx:for="{{professionalDetail.elementStates}}" wx:key="*this">| {{item}} |</text></view>
-      <view class="action-row"><button class="ghost-action" bindtap="openGanzhiDiagram">干支关系</button><button class="ghost-action small" bindtap="openAiCommand">白话解析</button></view>
-      <view class="relation-panel"><view class="relation-line" wx:for="{{professionalDetail.relationLines}}" wx:key="label"><text>{{item.label}}：</text>{{item.text}}</view></view>
-
-      <view class="spirit-section-title">四柱神煞</view>
-      <view class="spirit-list"><view class="spirit-line" wx:for="{{professionalDetail.pillarSpirits}}" wx:key="value"><text class="spirit-pill">{{item.value}}</text><view class="spirit-names" wx:if="{{item.names.length}}"><text class="spirit-name-chip" wx:for="{{item.names}}" wx:for-item="name" wx:key="*this" bindtap="openSpiritInfo" data-name="{{name}}">{{name}}</text></view></view></view>
-
-      <view class="spirit-section-title">大运神煞</view>
-      <view class="spirit-list"><view class="spirit-line" wx:for="{{professionalDetail.luckSpirits}}" wx:key="value"><text class="spirit-pill">{{item.value}}</text><view class="spirit-names"><text class="spirit-name-chip" wx:for="{{item.names}}" wx:for-item="name" wx:key="*this" bindtap="openSpiritInfo" data-name="{{name}}">{{name}}</text></view></view></view>
-
-      <view class="sub-heading">格局与旺衰</view>
-      <view class="profile-card featured-profile"><view class="profile-title">{{result.professional.pattern.name}}</view><view class="muted">{{result.professional.pattern.basis}}</view><view class="strength-line">旺衰 {{result.professional.strength.status}} · 扶身 {{result.professional.strength.ratio}}%</view><view class="muted basis-line" wx:for="{{result.professional.strength.basis}}" wx:key="*this">{{item}}</view></view>
-      <view class="sub-heading">喜用神参考</view>
-      <view class="profile-card useful-card"><view><view class="profile-title">喜用 {{result.professional.usefulGod.usefulText}}</view><view class="muted">{{result.professional.usefulGod.basis}}</view></view><view class="avoid-block">忌 {{result.professional.usefulGod.avoidText}}</view></view>
     </view>
 
-    <view wx:if="{{isAnalysisTab}}">
-      <view class="focus-card quick-focus-card"><view class="sub-heading compact-heading">先看这三点</view><view class="focus-line"><text class="focus-index">1</text><text>{{result.professional.chartSummary.oneLine}}</text></view><view class="focus-line"><text class="focus-index">2</text><text>喜用参考 {{result.professional.usefulGod.usefulText}}，忌 {{result.professional.usefulGod.avoidText}}。这是趋势提示，不是绝对定论。</text></view><view class="focus-line"><text class="focus-index">3</text><text>{{result.flowTriggerSummary.summary}}</text></view></view>
-      <view class="sub-heading">三层解读</view>
-      <view class="layer-card" wx:for="{{result.interpretationLayers}}" wx:key="title"><view class="layer-title">{{item.title}}</view><view class="layer-row"><text class="layer-label">命理原文</text><text>{{item.original}}</text></view><view class="layer-row"><text class="layer-label">白话解释</text><text>{{item.plain}}</text></view><view class="layer-row"><text class="layer-label">修身建议</text><text>{{item.action}}</text></view></view>
-      <view class="result-card reading-card"><view class="result-line muted">{{result.summary}}</view><view class="engine-list"><view class="engine-item" wx:for="{{result.engineInfo}}" wx:key="*this">{{item}}</view></view><view class="result-line muted">{{result.aiText}}</view></view>
+    <view wx:elif="{{activeResultTabIndex === 2}}">
+      <view class="basic-interpretation-card" wx:if="{{basicInterpretation}}">
+        <view class="interpretation-title">基础解读</view>
+
+        <view class="element-stats">
+          <view class="element-item" wx:for="{{basicInterpretation.elementStats}}" wx:key="name">
+            <view class="element-name" style="color: {{item.color}}">{{item.name}}</view>
+            <view class="element-bar">
+              <view class="element-bar-fill" style="width: {{item.percent}}%; background: {{item.color}}"></view>
+            </view>
+            <view class="element-count">{{item.count}}个 ({{item.percent}}%)</view>
+          </view>
+        </view>
+
+        <view class="interpretation-row">
+          <view class="interpretation-label">旺衰</view>
+          <view class="interpretation-value">{{basicInterpretation.strength.status}}</view>
+        </view>
+        <view class="interpretation-basis">
+          <text wx:for="{{basicInterpretation.strength.basis}}" wx:for-index="strengthBasisIndex" wx:key="strengthBasisIndex">· {{item}} </text>
+        </view>
+
+        <view class="interpretation-row">
+          <view class="interpretation-label">格局</view>
+          <view class="interpretation-value">{{basicInterpretation.pattern.name}}</view>
+        </view>
+        <view class="interpretation-basis">
+          <text wx:for="{{basicInterpretation.pattern.basis}}" wx:for-index="patternBasisIndex" wx:key="patternBasisIndex">· {{item}} </text>
+        </view>
+
+        <view class="interpretation-row">
+          <view class="interpretation-label">喜忌</view>
+          <view class="interpretation-value">喜用 <text class="useful-god">{{basicInterpretation.usefulGod.usefulText}}</text>，忌 <text class="avoid-god">{{basicInterpretation.usefulGod.avoidText}}</text></view>
+        </view>
+        <view class="interpretation-basis">· {{basicInterpretation.usefulGod.basis}}</view>
+
+        <view class="interpretation-note">* 内容为传统文化学习参考，不构成任何决策建议</view>
+      </view>
+
+      <view class="flow-timeline-card">
+        <view class="flow-timeline-head">
+          <view class="flow-timeline-title">大运流年</view>
+          <view class="flow-timeline-cycle">
+            {{professionalDetail.activeLuck ? professionalDetail.activeLuck.value : '当前大运'}}
+          </view>
+        </view>
+        <view class="flow-timeline-range">大运区间：{{professionalDetail.activeLuck ? professionalDetail.activeLuck.yearRange : '未知'}}</view>
+        <view class="flow-timeline-meta">{{professionalDetail.activeLuck ? professionalDetail.activeLuck.ageRange : ''}}</view>
+      </view>
+
+      <view class="current-overview-card">
+        <view class="current-overview-head">当年流年</view>
+        <view class="flow-detail-grid">
+          <view>年份：{{currentFlowYear ? currentFlowYear.yearText : '无'}}</view>
+          <view>干支：{{currentFlowYear ? currentFlowYear.value : '无'}}</view>
+          <view>十神：{{currentFlowYear ? currentFlowYear.tenGodText : '无'}}</view>
+          <view>纳音：{{currentFlowYear ? currentFlowYear.naYinText : '无'}}</view>
+        </view>
+      </view>
+
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="luckList">
+          <view>
+            <view class="fold-title">全部大运</view>
+            <view class="fold-subtitle">8 步大运列表默认收起</view>
+          </view>
+          <view class="fold-action">{{sectionExpanded.luckList ? '收起' : '展开'}}</view>
+        </view>
+        <scroll-view wx:if="{{sectionExpanded.luckList}}" scroll-x class="luck-scroll-x" enable-flex>
+          <view class="luck-row">
+            <view class="luck-row-label">大运</view>
+            <view class="luck-cycles-container">
+              <view
+                wx:for="{{professionalDetail.luckCycles}}"
+                wx:key="label"
+                class="luck-cycle-item {{item.active ? 'active' : ''}}"
+                bindtap="onLuckTap"
+                data-index="{{index}}"
+              >
+                <view class="luck-cycle-age">{{item.ageRange}}</view>
+                <view class="luck-cycle-gz">{{item.value}}</view>
+                <view class="luck-cycle-year">{{item.yearRange}}</view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="flowYears">
+          <view>
+            <view class="fold-title">流年时间轴</view>
+            <view class="fold-subtitle">点击流年后可展开对应流月</view>
+          </view>
+          <view class="fold-action">{{sectionExpanded.flowYears ? '收起' : '展开'}}</view>
+        </view>
+        <view wx:if="{{sectionExpanded.flowYears}}">
+          <scroll-view scroll-x class="flow-row-scroll" enable-flex>
+            <view class="flow-years-strip">
+              <view
+                class="flow-year-strip-item {{index === selectedFlowYearIndex ? 'active' : ''}}"
+                wx:for="{{flowTimelineYears}}"
+                wx:key="yearText"
+                bindtap="onFlowYearTap"
+                data-index="{{index}}"
+              >
+                <view class="flow-year-strip-year">{{item.yearText}}</view>
+                <view class="flow-year-strip-gz">{{item.value}}</view>
+                <view class="flow-year-strip-god">{{item.tenGodText}}</view>
+                <view class="flow-year-strip-age">{{item.ageText}}</view>
+              </view>
+            </view>
+          </scroll-view>
+          <view class="flow-card flow-year-detail" wx:if="{{selectedFlowYear}}">
+            <view class="flow-detail-title">流年 {{selectedFlowYear.yearText}}</view>
+            <view class="flow-detail-grid">
+              <view>干支：{{selectedFlowYear.value}}</view>
+              <view>十神：{{selectedFlowYear.tenGodText || '无'}}</view>
+              <view>纳音：{{selectedFlowYear.naYinText || '无'}}</view>
+              <view>年龄：{{selectedFlowYear.ageText || '无'}}</view>
+              <view>立春：{{selectedFlowYear.lichunDateText || '无'}}</view>
+              <view>范围：{{selectedFlowYear.dateRangeText || '无'}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="flowMonths">
+          <view>
+            <view class="fold-title">流月详情</view>
+            <view class="fold-subtitle">默认收起 12 个月流月</view>
+          </view>
+          <view class="fold-action">{{sectionExpanded.flowMonths ? '收起' : '展开'}}</view>
+        </view>
+        <view wx:if="{{sectionExpanded.flowMonths}}">
+          <scroll-view scroll-x class="flow-row-scroll" enable-flex wx:if="{{flowTimelineMonths.length > 0}}">
+            <view class="flow-months-strip">
+              <view
+                class="flow-month-strip-item {{index === selectedFlowMonthIndex ? 'active' : ''}}"
+                wx:for="{{flowTimelineMonths}}"
+                wx:key="dateText"
+                bindtap="onFlowMonthTap"
+                data-index="{{index}}"
+              >
+                <view class="flow-month-name">{{item.displayLabel}}</view>
+                <view class="flow-month-term">{{item.termNameText}}</view>
+                <view class="flow-month-range">{{item.dateText}}</view>
+                <view class="flow-month-gz">{{item.value}}</view>
+                <view class="flow-month-god">{{item.tenGod}}</view>
+              </view>
+            </view>
+          </scroll-view>
+          <view wx:else class="flow-empty">该年份暂未找到流月数据</view>
+          <view class="flow-card flow-month-detail" wx:if="{{selectedFlowMonth}}">
+            <view class="flow-detail-title">流月 {{selectedFlowMonth.displayLabel}}（{{selectedFlowMonth.value}}）</view>
+            <view class="flow-detail-grid">
+              <view>节令：{{selectedFlowMonth.termNameText || '无'}}</view>
+              <view>干支：{{selectedFlowMonth.value}}</view>
+              <view>十神：{{selectedFlowMonth.tenGod || '无'}}</view>
+              <view>纳音：{{selectedFlowMonth.naYinText || '无'}}</view>
+              <view>范围：{{selectedFlowMonth.dateText || '无'}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else>
+      <view class="focus-card quick-focus-card">
+        <view class="focus-line">
+          <text class="focus-index">1</text>
+          <text>{{result.professional.chartSummary.oneLine}}</text>
+        </view>
+        <view class="focus-line">
+          <text class="focus-index">2</text>
+          <text>{{result.professional.usefulGod.usefulText}} / {{result.professional.usefulGod.avoidText}}</text>
+        </view>
+        <view class="focus-line">
+          <text class="focus-index">3</text>
+          <text>{{result.flowTriggerSummary.summary || '当前运势与流年提示'}}</text>
+        </view>
+      </view>
     </view>
   </view>
 
-  <view wx:if="{{spiritModal.visible}}" class="spirit-modal-mask" catchtap="closeSpiritInfo">
-    <view class="spirit-modal" catchtap="noop"><view class="spirit-modal-head"><view class="spirit-figure-card"><view class="spirit-figure-symbol">{{spiritModal.figure}}</view><view class="spirit-figure-caption">星曜符牌</view></view><view class="spirit-modal-title-block"><view class="spirit-modal-kicker">{{spiritModal.category}}</view><view class="spirit-modal-title">{{spiritModal.title}}</view><view class="spirit-modal-source">传统子平神煞 · 测试版释义</view></view></view><view class="spirit-modal-section"><view class="spirit-modal-label">含义</view><view class="spirit-modal-copy">{{spiritModal.meaning}}</view></view><view class="spirit-modal-section"><view class="spirit-modal-label">命盘依据</view><view class="spirit-modal-copy">{{spiritModal.basis}}</view></view><view class="spirit-modal-section"><view class="spirit-modal-label">使用提醒</view><view class="spirit-modal-copy">{{spiritModal.advice}}</view></view><button class="spirit-modal-close" bindtap="closeSpiritInfo">知道了</button></view>
-  </view>
+  <canvas class="share-card-canvas" canvas-id="baziShareCanvas"></canvas>
 </view>
