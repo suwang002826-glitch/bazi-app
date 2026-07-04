@@ -2,5 +2,8 @@
   "navigationBarTitleText": "奇门",
   "navigationBarBackgroundColor": "#071016",
   "navigationBarTextStyle": "white",
-  "backgroundColor": "#071016"
+  "backgroundColor": "#071016",
+  "usingComponents": {
+    "x-pattern": "/components/x-pattern/x-pattern"
+  }
 }

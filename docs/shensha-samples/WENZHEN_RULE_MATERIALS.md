@@ -11,9 +11,10 @@
 | 羊刃 | 已录入规则页，待命例 | `wenzhen-yangren-rule-001.jpg` - `wenzhen-yangren-rule-005.jpg` |
 | 天德 | 已录入规则页和文字材料，待命例 | `wenzhen-tiande-rule-001.jpg` - `wenzhen-tiande-rule-003.jpg`, `TIANDE_GUIREN_TEXT_MATERIAL.md` |
 | 月德 | 已录入规则页和文字材料，待命例 | `wenzhen-yuede-rule-001.jpg` - `wenzhen-yuede-rule-003.jpg`, `YUEDE_GUIREN_TEXT_MATERIAL.md` |
-| 太极贵人 | 已录入规则页，待命例 | `wenzhen-taiji-rule-001.jpg` - `wenzhen-taiji-rule-002.jpg` |
-| 将星 | 已录入规则页，待命例 | `wenzhen-jiangxing-rule-001.jpg` - `wenzhen-jiangxing-rule-002.jpg` |
+| 太极贵人 | 已录入规则页和文字材料，待命例 | `wenzhen-taiji-rule-001.jpg` - `wenzhen-taiji-rule-002.jpg`, `TAIJI_GUIREN_TEXT_MATERIAL.md` |
+| 将星 | 已录入规则页和文字材料，待命例 | `wenzhen-jiangxing-rule-001.jpg` - `wenzhen-jiangxing-rule-002.jpg`, `JIANGXING_TEXT_MATERIAL.md` |
 | 驿马 | 已录入规则页、文字材料和一个不命中反例，待命中样本 | `wenzhen-yima-rule-001.jpg` - `wenzhen-yima-rule-003.jpg`, `YIMA_TEXT_MATERIAL.md` |
+| 华盖 | 已录入文字材料，待规则页和命例 | `HUAGAI_TEXT_MATERIAL.md` |
 
 ## 已归档但暂不纳入第一批
 

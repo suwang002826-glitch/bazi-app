@@ -1,4 +1,4 @@
-const cityLocations = require('../../data-packs/city-locations.json');
+const cityLocations = require('../../data-packs/city-locations');
 
 function normalizeLocationToken(text) {
   return String(text || '')

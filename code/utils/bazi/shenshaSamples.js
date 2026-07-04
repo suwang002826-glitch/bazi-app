@@ -298,6 +298,9 @@ function createWenZhenShenShaSampleTemplate() {
         basis: '以日干、年干查四地支',
         calculation: '问真规则页口诀：甲乙生人子午中，丙丁鸡兔定亨通，戊己两干临四季，庚辛寅亥禄丰隆，壬癸巳申偏喜美。当前仅录入规则页，待实际命例验证后才可实现算法。',
         confirmedBy: '问真八字',
+        classicQuote: '甲乙生人子午中，丙丁鸡兔定亨通，戊己两干临四季，庚辛寅亥禄丰隆，壬癸巳申偏喜美，值此应当福气钟，更须贵格来相扶，候封万户到三公。',
+        interpretationKeywords: ['聪明好学', '福禄兼得', '化险为夷', '贵人相助', '晚年安逸', '福寿双全'],
+        interpretationSummary: '太极贵人主聪明好学、福禄兼得、贵人相助。作为解释材料收录，后续用于展示文案参考，不参与算法验收。',
         screenshotRefs: [
           'wenzhen-taiji-rule-001.jpg',
           'wenzhen-taiji-rule-002.jpg'
@@ -323,6 +326,9 @@ function createWenZhenShenShaSampleTemplate() {
         basis: '以年支、日支查余支',
         calculation: '问真规则页口诀：子日子、丑日酉、寅日午、卯日卯、辰日子、巳日酉、午日午、未日卯、申日子、酉日酉、戌日午、亥日卯。当前仅录入规则页，待实际命例验证后才可实现算法。',
         confirmedBy: '问真八字',
+        classicQuote: '子日子，丑日酉，寅日午，卯日卯，辰日子，巳日酉，午日午，未日卯，申日子，酉日酉，戌日午，亥日卯。',
+        interpretationKeywords: ['权柄威信', '组织领导', '掌权之机', '将权', '财官亨通', '事职变动'],
+        interpretationSummary: '将星主权柄威信、组织领导和掌权之机。作为解释材料收录，后续用于展示文案参考，不参与算法验收。',
         screenshotRefs: [
           'wenzhen-jiangxing-rule-001.jpg',
           'wenzhen-jiangxing-rule-002.jpg'
@@ -406,6 +412,21 @@ function createWenZhenShenShaSampleTemplate() {
             }
           }
         ]
+      }
+    }
+    if (name === '华盖') {
+      return {
+        spiritName: name,
+        status: 'pending_wenzhen_sample',
+        rule: {
+          basis: '以年支、日支查余支',
+          calculation: '用户补充口诀：寅午戌见戌，亥卯未见未，申子辰见辰，巳酉丑见丑。当前仅录入文字材料，待问真规则页和实际命例验证后才可实现算法。',
+          confirmedBy: '问真八字',
+          classicQuote: '寅午戌见戌，亥卯未见未，申子辰见辰，巳酉丑见丑。',
+          interpretationKeywords: ['艺术', '权力', '职事变化', '才华横溢', '孤独', '修身养性'],
+          interpretationSummary: '华盖主艺术、才华、权力象征和孤独修习之象。作为解释材料收录，后续用于展示文案参考，不参与算法验收。'
+        },
+        cases: []
       }
     }
     // 其他神煞待收集

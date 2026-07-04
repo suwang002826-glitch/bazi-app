@@ -668,6 +668,19 @@ if (
     'keywords contain 化险为夷',
     tianYiSample && tianYiSample.rule && tianYiSample.rule.interpretationKeywords
   );
+  const taiJiSample = template.find((item) => item.spiritName === '太极贵人');
+  check(
+    taiJiSample && taiJiSample.rule && taiJiSample.rule.classicQuote && taiJiSample.rule.classicQuote.includes('甲乙生人子午中'),
+    'Taiji Guiren sample metadata should preserve classic quote text',
+    'classic quote contains 甲乙生人子午中',
+    taiJiSample && taiJiSample.rule && taiJiSample.rule.classicQuote
+  );
+  check(
+    taiJiSample && taiJiSample.rule && Array.isArray(taiJiSample.rule.interpretationKeywords) && taiJiSample.rule.interpretationKeywords.includes('聪明好学'),
+    'Taiji Guiren sample metadata should preserve interpretation keywords without changing algorithm readiness',
+    'keywords contain 聪明好学',
+    taiJiSample && taiJiSample.rule && taiJiSample.rule.interpretationKeywords
+  );
   const tianDeSample = template.find((item) => item.spiritName === '天德');
   check(
     tianDeSample && tianDeSample.rule && tianDeSample.rule.classicQuote && tianDeSample.rule.classicQuote.includes('寅月丁'),
@@ -706,6 +719,32 @@ if (
     'Yima sample metadata should preserve interpretation keywords without changing algorithm readiness',
     'keywords contain 远行',
     yiMaSample && yiMaSample.rule && yiMaSample.rule.interpretationKeywords
+  );
+  const jiangXingSample = template.find((item) => item.spiritName === '将星');
+  check(
+    jiangXingSample && jiangXingSample.rule && jiangXingSample.rule.classicQuote && jiangXingSample.rule.classicQuote.includes('子日子'),
+    'Jiangxing sample metadata should preserve classic quote text',
+    'classic quote contains 子日子',
+    jiangXingSample && jiangXingSample.rule && jiangXingSample.rule.classicQuote
+  );
+  check(
+    jiangXingSample && jiangXingSample.rule && Array.isArray(jiangXingSample.rule.interpretationKeywords) && jiangXingSample.rule.interpretationKeywords.includes('组织领导'),
+    'Jiangxing sample metadata should preserve interpretation keywords without changing algorithm readiness',
+    'keywords contain 组织领导',
+    jiangXingSample && jiangXingSample.rule && jiangXingSample.rule.interpretationKeywords
+  );
+  const huaGaiSample = template.find((item) => item.spiritName === '华盖');
+  check(
+    huaGaiSample && huaGaiSample.rule && huaGaiSample.rule.classicQuote && huaGaiSample.rule.classicQuote.includes('寅午戌见戌'),
+    'Huagai sample metadata should preserve classic quote text',
+    'classic quote contains 寅午戌见戌',
+    huaGaiSample && huaGaiSample.rule && huaGaiSample.rule.classicQuote
+  );
+  check(
+    huaGaiSample && huaGaiSample.rule && Array.isArray(huaGaiSample.rule.interpretationKeywords) && huaGaiSample.rule.interpretationKeywords.includes('艺术'),
+    'Huagai sample metadata should preserve interpretation keywords without changing algorithm readiness',
+    'keywords contain 艺术',
+    huaGaiSample && huaGaiSample.rule && huaGaiSample.rule.interpretationKeywords
   );
   const collectedSamples = template.filter((item) => item.status === 'collected');
   const pendingSamples = template.filter((item) => item.status === 'pending_wenzhen_sample');

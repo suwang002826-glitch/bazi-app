@@ -1,8 +1,8 @@
 const { buildReadingFromForm } = require('../../utils/bazi/pageAdapter');
 const { buildBaziInputSnapshot } = require('../../utils/bazi/historyStore');
-const preciseSolarTerms = require('../../data-packs/solar-terms/solarTerms-precise-1900-2100.json');
+const preciseSolarTerms = require('../../data-packs/solar-terms/solarTerms-precise-1900-2100');
 const { createBaziPlate } = require('../../utils/baziPlate');
-const cityLocations = require('../../data-packs/city-locations.json');
+const cityLocations = require('../../data-packs/city-locations');
 const lunarConversions = require('../../data-packs/lunar/lunar-conversions-1901-2100');
 const {
   getCityPickerNames,

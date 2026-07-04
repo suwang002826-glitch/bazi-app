@@ -16,9 +16,6 @@
     "navigationBarTextStyle": "white",
     "backgroundColor": "#07080e"
   },
-  "usingComponents": {
-    "x-pattern": "/components/x-pattern/x-pattern"
-  },
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {
     "color": "#817b92",

@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "六爻排盘",
-  "navigationStyle": "custom"
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "x-pattern": "/components/x-pattern/x-pattern"
+  }
 }
