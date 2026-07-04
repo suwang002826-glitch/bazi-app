@@ -47,7 +47,7 @@
         </view>
       </view>
       <view class="share-preview-tags" wx:if="{{shareCard.tags.length}}">
-        <text wx:for="{{shareCard.tags}}" wx:key="*this">{{item}}</text>
+        <text wx:for="{{shareCard.tags}}" wx:for-index="tagIndex" wx:key="tagIndex">{{item}}</text>
       </view>
       <view class="share-preview-actions">
         <view class="share-preview-action" bindtap="copyShareCardText">复制摘要</view>
@@ -148,7 +148,7 @@
           <view class="detail-row" wx:for="{{songPlate.metaRows}}" wx:key="label">
             <view class="detail-label">{{item.label}}</view>
             <view class="detail-values">
-              <text wx:for="{{item.values}}" wx:key="*this">{{item}}</text>
+              <text wx:for="{{item.values}}" wx:for-index="metaValueIndex" wx:key="metaValueIndex">{{item}}</text>
             </view>
           </view>
         </view>
@@ -159,7 +159,7 @@
       <view class="pro-summary">
         <view class="summary-main">{{result.professional.chartSummary.oneLine}}</view>
         <view class="summary-tags">
-          <text class="summary-tag" wx:for="{{result.professional.chartSummary.tags}}" wx:key="*this">{{item}}</text>
+          <text class="summary-tag" wx:for="{{result.professional.chartSummary.tags}}" wx:for-index="summaryTagIndex" wx:key="summaryTagIndex">{{item}}</text>
         </view>
         <view class="summary-note">{{result.professional.chartSummary.caution}}</view>
       </view>
@@ -229,7 +229,7 @@
           <view class="interpretation-value">{{basicInterpretation.strength.status}}</view>
         </view>
         <view class="interpretation-basis">
-          <text wx:for="{{basicInterpretation.strength.basis}}" wx:key="*this">· {{item}} </text>
+          <text wx:for="{{basicInterpretation.strength.basis}}" wx:for-index="strengthBasisIndex" wx:key="strengthBasisIndex">· {{item}} </text>
         </view>
 
         <view class="interpretation-row">
@@ -237,7 +237,7 @@
           <view class="interpretation-value">{{basicInterpretation.pattern.name}}</view>
         </view>
         <view class="interpretation-basis">
-          <text wx:for="{{basicInterpretation.pattern.basis}}" wx:key="*this">· {{item}} </text>
+          <text wx:for="{{basicInterpretation.pattern.basis}}" wx:for-index="patternBasisIndex" wx:key="patternBasisIndex">· {{item}} </text>
         </view>
 
         <view class="interpretation-row">
