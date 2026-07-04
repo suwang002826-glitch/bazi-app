@@ -1,5 +1,6 @@
 const app = getApp();
 const { createBaziPlate, createProfessionalDetail } = require('../../utils/baziPlate');
+const { getBasicInterpretation } = require('../../utils/bazi/basicInterpretation');
 
 const RESULT_TABS = ['本命', '解盘', '大运流年', '关注点'];
 const HIDDEN_STEM_LEVELS = ['本气', '中气', '余气'];
@@ -209,6 +210,7 @@ Page({
     });
 
     const shareToken = reading.shareToken || this.ensureShareToken(reading);
+    const basicInterpretation = getBasicInterpretation(result);
 
     this.setData({
       shareToken,
@@ -216,6 +218,7 @@ Page({
       baziPlate,
       songPlate,
       professionalDetail,
+      basicInterpretation,
       selectedLuckIndex: professionalDetail.selectedLuckIndex || 0,
       selectedYearIndex: professionalDetail.selectedYearIndex || 0,
       selectedMonthIndex: professionalDetail.selectedMonthIndex || 0,
