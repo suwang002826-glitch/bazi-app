@@ -1,3 +1,8 @@
 /tmp*.js
 /project.config.json
 /project.private.config.json
+node_modules/
+dist/
+public/
+.DS_Store
+*.log
