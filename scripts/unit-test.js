@@ -647,11 +647,25 @@ if (
 ) {
   const template = createWenZhenShenShaSampleTemplate();
   assertEqual(template.length, REQUIRED_WENZHEN_SHENSHA.length, 'sample template should cover every required shensha');
+  const collectedSamples = template.filter((item) => item.status === 'collected');
+  const pendingSamples = template.filter((item) => item.status === 'pending_wenzhen_sample');
   check(
-    template.every((item) => item.status === 'pending_wenzhen_sample' && item.cases.length === 0),
-    'sample template should be pending and contain no invented cases',
-    'all pending without cases',
-    JSON.stringify(template[0])
+    collectedSamples.length >= 1,
+    'sample template should include collected WenZhen-backed shensha when samples exist',
+    'at least one collected sample',
+    collectedSamples.length
+  );
+  check(
+    collectedSamples.every((item) => item.cases.length >= 3 && validateWenZhenShenShaSample(item).ok),
+    'collected shensha samples should include verified WenZhen cases',
+    'collected samples with valid cases',
+    JSON.stringify(collectedSamples.map((item) => item.spiritName))
+  );
+  check(
+    pendingSamples.every((item) => item.cases.length === 0),
+    'pending shensha samples should contain no invented cases',
+    'pending samples without cases',
+    JSON.stringify(pendingSamples[0])
   );
 
   const invalidSample = validateWenZhenShenShaSample({
@@ -697,8 +711,9 @@ if (
   assertEqual(validSample.ok, true, 'validator should accept complete WenZhen-backed shensha sample shape');
 
   const readiness = summarizeWenZhenShenShaReadiness(template);
-  assertEqual(readiness.ready, false, 'empty shensha template should not be ready for implementation');
-  assertEqual(readiness.pendingCount, REQUIRED_WENZHEN_SHENSHA.length, 'empty shensha template should mark all targets pending');
+  assertEqual(readiness.ready, false, 'partial shensha template should not be ready for implementation');
+  assertEqual(readiness.readyCount, collectedSamples.length, 'partial shensha template should count collected targets as ready');
+  assertEqual(readiness.pendingCount, REQUIRED_WENZHEN_SHENSHA.length - collectedSamples.length, 'partial shensha template should keep unverified targets pending');
 }
 
 // 13) frontend UX helpers: city selector
