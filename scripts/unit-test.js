@@ -14,6 +14,36 @@ const {
   calculateDaYun
 } = require(path.join(__dirname, '../code/utils/bazi/coreEngine.js'));
 const { buildReadingFromForm } = require(path.join(__dirname, '../code/utils/bazi/pageAdapter.js'));
+const {
+  createBaziHistoryRecord,
+  saveBaziHistoryRecord,
+  listBaziHistoryRecords,
+  deleteBaziHistoryRecord
+} = require(path.join(__dirname, '../code/utils/bazi/historyStore.js'));
+let baziExplainModule = {};
+try {
+  baziExplainModule = require(path.join(__dirname, '../code/utils/bazi/explanations.js'));
+} catch (error) {
+  baziExplainModule = {};
+}
+let shenShaSampleModule = {};
+try {
+  shenShaSampleModule = require(path.join(__dirname, '../code/utils/bazi/shenshaSamples.js'));
+} catch (error) {
+  shenShaSampleModule = {};
+}
+let citySelectorModule = {};
+try {
+  citySelectorModule = require(path.join(__dirname, '../code/utils/bazi/citySelector.js'));
+} catch (error) {
+  citySelectorModule = {};
+}
+let resultSectionsModule = {};
+try {
+  resultSectionsModule = require(path.join(__dirname, '../code/utils/bazi/resultSections.js'));
+} catch (error) {
+  resultSectionsModule = {};
+}
 
 const termsData = require(path.join(__dirname, '../code/data-packs/solar-terms/solarTerms-precise-1900-2100.json'));
 
@@ -415,6 +445,325 @@ check(
   '癸卯',
   adaptedLunarModeOnly && adaptedLunarModeOnly.flowYears[0] && adaptedLunarModeOnly.flowYears[0].value
 );
+
+// 10) bazi history snapshot storage
+runHeader('Adapter: bazi history local snapshot storage');
+function createMemoryWxStorage(initial = {}) {
+  const store = { ...initial };
+  return {
+    getStorageSync(key) {
+      return store[key];
+    },
+    setStorageSync(key, value) {
+      store[key] = value;
+    },
+    removeStorageSync(key) {
+      delete store[key];
+    },
+    dump() {
+      return store;
+    }
+  };
+}
+
+const historyStorage = createMemoryWxStorage();
+const historyReading = {
+  result: adapted,
+  baziPlate: { columns: [{ label: 'year' }], rows: [] },
+  shareToken: 'share-test-token'
+};
+const historyInput = {
+  calendarType: 'solar',
+  isLunar: false,
+  birthDate: '2000-12-17',
+  birthTime: '10:00:00',
+  gender: 'male',
+  useTrueSolarTime: false,
+  useEarlyLateZi: false,
+  longitude: 120,
+  latitude: 39
+};
+const historyRecordA = createBaziHistoryRecord({
+  reading: historyReading,
+  input: historyInput,
+  now: new Date('2026-07-04T10:00:00+08:00'),
+  id: 'case_a'
+});
+check(
+  historyRecordA.title.includes('2000-12-17') && historyRecordA.title.includes('male'),
+  'history default title should use birth date and gender',
+  'title contains birth date and gender',
+  historyRecordA.title
+);
+check(
+  historyRecordA.payload === historyReading,
+  'history record should keep exact reading snapshot object',
+  'same object reference',
+  historyRecordA.payload === historyReading
+);
+saveBaziHistoryRecord(historyStorage, historyRecordA);
+saveBaziHistoryRecord(historyStorage, createBaziHistoryRecord({
+  reading: { result: adaptedLunarModeOnly, baziPlate: { columns: [], rows: [] } },
+  input: { ...historyInput, birthDate: '1990-01-01', gender: 'female' },
+  name: 'custom case',
+  now: new Date('2026-07-04T11:00:00+08:00'),
+  id: 'case_b'
+}));
+const savedHistory = listBaziHistoryRecords(historyStorage);
+assertEqual(savedHistory.length, 2, 'history should save two local bazi records');
+assertEqual(savedHistory[0].id, 'case_b', 'history should be sorted by saved time descending');
+assertEqual(savedHistory[0].title, 'custom case', 'custom case name should override default title');
+assertEqual(savedHistory[1].input.birthTime, '10:00:00', 'history should persist birth time input');
+assertEqual(savedHistory[1].payload.result.flowYears.length, 81, 'history should persist full result snapshot');
+const afterDelete = deleteBaziHistoryRecord(historyStorage, 'case_b');
+assertEqual(afterDelete.length, 1, 'deleting one history record should leave one record');
+assertEqual(afterDelete[0].id, 'case_a', 'delete should remove the selected record only');
+
+// 11) bazi field explanation dictionary
+runHeader('Adapter: bazi field explanations');
+const { getBaziExplanation, listBaziExplanationTopics } = baziExplainModule;
+check(
+  typeof getBaziExplanation === 'function',
+  'bazi field explanation helper should be importable',
+  'function',
+  typeof getBaziExplanation
+);
+check(
+  typeof listBaziExplanationTopics === 'function',
+  'bazi field explanation topic list should be importable',
+  'function',
+  typeof listBaziExplanationTopics
+);
+
+if (typeof getBaziExplanation === 'function') {
+  const tenGodExplain = getBaziExplanation('tenGod', '正官');
+  const hiddenStemExplain = getBaziExplanation('hiddenStem', '寅');
+  const voidExplain = getBaziExplanation('void', '寅卯');
+  const naYinExplain = getBaziExplanation('naYin', '涧下水');
+  const spiritExplain = getBaziExplanation('spirit', '');
+  const strengthExplain = getBaziExplanation('strength', '中和');
+
+  assertEqual(tenGodExplain.title, '十神', 'ten god explanation should use standard title');
+  check(
+    tenGodExplain.content.includes('日干') && tenGodExplain.content.includes('生克'),
+    'ten god explanation should describe basis without custom reading',
+    'contains 日干 and 生克',
+    tenGodExplain.content
+  );
+  check(
+    hiddenStemExplain.content.includes('本气') && hiddenStemExplain.content.includes('藏干表'),
+    'hidden stem explanation should describe fixed hidden-stem table order',
+    'contains 本气 and 藏干表',
+    hiddenStemExplain.content
+  );
+  check(
+    voidExplain.content.includes('六甲旬空'),
+    'void explanation should describe xun-kong basis',
+    'contains 六甲旬空',
+    voidExplain.content
+  );
+  check(
+    naYinExplain.content.includes('六十甲子纳音表'),
+    'na yin explanation should describe sixty-jiazi mapping',
+    'contains 六十甲子纳音表',
+    naYinExplain.content
+  );
+  check(
+    spiritExplain.content.includes('问真') && spiritExplain.content.includes('不做自定义解释'),
+    'spirit explanation should avoid unverified custom interpretation',
+    'mentions 问真 and no custom interpretation',
+    spiritExplain.content
+  );
+  check(
+    strengthExplain.content.includes('月令') && strengthExplain.content.includes('五行'),
+    'strength explanation should describe element-season basis',
+    'contains 月令 and 五行',
+    strengthExplain.content
+  );
+}
+
+if (typeof listBaziExplanationTopics === 'function') {
+  const topics = listBaziExplanationTopics();
+  ['tenGod', 'hiddenStem', 'void', 'naYin', 'spirit', 'strength'].forEach((topic) => {
+    check(topics.includes(topic), `explanation topics should include ${topic}`, topic, topics.join(','));
+  });
+}
+
+// 12) WenZhen ShenSha sample intake guard
+runHeader('Adapter: WenZhen shensha sample intake schema');
+const {
+  REQUIRED_WENZHEN_SHENSHA,
+  createWenZhenShenShaSampleTemplate,
+  validateWenZhenShenShaSample,
+  summarizeWenZhenShenShaReadiness
+} = shenShaSampleModule;
+
+check(
+  Array.isArray(REQUIRED_WENZHEN_SHENSHA),
+  'required WenZhen shensha list should be importable',
+  'array',
+  typeof REQUIRED_WENZHEN_SHENSHA
+);
+if (Array.isArray(REQUIRED_WENZHEN_SHENSHA)) {
+  ['天乙贵人', '太极贵人', '文昌', '驿马', '桃花', '羊刃', '华盖', '将星', '天德', '月德'].forEach((name) => {
+    check(REQUIRED_WENZHEN_SHENSHA.includes(name), `required WenZhen shensha list should include ${name}`, name, REQUIRED_WENZHEN_SHENSHA.join(','));
+  });
+}
+check(
+  typeof createWenZhenShenShaSampleTemplate === 'function',
+  'WenZhen shensha sample template builder should be importable',
+  'function',
+  typeof createWenZhenShenShaSampleTemplate
+);
+check(
+  typeof validateWenZhenShenShaSample === 'function',
+  'WenZhen shensha sample validator should be importable',
+  'function',
+  typeof validateWenZhenShenShaSample
+);
+check(
+  typeof summarizeWenZhenShenShaReadiness === 'function',
+  'WenZhen shensha readiness summarizer should be importable',
+  'function',
+  typeof summarizeWenZhenShenShaReadiness
+);
+
+if (
+  typeof createWenZhenShenShaSampleTemplate === 'function' &&
+  typeof validateWenZhenShenShaSample === 'function' &&
+  typeof summarizeWenZhenShenShaReadiness === 'function'
+) {
+  const template = createWenZhenShenShaSampleTemplate();
+  assertEqual(template.length, REQUIRED_WENZHEN_SHENSHA.length, 'sample template should cover every required shensha');
+  check(
+    template.every((item) => item.status === 'pending_wenzhen_sample' && item.cases.length === 0),
+    'sample template should be pending and contain no invented cases',
+    'all pending without cases',
+    JSON.stringify(template[0])
+  );
+
+  const invalidSample = validateWenZhenShenShaSample({
+    spiritName: '天乙贵人',
+    rule: { basis: '年干/日干', calculation: '以问真截图为准' },
+    cases: []
+  });
+  assertEqual(invalidSample.ok, false, 'validator should reject shensha sample without verified cases');
+
+  const validSample = validateWenZhenShenShaSample({
+    spiritName: '天乙贵人',
+    rule: {
+      basis: '以问真八字实际显示为准',
+      calculation: '记录问真页面命中的柱位和地支，不自行外推'
+    },
+    cases: [{
+      caseId: 'wz-tygr-001',
+      source: '问真八字',
+      screenshotRef: 'wenzhen-tygr-001.png',
+      input: {
+        solarTime: '1990-01-01 12:00:00',
+        gender: '男',
+        longitude: 120,
+        latitude: 39,
+        useTrueSolarTime: false,
+        useDst: false
+      },
+      expect: {
+        pillars: {
+          year: '己巳',
+          month: '丙子',
+          day: '丙寅',
+          hour: '甲午'
+        },
+        spirits: [{
+          name: '天乙贵人',
+          location: '年柱',
+          branch: '巳'
+        }]
+      }
+    }]
+  });
+  assertEqual(validSample.ok, true, 'validator should accept complete WenZhen-backed shensha sample shape');
+
+  const readiness = summarizeWenZhenShenShaReadiness(template);
+  assertEqual(readiness.ready, false, 'empty shensha template should not be ready for implementation');
+  assertEqual(readiness.pendingCount, REQUIRED_WENZHEN_SHENSHA.length, 'empty shensha template should mark all targets pending');
+}
+
+// 13) frontend UX helpers: city selector
+runHeader('Frontend UX: true solar city selector');
+const {
+  CITY_PICKER_OPTIONS,
+  getCityPickerNames,
+  resolveCityPickerSelection,
+  findLocationByRegion
+} = citySelectorModule;
+check(
+  Array.isArray(CITY_PICKER_OPTIONS),
+  'city picker options should be importable',
+  'array',
+  typeof CITY_PICKER_OPTIONS
+);
+if (Array.isArray(CITY_PICKER_OPTIONS)) {
+  check(CITY_PICKER_OPTIONS.length >= 50, 'city picker should cover at least 50 major cities', '>= 50', CITY_PICKER_OPTIONS.length);
+  ['北京市', '上海市', '广州市', '深圳市', '乌鲁木齐市', '哈尔滨市', '拉萨市'].forEach((cityName) => {
+    check(
+      CITY_PICKER_OPTIONS.some((item) => item.name === cityName),
+      `city picker should include ${cityName}`,
+      cityName,
+      CITY_PICKER_OPTIONS.map((item) => item.name).join(',')
+    );
+  });
+}
+check(typeof getCityPickerNames === 'function', 'city picker names helper should be importable', 'function', typeof getCityPickerNames);
+check(typeof resolveCityPickerSelection === 'function', 'city picker selection resolver should be importable', 'function', typeof resolveCityPickerSelection);
+check(typeof findLocationByRegion === 'function', 'city region matcher should be importable', 'function', typeof findLocationByRegion);
+if (typeof getCityPickerNames === 'function' && Array.isArray(CITY_PICKER_OPTIONS)) {
+  const names = getCityPickerNames();
+  assertEqual(names.length, CITY_PICKER_OPTIONS.length, 'city picker names should match option count');
+}
+if (typeof resolveCityPickerSelection === 'function') {
+  const urumqiIndex = Array.isArray(CITY_PICKER_OPTIONS)
+    ? CITY_PICKER_OPTIONS.findIndex((item) => item.name === '乌鲁木齐市')
+    : -1;
+  const urumqi = resolveCityPickerSelection(urumqiIndex);
+  assertEqual(urumqi && urumqi.longitude, '87.62', 'Urumqi city selection should autofill longitude');
+  assertEqual(urumqi && urumqi.latitude, '43.82', 'Urumqi city selection should autofill latitude');
+}
+if (typeof findLocationByRegion === 'function') {
+  const harbin = findLocationByRegion(['黑龙江省', '哈尔滨市', '南岗区']);
+  assertEqual(harbin && harbin.longitude, '126.63', 'region picker should resolve Harbin longitude');
+}
+
+// 14) frontend UX helpers: result sections
+runHeader('Frontend UX: result page collapsed sections');
+const {
+  getDefaultResultSectionState,
+  toggleResultSection,
+  findCurrentFlowYear
+} = resultSectionsModule;
+check(typeof getDefaultResultSectionState === 'function', 'default result section helper should be importable', 'function', typeof getDefaultResultSectionState);
+check(typeof toggleResultSection === 'function', 'result section toggle helper should be importable', 'function', typeof toggleResultSection);
+check(typeof findCurrentFlowYear === 'function', 'current flow year helper should be importable', 'function', typeof findCurrentFlowYear);
+if (typeof getDefaultResultSectionState === 'function') {
+  const defaultSections = getDefaultResultSectionState();
+  ['pillarDetails', 'professionalDetails', 'luckList', 'flowYears', 'flowMonths', 'spirits'].forEach((key) => {
+    assertEqual(defaultSections[key], false, `section ${key} should be collapsed by default`);
+  });
+}
+if (typeof toggleResultSection === 'function' && typeof getDefaultResultSectionState === 'function') {
+  const before = getDefaultResultSectionState();
+  const after = toggleResultSection(before, 'luckList');
+  assertEqual(after.luckList, true, 'toggle should expand selected section');
+  assertEqual(before.luckList, false, 'toggle should not mutate previous section state');
+}
+if (typeof findCurrentFlowYear === 'function') {
+  const flowYear = findCurrentFlowYear([
+    { year: 2025, value: '乙巳', tenGod: '偏财', naYin: '覆灯火' },
+    { year: 2026, value: '丙午', tenGod: '正财', naYin: '天河水' }
+  ], 2026);
+  assertEqual(flowYear && flowYear.yearText, '2026年', 'current flow year helper should format year text');
+  assertEqual(flowYear && flowYear.value, '丙午', 'current flow year helper should return matched flow year');
+}
 
 console.log(`\nUnit Test Summary: ${passed} passed, ${failed} failed`);
 if (failures.length > 0) {

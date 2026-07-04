@@ -451,3 +451,132 @@
   line-height: 64rpx;
   text-align: center;
 }
+
+.history-panel {
+  margin-top: 22rpx;
+  padding: 24rpx;
+  border: 1rpx solid rgba(217, 191, 113, .18);
+  border-radius: 18rpx;
+  background:
+    linear-gradient(145deg, rgba(242, 240, 228, .075), rgba(242, 240, 228, .025)),
+    rgba(18, 21, 50, .90);
+  box-shadow:
+    inset 0 1rpx 0 rgba(242, 240, 228, .08),
+    0 12rpx 24rpx rgba(0, 0, 0, .22);
+}
+
+.history-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+  margin-bottom: 18rpx;
+}
+
+.history-kicker {
+  color: rgba(217, 191, 113, .72);
+  font-size: 22rpx;
+  font-weight: 900;
+}
+
+.history-panel-title {
+  margin-top: 4rpx;
+  color: #f2f0e4;
+  font-size: 36rpx;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.history-count {
+  flex: 0 0 auto;
+  padding: 8rpx 16rpx;
+  border: 1rpx solid rgba(217, 191, 113, .22);
+  border-radius: 999rpx;
+  background: rgba(217, 191, 113, .10);
+  color: #d9bf71;
+  font-size: 22rpx;
+  font-weight: 900;
+}
+
+.history-case-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92rpx;
+  gap: 18rpx;
+  align-items: center;
+  padding: 18rpx 0;
+  border-top: 1rpx solid rgba(242, 240, 228, .08);
+}
+
+.history-case-main {
+  min-width: 0;
+}
+
+.history-case-title {
+  overflow: hidden;
+  color: #f2f0e4;
+  font-size: 28rpx;
+  font-weight: 900;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-case-meta,
+.history-case-summary {
+  overflow: hidden;
+  margin-top: 6rpx;
+  color: rgba(242, 240, 228, .58);
+  font-size: 22rpx;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-case-summary {
+  color: rgba(242, 240, 228, .46);
+}
+
+.history-case-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  align-items: stretch;
+}
+
+.history-open-label,
+.history-delete {
+  height: 42rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 900;
+  line-height: 42rpx;
+  text-align: center;
+}
+
+.history-open-label {
+  background: rgba(217, 191, 113, .18);
+  color: #d9bf71;
+}
+
+.history-delete {
+  background: rgba(203, 91, 79, .14);
+  color: #e9a096;
+}
+
+.history-empty {
+  padding: 22rpx 0 6rpx;
+  border-top: 1rpx solid rgba(242, 240, 228, .08);
+}
+
+.history-empty-title {
+  color: #f2f0e4;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+.history-empty-copy {
+  margin-top: 8rpx;
+  color: rgba(242, 240, 228, .56);
+  font-size: 24rpx;
+  line-height: 1.55;
+}

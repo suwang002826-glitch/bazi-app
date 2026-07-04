@@ -17,17 +17,17 @@
     <view class="bazi-profile">
       <view class="profile-seal">{{result.dayMaster.stem}}</view>
       <view class="profile-main">
-        <view class="profile-name">{{result.destinyLabel || '乾造'}} {{result.displayName}}</view>
-        <view class="profile-time">性别：{{result.personProfile && result.personProfile.gender === '女' ? '女命' : '男命'}}</view>
-        <view class="profile-time">生日：{{result.calendarInfo && result.calendarInfo.inputText ? result.calendarInfo.inputText : result.solarTime}}</view>
-        <view class="profile-time" wx:if="{{result.calendarInfo && result.calendarInfo.outputText}}">公历：{{result.calendarInfo.outputText}}</view>
-        <view class="profile-time" wx:if="{{result.calendarInfo && result.calendarInfo.mode}}">历法：{{result.calendarInfo.mode}}</view>
-        <view class="profile-time">真太阳时：{{result.adjustedSolarTime}}</view>
+        <view class="profile-name">{{result.destinyLabel || '命例'}} {{result.displayName}}</view>
+        <view class="profile-time">性别：{{result.personProfile && result.personProfile.gender ? result.personProfile.gender : (result.gender || '未知')}}</view>
+        <view class="profile-time">日历：{{result.calendarInfo && result.calendarInfo.inputText ? result.calendarInfo.inputText : result.solarTime}}</view>
+        <view class="profile-time" wx:if="{{result.calendarInfo && result.calendarInfo.outputText}}">转换：{{result.calendarInfo.outputText}}</view>
+        <view class="profile-time" wx:if="{{result.calendarInfo && result.calendarInfo.mode}}">方式：{{result.calendarInfo.mode}}</view>
+        <view class="profile-time">标准时间：{{result.adjustedSolarTime}}</view>
         <view class="profile-place">{{result.birthPlace}}</view>
       </view>
       <view class="profile-side">
-        <view class="profile-status">{{result.professional && result.professional.strength ? result.professional.strength.status : '八字排盘'}}</view>
-        <view class="profile-archive" bindtap="archiveCurrentCase" hover-class="tap-soft">存入命例</view>
+        <view class="profile-status" bindtap="openBaziExplanation" data-topic="strength" data-value="{{result.professional && result.professional.strength ? result.professional.strength.status : '八字排盘'}}">{{result.professional && result.professional.strength ? result.professional.strength.status : '八字排盘'}}</view>
+        <view class="profile-archive" bindtap="archiveCurrentCase" hover-class="tap-soft">保存命例</view>
       </view>
     </view>
 
@@ -52,7 +52,7 @@
           <text>五行</text>
           <text>{{result.fiveElementsP0 ? result.fiveElementsP0.dominant : ''}}</text>
         </view>
-        <view class="brief-item">
+        <view class="brief-item" bindtap="openBaziExplanation" data-topic="void" data-value="{{result.dayVoid ? result.dayVoid.text : '无'}}">
           <text>空亡</text>
           <text>{{result.dayVoid ? result.dayVoid.text : '无'}}</text>
         </view>
@@ -72,25 +72,54 @@
 
     <view wx:if="{{activeResultTabIndex === 0}}">
       <view class="song-overview">
-        <view class="overview-title">八字排盘</view>
-        <view class="pillar-grid">
-          <view class="pillar-card" wx:for="{{songPlate.pillars}}" wx:key="label">
+        <view class="overview-head">
+          <view>
+            <view class="overview-title">核心四柱</view>
+            <view class="overview-copy">默认收起藏干、空亡、纳音等详情，减少滚动。</view>
+          </view>
+          <view class="fold-small-action" bindtap="onToggleResultSection" data-section-key="pillarDetails">{{sectionExpanded.pillarDetails ? '收起' : '展开详情'}}</view>
+        </view>
+
+        <view class="pillar-grid compact-pillar-grid">
+          <view class="pillar-card compact-pillar-card" wx:for="{{songPlate.pillars}}" wx:key="label">
             <view class="pillar-label">{{item.label}}</view>
-            <view class="pillar-core">{{item.stem}}{{item.branch}}</view>
-            <view>十神：{{item.star}}</view>
-            <view class="pillar-meta">纳音：{{item.nayin}}</view>
-            <view class="pillar-meta">空亡：{{item.void}}</view>
-            <view class="pillar-meta">藏干：{{item.hidden}}</view>
-            <view class="pillar-hidden-lines">
-              <view class="pillar-hidden-line" wx:for="{{item.levelStems}}" wx:key="level">
-                <text class="hidden-role">{{item.level}}</text>
-                <text class="hidden-stem-item">{{item.stem}}{{item.element}}</text>
-                <text class="hidden-god">{{item.tenGod}}</text>
+            <view class="pillar-core">
+              <text class="pillar-stem">{{item.stem}}</text>
+              <text class="pillar-branch">{{item.branch}}</text>
+            </view>
+            <view class="pillar-star" bindtap="openBaziExplanation" data-topic="tenGod" data-value="{{item.star}}">{{item.star}}</view>
+            <view wx:if="{{sectionExpanded.pillarDetails}}">
+              <view class="pillar-meta" bindtap="openBaziExplanation" data-topic="naYin" data-value="{{item.nayin}}">纳音：{{item.nayin}}</view>
+              <view class="pillar-meta" bindtap="openBaziExplanation" data-topic="void" data-value="{{item.void}}">空亡：{{item.void}}</view>
+              <view class="pillar-meta" bindtap="openBaziExplanation" data-topic="hiddenStem" data-value="{{item.hidden}}">藏干：{{item.hidden}}</view>
+              <view class="pillar-hidden-lines">
+                <view class="pillar-hidden-line" wx:for="{{item.levelStems}}" wx:key="level">
+                  <text class="hidden-role">{{item.level}}</text>
+                  <text class="hidden-stem-item">{{item.stem}}{{item.element}}</text>
+                  <text class="hidden-god">{{item.tenGod}}</text>
+                </view>
               </view>
             </view>
           </view>
         </view>
-        <view class="detail-ribbon">
+
+        <view class="current-overview-card">
+          <view class="current-overview-head">当前岁运</view>
+          <view class="current-overview-grid">
+            <view class="current-overview-item">
+              <text>当前大运</text>
+              <text>{{professionalDetail.activeLuck ? professionalDetail.activeLuck.value : '未起运'}}</text>
+              <text>{{professionalDetail.activeLuck ? professionalDetail.activeLuck.ageRange : ''}} {{professionalDetail.activeLuck ? professionalDetail.activeLuck.yearRange : ''}}</text>
+            </view>
+            <view class="current-overview-item">
+              <text>当年流年</text>
+              <text>{{currentFlowYear ? currentFlowYear.value : '无'}}</text>
+              <text>{{currentFlowYear ? currentFlowYear.yearText : ''}} {{currentFlowYear ? currentFlowYear.tenGodText : ''}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="detail-ribbon" wx:if="{{sectionExpanded.pillarDetails}}">
           <view class="detail-row" wx:for="{{songPlate.metaRows}}" wx:key="label">
             <view class="detail-label">{{item.label}}</view>
             <view class="detail-values">
@@ -109,109 +138,180 @@
         </view>
         <view class="summary-note">{{result.professional.chartSummary.caution}}</view>
       </view>
-      <view class="pro-table-scroll">
-        <view class="pro-table">
-          <view class="pro-row pro-head-row">
-            <view class="pro-label">柱位</view>
-            <view class="pro-head-cell">十神</view>
-            <view class="pro-head-cell">藏干</view>
-            <view class="pro-head-cell">纳音</view>
-            <view class="pro-head-cell">空亡</view>
-            <view class="pro-head-cell">十神主文</view>
-            <view class="pro-head-cell">空亡</view>
+
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="professionalDetails">
+          <view>
+            <view class="fold-title">专业细盘</view>
+            <view class="fold-subtitle">十神、藏干、纳音、空亡等字段</view>
           </view>
-          <view class="pro-row" wx:for="{{songPlate.pillars}}" wx:key="label">
-            <view class="pro-label">{{item.label}}</view>
-            <view class="pro-cell">{{item.star}}</view>
-            <view class="pro-cell">{{item.hidden}}</view>
-            <view class="pro-cell">{{item.nayin}}</view>
-            <view class="pro-cell">{{item.void}}</view>
-            <view class="pro-cell">{{item.spirits}}</view>
-            <view class="pro-cell">{{item.subStar}}</view>
+          <view class="fold-action">{{sectionExpanded.professionalDetails ? '收起' : '展开'}}</view>
+        </view>
+        <view class="pro-table-scroll" wx:if="{{sectionExpanded.professionalDetails}}">
+          <view class="pro-table">
+            <view class="pro-row pro-head-row">
+              <view class="pro-label">柱位</view>
+              <view class="pro-head-cell">十神</view>
+              <view class="pro-head-cell">藏干</view>
+              <view class="pro-head-cell">纳音</view>
+              <view class="pro-head-cell">空亡</view>
+              <view class="pro-head-cell">神煞</view>
+              <view class="pro-head-cell">副星</view>
+            </view>
+            <view class="pro-row" wx:for="{{songPlate.pillars}}" wx:key="label">
+              <view class="pro-label">{{item.label}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="tenGod" data-value="{{item.star}}">{{item.star}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="hiddenStem" data-value="{{item.hidden}}">{{item.hidden}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="naYin" data-value="{{item.nayin}}">{{item.nayin}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="void" data-value="{{item.void}}">{{item.void}}</view>
+              <view class="pro-cell" bindtap="openBaziExplanation" data-topic="spirit" data-value="{{item.spirits}}">{{item.spirits || '未接入'}}</view>
+              <view class="pro-cell">{{item.subStar}}</view>
+            </view>
           </view>
+        </view>
+      </view>
+
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="spirits">
+          <view>
+            <view class="fold-title">神煞占位区</view>
+            <view class="fold-subtitle">待问真样本验证后开放</view>
+          </view>
+          <view class="fold-action">{{sectionExpanded.spirits ? '收起' : '展开'}}</view>
+        </view>
+        <view class="fold-body" wx:if="{{sectionExpanded.spirits}}">
+          当前神煞算法仍处于样本采集阶段。未通过问真八字样本验证前，不显示自定义神煞结果，也不作为 AI 断语依据。
         </view>
       </view>
     </view>
 
-    <!-- 大运流年 Tab -->
     <view wx:elif="{{activeResultTabIndex === 2}}">
-      <!-- 当前位置提示 -->
-      <view class="luck-current-tip">
-        <view class="luck-current-label">当前查看</view>
-        <view class="luck-current-text">
-          {{professionalDetail.luckCycles[selectedLuckIndex].label}} · {{professionalDetail.selectedFlowYear.year}}年{{professionalDetail.selectedFlowYear.value}} · {{professionalDetail.selectedMonth.monthTitle}}月
-        </view>
-      </view>
-      <view class="luck-scroll-hint">左右滑动查看完整大运、流年、流月</view>
-
-      <!-- 大运横向时间轴 -->
-      <scroll-view scroll-x class="luck-scroll-x" enable-flex>
-        <view class="luck-row">
-          <view class="luck-row-label">大运</view>
-          <view class="luck-cycles-container">
-            <view 
-              wx:for="{{professionalDetail.luckCycles}}" 
-              wx:key="label"
-              class="luck-cycle-item {{item.active ? 'active' : ''}}"
-              bindtap="onLuckTap"
-              data-index="{{index}}"
-            >
-              <view class="luck-cycle-age">{{item.ageRange}}</view>
-              <view class="luck-cycle-gz">{{item.value}}</view>
-              <view class="luck-cycle-year">{{item.yearRange}}</view>
-            </view>
+      <view class="flow-timeline-card">
+        <view class="flow-timeline-head">
+          <view class="flow-timeline-title">大运流年</view>
+          <view class="flow-timeline-cycle">
+            {{professionalDetail.activeLuck ? professionalDetail.activeLuck.value : '当前大运'}}
           </view>
         </view>
-      </scroll-view>
+        <view class="flow-timeline-range">大运区间：{{professionalDetail.activeLuck ? professionalDetail.activeLuck.yearRange : '未知'}}</view>
+        <view class="flow-timeline-meta">{{professionalDetail.activeLuck ? professionalDetail.activeLuck.ageRange : ''}}</view>
+      </view>
 
-      <!-- 流年网格 -->
-      <view class="flow-years-container">
-        <view class="flow-years-row">
-          <view class="flow-years-label">流年</view>
-          <view class="flow-years-grid">
-            <view class="flow-year-col" wx:for="{{professionalDetail.flowYears}}" wx:key="year">
-              <view 
-                wx:for="{{item.miniPillars}}" 
-                wx:key="year"
-                wx:for-item="yearItem"
-                class="flow-year-item {{yearItem.active ? 'active' : ''}}"
-                bindtap="onFlowYearItemTap"
+      <view class="current-overview-card">
+        <view class="current-overview-head">当年流年</view>
+        <view class="flow-detail-grid">
+          <view>年份：{{currentFlowYear ? currentFlowYear.yearText : '无'}}</view>
+          <view>干支：{{currentFlowYear ? currentFlowYear.value : '无'}}</view>
+          <view>十神：{{currentFlowYear ? currentFlowYear.tenGodText : '无'}}</view>
+          <view>纳音：{{currentFlowYear ? currentFlowYear.naYinText : '无'}}</view>
+        </view>
+      </view>
+
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="luckList">
+          <view>
+            <view class="fold-title">全部大运</view>
+            <view class="fold-subtitle">8 步大运列表默认收起</view>
+          </view>
+          <view class="fold-action">{{sectionExpanded.luckList ? '收起' : '展开'}}</view>
+        </view>
+        <scroll-view wx:if="{{sectionExpanded.luckList}}" scroll-x class="luck-scroll-x" enable-flex>
+          <view class="luck-row">
+            <view class="luck-row-label">大运</view>
+            <view class="luck-cycles-container">
+              <view
+                wx:for="{{professionalDetail.luckCycles}}"
+                wx:key="label"
+                class="luck-cycle-item {{item.active ? 'active' : ''}}"
+                bindtap="onLuckTap"
                 data-index="{{index}}"
-                data-offset="{{yearItem.year - item.year}}"
               >
-                <view class="flow-year-num">{{yearItem.year}}</view>
-                <view class="flow-year-gz">{{yearItem.value}}</view>
+                <view class="luck-cycle-age">{{item.ageRange}}</view>
+                <view class="luck-cycle-gz">{{item.value}}</view>
+                <view class="luck-cycle-year">{{item.yearRange}}</view>
               </view>
             </view>
           </view>
-        </view>
+        </scroll-view>
       </view>
 
-      <!-- 流月横向时间轴 -->
-      <scroll-view scroll-x class="luck-scroll-x" enable-flex>
-        <view class="luck-row">
-          <view class="luck-row-label">流月</view>
-          <view class="luck-months-container">
-            <view 
-              wx:for="{{professionalDetail.flowMonths}}" 
-              wx:key="monthTitle"
-              class="luck-month-item {{item.active ? 'active' : ''}}"
-              bindtap="onFlowMonthTap"
-              data-index="{{index}}"
-            >
-              <view class="luck-month-term">{{item.monthTitle}}</view>
-              <view class="luck-month-date">{{item.dateShort}}</view>
-              <view class="luck-month-gz">{{item.value}}</view>
-              <view class="luck-month-god">{{item.tenGod}}</view>
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="flowYears">
+          <view>
+            <view class="fold-title">流年时间轴</view>
+            <view class="fold-subtitle">点击流年后可展开对应流月</view>
+          </view>
+          <view class="fold-action">{{sectionExpanded.flowYears ? '收起' : '展开'}}</view>
+        </view>
+        <view wx:if="{{sectionExpanded.flowYears}}">
+          <scroll-view scroll-x class="flow-row-scroll" enable-flex>
+            <view class="flow-years-strip">
+              <view
+                class="flow-year-strip-item {{index === selectedFlowYearIndex ? 'active' : ''}}"
+                wx:for="{{flowTimelineYears}}"
+                wx:key="yearText"
+                bindtap="onFlowYearTap"
+                data-index="{{index}}"
+              >
+                <view class="flow-year-strip-year">{{item.yearText}}</view>
+                <view class="flow-year-strip-gz">{{item.value}}</view>
+                <view class="flow-year-strip-god">{{item.tenGodText}}</view>
+                <view class="flow-year-strip-age">{{item.ageText}}</view>
+              </view>
+            </view>
+          </scroll-view>
+          <view class="flow-card flow-year-detail" wx:if="{{selectedFlowYear}}">
+            <view class="flow-detail-title">流年 {{selectedFlowYear.yearText}}</view>
+            <view class="flow-detail-grid">
+              <view>干支：{{selectedFlowYear.value}}</view>
+              <view>十神：{{selectedFlowYear.tenGodText || '无'}}</view>
+              <view>纳音：{{selectedFlowYear.naYinText || '无'}}</view>
+              <view>年龄：{{selectedFlowYear.ageText || '无'}}</view>
+              <view>立春：{{selectedFlowYear.lichunDateText || '无'}}</view>
+              <view>范围：{{selectedFlowYear.dateRangeText || '无'}}</view>
             </view>
           </view>
         </view>
-      </scroll-view>
+      </view>
 
-      <!-- 流月说明 -->
-      <view class="flow-month-desc" wx:if="{{professionalDetail.selectedMonth}}">
-        <view class="flow-month-title">{{professionalDetail.selectedMonth.monthTitle}}月 · {{professionalDetail.selectedMonth.value}} · {{professionalDetail.selectedMonth.tenGod}}</view>
-        <view class="flow-month-text">{{professionalDetail.selectedMonth.influenceSummary}}</view>
+      <view class="fold-card">
+        <view class="fold-head" bindtap="onToggleResultSection" data-section-key="flowMonths">
+          <view>
+            <view class="fold-title">流月详情</view>
+            <view class="fold-subtitle">默认收起 12 个月流月</view>
+          </view>
+          <view class="fold-action">{{sectionExpanded.flowMonths ? '收起' : '展开'}}</view>
+        </view>
+        <view wx:if="{{sectionExpanded.flowMonths}}">
+          <scroll-view scroll-x class="flow-row-scroll" enable-flex wx:if="{{flowTimelineMonths.length > 0}}">
+            <view class="flow-months-strip">
+              <view
+                class="flow-month-strip-item {{index === selectedFlowMonthIndex ? 'active' : ''}}"
+                wx:for="{{flowTimelineMonths}}"
+                wx:key="dateText"
+                bindtap="onFlowMonthTap"
+                data-index="{{index}}"
+              >
+                <view class="flow-month-name">{{item.displayLabel}}</view>
+                <view class="flow-month-term">{{item.termNameText}}</view>
+                <view class="flow-month-range">{{item.dateText}}</view>
+                <view class="flow-month-gz">{{item.value}}</view>
+                <view class="flow-month-god">{{item.tenGod}}</view>
+              </view>
+            </view>
+          </scroll-view>
+          <view wx:else class="flow-empty">该年份暂未找到流月数据</view>
+          <view class="flow-card flow-month-detail" wx:if="{{selectedFlowMonth}}">
+            <view class="flow-detail-title">流月 {{selectedFlowMonth.displayLabel}}（{{selectedFlowMonth.value}}）</view>
+            <view class="flow-detail-grid">
+              <view>节令：{{selectedFlowMonth.termNameText || '无'}}</view>
+              <view>干支：{{selectedFlowMonth.value}}</view>
+              <view>十神：{{selectedFlowMonth.tenGod || '无'}}</view>
+              <view>纳音：{{selectedFlowMonth.naYinText || '无'}}</view>
+              <view>范围：{{selectedFlowMonth.dateText || '无'}}</view>
+            </view>
+          </view>
+        </view>
       </view>
     </view>
 

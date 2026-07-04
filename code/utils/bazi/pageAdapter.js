@@ -576,7 +576,7 @@ function buildLegacyBaziResult(coreResult, form = {}) {
     destinyLabel,
     gender: form.gender || '男',
     title: `${form.name || '命例'}${destinyLabel}`,
-    betaLabel: '排盘引擎 v0.3.1',
+    betaLabel: '排盘引擎 v0.4.2',
     solarTime: `${form.birthDate || ''} ${form.birthTime || ''}`,
     adjustedSolarTime: coreResult.adjustedDateTime,
     birthPlace: form.birthPlace || '',
@@ -615,7 +615,7 @@ function buildLegacyBaziResult(coreResult, form = {}) {
       summary: `${yearText} ${monthText} ${dayText} ${hourText}`
     },
     engineInfo: [
-      '当前为 v0.3.1 稳定版，真太阳时由核心计算模块输出',
+      '当前为 v0.4.2 稳定版，真太阳时由核心计算模块输出',
       `${ZODIAC_BY_BRANCH[yearPillar.branch]}年`
     ]
   };

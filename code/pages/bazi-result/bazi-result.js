@@ -1,5 +1,15 @@
 const app = getApp();
 const { createBaziPlate, createProfessionalDetail } = require('../../utils/baziPlate');
+const {
+  buildBaziInputSnapshot,
+  getDefaultBaziHistoryTitle
+} = require('../../utils/bazi/historyStore');
+const { getBaziExplanation } = require('../../utils/bazi/explanations');
+const {
+  getDefaultResultSectionState,
+  toggleResultSection,
+  findCurrentFlowYear
+} = require('../../utils/bazi/resultSections');
 
 const RESULT_TABS = ['本命', '解盘', '大运流年', '关注点'];
 const HIDDEN_STEM_LEVELS = ['本气', '中气', '余气'];
@@ -146,6 +156,147 @@ function buildSongPlate(result, baziPlate) {
   };
 }
 
+function formatShortDate(dateText) {
+  if (!dateText) return '';
+  const raw = String(dateText).replace('T', ' ');
+  return raw.length > 10 ? raw.slice(0, 10) : raw;
+}
+
+function formatRange(startDate, endDate) {
+  if (!startDate && !endDate) return '';
+  if (!startDate) return formatShortDate(endDate);
+  if (!endDate) return formatShortDate(startDate);
+  return `${formatShortDate(startDate)} ~ ${formatShortDate(endDate)}`;
+}
+
+function toInt(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function normalizeFlowMonth(month) {
+  if (!month) return null;
+  const termName = month.termName || month.term || '';
+  const startDate = month.startDate || '';
+  const endDate = month.endDate || '';
+  const dateRange = formatRange(startDate, endDate) || formatShortDate(termName) || month.dateShort || '';
+  return {
+    ...month,
+    monthTitle: month.monthTitle || termName || '',
+    dateText: dateRange,
+    termNameText: termName,
+    startDateText: formatShortDate(startDate),
+    endDateText: formatShortDate(endDate),
+    naYinText: month.naYin || '',
+    displayLabel: month.monthTitle || termName || month.termTime || ''
+  };
+}
+
+function normalizeFlowYears(flowYearsRaw) {
+  if (!Array.isArray(flowYearsRaw) || !flowYearsRaw.length) return [];
+  return flowYearsRaw
+    .map((item) => item || {})
+    .map((item) => {
+      const year = toInt(item.year, NaN);
+      const age = toInt(item.age, NaN);
+      return {
+        ...item,
+        year,
+        age,
+        ageText: Number.isFinite(age) ? `${age}岁` : '',
+        yearText: Number.isFinite(year) ? `${year}年` : '—',
+        dateRangeText: formatRange(item.startDate, item.endDate),
+        naYinText: item.naYin || '',
+        tenGodText: item.tenGod || '',
+        lichunDateText: formatShortDate(item.lichunDate || ''),
+        months: Array.isArray(item.months) ? item.months.map(normalizeFlowMonth).filter(Boolean) : []
+      };
+    })
+    .sort((a, b) => {
+      const aYear = Number.isFinite(a.year) ? a.year : Number.MIN_SAFE_INTEGER;
+      const bYear = Number.isFinite(b.year) ? b.year : Number.MIN_SAFE_INTEGER;
+      if (aYear !== bYear) return aYear - bYear;
+      const aAge = Number.isFinite(a.age) ? a.age : 0;
+      const bAge = Number.isFinite(b.age) ? b.age : 0;
+      return aAge - bAge;
+    });
+}
+
+function getDefaultTimelineYears(flowYears, cycles, luckIndex) {
+  if (!Array.isArray(flowYears) || !flowYears.length) return [];
+
+  const sortedYears = normalizeFlowYears(flowYears);
+  if (!sortedYears.length) return [];
+
+  const cycle = Array.isArray(cycles) && cycles[luckIndex] ? cycles[luckIndex] : null;
+  if (cycle && cycle.startYear != null && cycle.endYear != null) {
+    const startYear = toInt(cycle.startYear, Number.NaN);
+    const endYear = toInt(cycle.endYear, Number.NaN);
+    const inCycle = sortedYears.filter((item) => Number.isFinite(item.year) && item.year >= startYear && item.year <= endYear);
+    if (inCycle.length > 0) return inCycle;
+  }
+
+  const currentYear = new Date().getFullYear();
+  let nearestIndex = sortedYears.findIndex((item) => item.year === currentYear);
+  if (nearestIndex < 0) {
+    nearestIndex = sortedYears.findIndex((item) => item.year > currentYear);
+    if (nearestIndex < 0) nearestIndex = sortedYears.length - 1;
+  }
+  let blockStart = Math.floor(Math.max(0, nearestIndex) / 10) * 10;
+  if (blockStart + 9 >= sortedYears.length) blockStart = Math.max(0, sortedYears.length - 10);
+  return sortedYears.slice(blockStart, blockStart + 10);
+}
+
+function buildFlowTimelineState(result, options = {}) {
+  const sourceYears = Array.isArray(result.flowYears) ? result.flowYears : [];
+  const flowYears = normalizeFlowYears(sourceYears);
+  const cycles = result.luck && Array.isArray(result.luck.cycles) ? result.luck.cycles : [];
+  const currentLuckIndex = Number.isFinite(toInt(options.luckIndex, NaN)) ? toInt(options.luckIndex, 0) : 0;
+
+  const timelineYears = getDefaultTimelineYears(flowYears, cycles, currentLuckIndex);
+  if (!timelineYears.length) {
+    return {
+      flowTimelineYears: [],
+      flowTimelineMonths: [],
+      selectedFlowYearIndex: -1,
+      selectedFlowMonthIndex: -1,
+      selectedFlowYear: null,
+      selectedFlowMonth: null,
+      selectedFlowLuckIndex: currentLuckIndex
+    };
+  }
+
+  let targetYear = options.selectedFlowYear;
+  if (targetYear == null && options.selectedFlowYearValue != null) targetYear = options.selectedFlowYearValue;
+  let selectedFlowYearIndex = Number.isFinite(toInt(options.selectedFlowYearIndex, NaN)) ? toInt(options.selectedFlowYearIndex, 0) : 0;
+  if (targetYear != null) {
+    const matched = timelineYears.findIndex((item) => toInt(item.year, NaN) === toInt(targetYear, NaN));
+    if (matched >= 0) selectedFlowYearIndex = matched;
+  }
+  if (selectedFlowYearIndex < 0) selectedFlowYearIndex = 0;
+  if (selectedFlowYearIndex >= timelineYears.length) selectedFlowYearIndex = timelineYears.length - 1;
+
+  const selectedFlowYear = timelineYears[selectedFlowYearIndex] || timelineYears[0];
+  const timelineMonths = selectedFlowYear && Array.isArray(selectedFlowYear.months)
+    ? selectedFlowYear.months
+    : [];
+  let selectedFlowMonthIndex = Number.isFinite(toInt(options.selectedFlowMonthIndex, NaN)) ? toInt(options.selectedFlowMonthIndex, 0) : 0;
+  if (selectedFlowMonthIndex < 0) selectedFlowMonthIndex = 0;
+  if (selectedFlowMonthIndex >= timelineMonths.length) selectedFlowMonthIndex = timelineMonths.length > 0 ? timelineMonths.length - 1 : 0;
+
+  const selectedFlowMonth = timelineMonths[selectedFlowMonthIndex] || timelineMonths[0] || null;
+
+  return {
+    flowTimelineYears: timelineYears,
+    flowTimelineMonths: timelineMonths,
+    selectedFlowYearIndex,
+    selectedFlowMonthIndex,
+    selectedFlowYear,
+    selectedFlowMonth,
+    selectedFlowLuckIndex: currentLuckIndex
+  };
+}
+
 Page({
   data: {
     result: null,
@@ -158,12 +309,25 @@ Page({
     selectedYearIndex: 0,
     selectedMonthIndex: 0,
     selectedYearOffset: 0,
+    flowTimelineYears: [],
+    flowTimelineMonths: [],
+    selectedFlowYearIndex: 0,
+    selectedFlowMonthIndex: 0,
+    selectedFlowYear: null,
+    selectedFlowMonth: null,
+    selectedFlowLuckIndex: 0,
+    currentFlowYear: null,
+    sectionExpanded: getDefaultResultSectionState(),
+    readingInput: null,
     shareToken: ''
   },
 
   ensureShareToken(reading) {
     if (!reading) return '';
     if (reading.shareToken) return reading.shareToken;
+    if (reading.result && !reading.input) {
+      reading.input = buildBaziInputSnapshot({}, reading.result);
+    }
     const shareToken = app.saveBaziShareSnapshot(reading);
     reading.shareToken = shareToken;
     app.globalData.currentBaziReading = reading;
@@ -177,8 +341,15 @@ Page({
     return app.readBaziShareSnapshot(token);
   },
 
+  readByHistoryId(options) {
+    const historyId = options && options.historyId ? decodeURIComponent(options.historyId) : '';
+    if (!historyId || !app.getBaziHistory) return null;
+    const record = app.getBaziHistory(historyId);
+    return record && record.payload ? record.payload : null;
+  },
+
   onLoad(options = {}) {
-    let reading = this.readByShareToken(options);
+    let reading = this.readByHistoryId(options) || this.readByShareToken(options);
 
     if (!reading) {
       reading = app.globalData.currentBaziReading || wx.getStorageSync('currentBaziReading');
@@ -194,6 +365,7 @@ Page({
 
     const normalizedShareToken = options.shareToken ? decodeURIComponent(options.shareToken) : '';
     const result = normalizeResult(reading.result);
+    const readingInput = reading.input || buildBaziInputSnapshot({}, result);
     const baziPlate = reading.baziPlate || createBaziPlate(result);
     const songPlate = buildSongPlate(result, baziPlate);
     // 使用按大运分组的流年数据创建专业排盘
@@ -207,6 +379,9 @@ Page({
       monthIndex: 0,
       yearOffset: 0
     });
+    const flowTimelineState = buildFlowTimelineState(result, {
+      luckIndex: professionalDetail.selectedLuckIndex || 0
+    });
 
     const shareToken = reading.shareToken || this.ensureShareToken(reading);
 
@@ -216,19 +391,40 @@ Page({
       baziPlate,
       songPlate,
       professionalDetail,
+      readingInput,
       selectedLuckIndex: professionalDetail.selectedLuckIndex || 0,
       selectedYearIndex: professionalDetail.selectedYearIndex || 0,
       selectedMonthIndex: professionalDetail.selectedMonthIndex || 0,
-      selectedYearOffset: professionalDetail.selectedYearOffset || 0
+      selectedYearOffset: professionalDetail.selectedYearOffset || 0,
+      currentFlowYear: findCurrentFlowYear(result.flowYears),
+      sectionExpanded: getDefaultResultSectionState(),
+      ...flowTimelineState
     });
   },
 
-  onShareAppMessage() {
-    const token = this.ensureShareToken({
+  refreshFlowTimeline(patch = {}) {
+    if (!this.data.result) return;
+    const flowTimelineState = buildFlowTimelineState(this.data.result, {
+      luckIndex: Number.isFinite(patch.luckIndex) ? patch.luckIndex : this.data.selectedFlowLuckIndex,
+      selectedFlowYearIndex: Number.isFinite(patch.selectedFlowYearIndex) ? patch.selectedFlowYearIndex : this.data.selectedFlowYearIndex,
+      selectedFlowMonthIndex: Number.isFinite(patch.selectedFlowMonthIndex) ? patch.selectedFlowMonthIndex : this.data.selectedFlowMonthIndex,
+      selectedFlowYear: patch.selectedFlowYear,
+      selectedFlowYearValue: patch.selectedFlowYearValue
+    });
+    this.setData(flowTimelineState);
+  },
+
+  buildCurrentReadingSnapshot() {
+    return {
       result: this.data.result,
       baziPlate: this.data.baziPlate,
-      shareToken: this.data.shareToken
-    });
+      shareToken: this.data.shareToken,
+      input: this.data.readingInput || buildBaziInputSnapshot({}, this.data.result || {})
+    };
+  },
+
+  onShareAppMessage() {
+    const token = this.ensureShareToken(this.buildCurrentReadingSnapshot());
 
     return {
       title: `${this.data.result.displayName || '八字'}${this.data.result.destinyLabel || ''}排盘结果`,
@@ -239,6 +435,15 @@ Page({
   onResultTabChange(event) {
     this.setData({
       activeResultTabIndex: Number(event.currentTarget.dataset.tabIndex)
+    });
+  },
+
+  onToggleResultSection(event) {
+    const key = event && event.currentTarget && event.currentTarget.dataset
+      ? event.currentTarget.dataset.sectionKey
+      : '';
+    this.setData({
+      sectionExpanded: toggleResultSection(this.data.sectionExpanded, key)
     });
   },
 
@@ -274,28 +479,51 @@ Page({
   },
 
   onLuckTap(event) {
-    this.refreshProfessionalDetail({ luckIndex: Number(event.currentTarget.dataset.index) });
+    const luckIndex = Number(event.currentTarget.dataset.index);
+    this.refreshProfessionalDetail({ luckIndex });
+    this.refreshFlowTimeline({
+      luckIndex,
+      selectedFlowYearIndex: 0,
+      selectedFlowMonthIndex: 0
+    });
   },
 
   onFlowYearTap(event) {
-    this.refreshProfessionalDetail({
-      yearIndex: Number(event.currentTarget.dataset.index),
-      yearOffset: 0
+    const selectedFlowYearIndex = Number(event.currentTarget.dataset.index);
+    this.refreshFlowTimeline({
+      selectedFlowYearIndex,
+      selectedFlowMonthIndex: 0
+    });
+    this.setData({
+      sectionExpanded: {
+        ...this.data.sectionExpanded,
+        flowMonths: true
+      }
     });
   },
 
   onFlowYearItemTap(event) {
-    this.refreshProfessionalDetail({
-      yearIndex: Number(event.currentTarget.dataset.index),
-      yearOffset: Number(event.currentTarget.dataset.offset)
-    });
+    this.onFlowYearTap(event);
   },
 
   onFlowMonthTap(event) {
-    this.refreshProfessionalDetail({ monthIndex: Number(event.currentTarget.dataset.index) });
+    this.refreshFlowTimeline({
+      selectedFlowMonthIndex: Number(event.currentTarget.dataset.index)
+    });
   },
 
-  archiveCurrentCase() {
+  openBaziExplanation(event) {
+    const dataset = (event && event.currentTarget && event.currentTarget.dataset) || {};
+    const explanation = getBaziExplanation(dataset.topic, dataset.value || '');
+    wx.showModal({
+      title: explanation.title,
+      content: `${explanation.content}\n\n口径：${explanation.basis}`,
+      showCancel: false,
+      confirmText: '知道了'
+    });
+  },
+
+  archiveCurrentCaseDeprecated() {
     if (!this.data.result) return;
     const triggerText = this.data.result.flowTriggerSummary && this.data.result.flowTriggerSummary.summary
       ? `当前流信息：${this.data.result.flowTriggerSummary.summary}`
@@ -316,6 +544,31 @@ Page({
       }
     });
     wx.showToast({ title: '已存入命例', icon: 'success' });
+  },
+
+  archiveCurrentCase() {
+    this.openSaveCaseModal();
+  },
+
+  openSaveCaseModal() {
+    if (!this.data.result) return;
+    const reading = this.buildCurrentReadingSnapshot();
+    const defaultName = getDefaultBaziHistoryTitle(reading.input, reading.result);
+    wx.showModal({
+      title: '保存命例',
+      content: '可修改命例名称，保存后可从首页历史命例恢复。',
+      editable: true,
+      placeholderText: defaultName,
+      success: (res) => {
+        if (!res.confirm) return;
+        const name = String(res.content || '').trim() || defaultName;
+        const saved = app.saveBaziHistory(reading, reading.input, name);
+        wx.showToast({
+          title: saved ? '已保存命例' : '保存失败',
+          icon: saved ? 'success' : 'none'
+        });
+      }
+    });
   },
 
   openGanzhiDiagram() {

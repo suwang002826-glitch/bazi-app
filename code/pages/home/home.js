@@ -240,11 +240,22 @@ Page({
     selected: {},
     weekLabels: WEEKDAYS,
     calendarCells: [],
-    analysis: {}
+    analysis: {},
+    baziHistory: []
   },
 
   onLoad() {
     this.refreshCalendar(new Date());
+  },
+
+  onShow() {
+    this.loadBaziHistory();
+  },
+
+  loadBaziHistory() {
+    const app = getApp();
+    const history = app.listBaziHistory ? app.listBaziHistory() : [];
+    this.setData({ baziHistory: history });
   },
 
   refreshCalendar(selectedDate, viewDate = selectedDate) {
@@ -306,5 +317,33 @@ Page({
 
   goBazi() {
     wx.switchTab({ url: '/pages/bazi/bazi' });
+  },
+
+  openHistoryCase(event) {
+    const id = event.currentTarget.dataset.id;
+    const record = this.data.baziHistory.find((item) => String(item.id) === String(id));
+    if (!record || !record.payload) {
+      wx.showToast({ title: '命例快照缺失', icon: 'none' });
+      return;
+    }
+    const app = getApp();
+    app.globalData.currentBaziReading = record.payload;
+    wx.setStorageSync('currentBaziReading', record.payload);
+    wx.navigateTo({ url: `/pages/bazi-result/bazi-result?historyId=${encodeURIComponent(id)}` });
+  },
+
+  deleteHistoryCase(event) {
+    const id = event.currentTarget.dataset.id;
+    wx.showModal({
+      title: '删除命例',
+      content: '删除后无法恢复，确认删除这条历史命例吗？',
+      success: (res) => {
+        if (!res.confirm) return;
+        const app = getApp();
+        const next = app.deleteBaziHistory ? app.deleteBaziHistory(id) : [];
+        this.setData({ baziHistory: next });
+        wx.showToast({ title: '已删除', icon: 'success' });
+      }
+    });
   }
 });

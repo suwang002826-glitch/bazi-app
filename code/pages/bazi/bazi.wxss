@@ -312,3 +312,15 @@
 .lunar-picker-value {
   max-width: 360rpx;
 }
+
+.city-quick-row {
+  background: rgba(217, 191, 113, .035);
+}
+
+.city-picker-value {
+  max-width: 390rpx;
+  overflow: hidden;
+  color: #d9bf71;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
