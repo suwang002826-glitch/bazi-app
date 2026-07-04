@@ -11,7 +11,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐢插崍' }
+    expect: { year: "己巳", month: "丙子", day: "丙寅", hour: "甲午" }
   },
   {
     case_id: 2,
@@ -23,7 +23,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
+    expect: { year: "己巳", month: "丙子", day: "丁卯", hour: "庚子" }
   },
   {
     case_id: 3,
@@ -35,7 +35,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
+    expect: { year: "己巳", month: "丙子", day: "丁卯", hour: "庚子" }
   },
   {
     case_id: 4,
@@ -47,7 +47,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涓佸嵂', month: '鐧镐笐', day: '宸变笐', hour: '涔欎亥' }
+    expect: { year: "丁卯", month: "癸丑", day: "己丑", hour: "乙亥" }
   },
   {
     case_id: 5,
@@ -59,7 +59,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鎴婅景', month: '鐢插瘏', day: '搴氬瘏', hour: '涓欏瓙' }
+    expect: { year: "戊辰", month: "甲寅", day: "庚寅", hour: "丙子" }
   },
   {
     case_id: 6,
@@ -71,7 +71,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '搴氬崍', month: '鎴婂瘏', day: '搴氬崍', hour: '鎴婂瘏' }
+    expect: { year: "庚午", month: "戊寅", day: "庚午", hour: "戊寅" }
   },
   {
     case_id: 7,
@@ -83,7 +83,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '搴氬崍', month: '宸卞嵂', day: '搴氬崍', hour: '宸卞嵂' }
+    expect: { year: "庚午", month: "己卯", day: "庚午", hour: "己卯" }
   },
   {
     case_id: 8,
@@ -95,7 +95,7 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '涓佸嵂', month: '鐢茶景', day: '杈涘嵂', hour: '宸变笐' }
+    expect: { year: "丁卯", month: "甲辰", day: "辛卯", hour: "己丑" }
   },
   {
     case_id: 9,
@@ -107,7 +107,7 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '涓佸嵂', month: '宸遍厜', day: '涔欎笐', hour: '涓佷笐' }
+    expect: { year: "丁卯", month: "己酉", day: "乙丑", hour: "丁丑" }
   },
   {
     case_id: 10,
@@ -119,7 +119,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: true
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐧稿烦' }
+    expect: { year: "己巳", month: "丙子", day: "丙寅", hour: "癸巳" }
   },
   {
     case_id: 11,
@@ -131,7 +131,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: true
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐢插崍' }
+    expect: { year: "己巳", month: "丙子", day: "丙寅", hour: "甲午" }
   },
   // 1950-2010骞存櫘閫氭棩鏈熷叏鏃惰景瑕嗙洊鐢ㄤ緥锛堝叡19涓紝瑕嗙洊0-23鐐规墍鏈夋椂杈帮級
   {
@@ -144,7 +144,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涔欐湭', month: '宸卞嵂', day: '涔欎亥', hour: '涓欏瓙' }
+    expect: { year: "乙未", month: "己卯", day: "乙亥", hour: "丙子" }
   },
   {
     case_id: 13,
@@ -156,7 +156,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '澹瘏', month: '涔欏烦', day: '鎴婂崍', hour: '鐧镐笐' }
+    expect: { year: "壬寅", month: "乙巳", day: "戊午", hour: "癸丑" }
   },
   {
     case_id: 14,
@@ -168,7 +168,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '搴氭垖', month: '鐧告湭', day: '宸变笐', hour: '涓欏瘏' }
+    expect: { year: "庚戌", month: "癸未", day: "己丑", hour: "丙寅" }
   },
   {
     case_id: 15,
@@ -180,7 +180,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鐧镐亥', month: '杈涢厜', day: '鐧稿嵂', hour: '涔欏嵂' }
+    expect: { year: "癸亥", month: "辛酉", day: "癸卯", hour: "乙卯" }
   },
   {
     case_id: 16,
@@ -192,7 +192,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涔欎亥', month: '涓佷亥', day: '搴氱敵', hour: '搴氳景' }
+    expect: { year: "乙亥", month: "丁亥", day: "庚申", hour: "庚辰" }
   },
   {
     case_id: 17,
@@ -204,7 +204,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涔欓厜', month: '鎴婂瘏', day: '鐧搁厜', hour: '涓佸烦' }
+    expect: { year: "乙酉", month: "戊寅", day: "癸酉", hour: "丁巳" }
   },
   {
     case_id: 18,
@@ -216,7 +216,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鎴婃垖', month: '涓欒景', day: '鐢插瘏', hour: '搴氬崍' }
+    expect: { year: "戊戌", month: "丙辰", day: "甲寅", hour: "庚午" }
   },
   {
     case_id: 19,
@@ -228,7 +228,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鎴婄敵', month: '鎴婂崍', day: '鐧镐亥', hour: '宸辨湭' }
+    expect: { year: "戊申", month: "戊午", day: "癸亥", hour: "己未" }
   },
   {
     case_id: 20,
@@ -240,7 +240,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鎴婂崍', month: '搴氱敵', day: '搴氭垖', hour: '鐢茬敵' }
+    expect: { year: "戊午", month: "庚申", day: "庚戌", hour: "甲申" }
   },
   {
     case_id: 21,
@@ -252,7 +252,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鎴婅景', month: '澹垖', day: '涓侀厜', hour: '宸遍厜' }
+    expect: { year: "戊辰", month: "壬戌", day: "丁酉", hour: "己酉" }
   },
   {
     case_id: 22,
@@ -264,7 +264,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鎴婂瘏', month: '鐧镐亥', day: '鐢茬敵', hour: '鐢叉垖' }
+    expect: { year: "戊寅", month: "癸亥", day: "甲申", hour: "甲戌" }
   },
   {
     case_id: 23,
@@ -276,7 +276,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涓佷亥', month: '鐧镐笐', day: '鐢插瓙', hour: '涔欎亥' }
+    expect: { year: "丁亥", month: "癸丑", day: "甲子", hour: "乙亥" }
   },
   {
     case_id: 24,
@@ -288,7 +288,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '澹景', month: '涓佹湭', day: '澹崍', hour: '搴氬瓙' }
+    expect: { year: "壬辰", month: "丁未", day: "壬午", hour: "庚子" }
   },
   {
     case_id: 25,
@@ -300,7 +300,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涔欏烦', month: '涔欓厜', day: '鎴婂瓙', hour: '鐧镐笐' }
+    expect: { year: "乙巳", month: "乙酉", day: "戊子", hour: "癸丑" }
   },
   {
     case_id: 26,
@@ -312,7 +312,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涔欏嵂', month: '鎴婂瓙', day: '澹景', hour: '鐧稿嵂' }
+    expect: { year: "乙卯", month: "戊子", day: "壬辰", hour: "癸卯" }
   },
   {
     case_id: 27,
@@ -324,7 +324,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '涔欎笐', month: '鐧告湭', day: '涔欎笐', hour: '杈涘烦' }
+    expect: { year: "乙丑", month: "癸未", day: "乙丑", hour: "辛巳" }
   },
   {
     case_id: 28,
@@ -336,7 +336,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '搴氬崍', month: '搴氳景', day: '搴氭垖', hour: '鐧告湭' }
+    expect: { year: "庚午", month: "庚辰", day: "庚戌", hour: "癸未" }
   },
   {
     case_id: 29,
@@ -348,7 +348,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '搴氳景', month: '澹崍', day: '宸变亥', hour: '鐧搁厜' }
+    expect: { year: "庚辰", month: "壬午", day: "己亥", hour: "癸酉" }
   },
   {
     case_id: 30,
@@ -360,7 +360,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '搴氬瘏', month: '涔欓厜', day: '澹垖', hour: '杈涗亥' }
+    expect: { year: "庚寅", month: "乙酉", day: "壬戌", hour: "辛亥" }
   },
   {
     case_id: 31,
@@ -372,7 +372,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鎴婅景', month: '鐢插瘏', day: '宸变笐', hour: '涔欎亥' }
+    expect: { year: "戊辰", month: "甲寅", day: "己丑", hour: "乙亥" }
   },
   {
     case_id: 32,
@@ -384,7 +384,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '搴氬崍', month: '宸卞嵂', day: '搴氬崍', hour: '鎴婂瘏' }
+    expect: { year: "庚午", month: "己卯", day: "庚午", hour: "戊寅" }
   },
   {
     case_id: 33,
@@ -396,7 +396,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
+    expect: { year: "己巳", month: "丙子", day: "丁卯", hour: "庚子" }
   },
   {
     case_id: 34,
@@ -408,7 +408,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓佸嵂', hour: '搴氬瓙' }
+    expect: { year: "己巳", month: "丙子", day: "丁卯", hour: "庚子" }
   },
   {
     case_id: 35,
@@ -420,7 +420,7 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '涓欏瘏', month: '澹景', day: '鎴婄敵', hour: '鐧镐笐' }
+    expect: { year: "丙寅", month: "壬辰", day: "戊申", hour: "癸丑" }
   },
   {
     case_id: 36,
@@ -432,7 +432,7 @@ const TEST_CASES = [
       use_dst: true,
       use_true_solar: false
     },
-    expect: { year: '涓欏瘏', month: '涓侀厜', day: '杈涢厜', hour: '宸变笐' }
+    expect: { year: "丙寅", month: "丁酉", day: "辛酉", hour: "己丑" }
   },
   {
     case_id: 37,
@@ -444,7 +444,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '鐢茶景', month: '涓佷笐', day: '鐢叉垖', hour: '宸卞烦' }
+    expect: { year: "甲辰", month: "丁丑", day: "甲戌", hour: "己巳" }
   },
   {
     case_id: 38,
@@ -456,7 +456,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: true
     },
-    expect: { year: '宸卞烦', month: '涓欏瓙', day: '涓欏瘏', hour: '鐢插崍' }
+    expect: { year: "己巳", month: "丙子", day: "丙寅", hour: "甲午" }
   },
   {
     case_id: 39,
@@ -473,7 +473,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '搴氬崍' }
+    expect: { year: "癸卯", month: "辛酉", day: "庚寅", hour: "壬午" }
   },
   {
     case_id: 40,
@@ -490,7 +490,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '搴氬崍' }
+    expect: { year: "癸卯", month: "辛酉", day: "庚寅", hour: "壬午" }
   },
   {
     case_id: 41,
@@ -507,7 +507,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '宸卞烦' }
+    expect: { year: "癸卯", month: "乙卯", day: "戊子", hour: "丁巳" }
   },
   {
     case_id: 42,
@@ -523,7 +523,7 @@ const TEST_CASES = [
       use_dst: false,
       use_true_solar: false
     },
-    expect: { year: '澹瘏', month: '澹瓙', day: '宸辨湭', hour: '鐢叉垖' }
+    expect: { year: "癸卯", month: "辛酉", day: "庚寅", hour: "丙戌" }
   }
 ];
 

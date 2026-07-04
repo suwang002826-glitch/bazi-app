@@ -343,6 +343,79 @@ check(
   adaptedNumericFemale.luck && adaptedNumericFemale.luck.direction
 );
 
+const adaptedLunarModeOnly = buildReadingFromForm({
+  birthDate: '1990-01-01',
+  birthTime: '12:00:00',
+  calendarType: 'lunar',
+  lunarYear: 2023,
+  lunarMonth: 8,
+  lunarDay: 15,
+  isLeapMonth: false,
+  useTrueSolarTime: false,
+  useDST: false,
+  useEarlyLateZi: false,
+  longitude: 120,
+  latitude: 39
+});
+check(
+  adaptedLunarModeOnly.calendarConversion && adaptedLunarModeOnly.calendarConversion.isLunar === true,
+  'adapter should keep calendarMode=lunar as lunar conversion mode',
+  true,
+  adaptedLunarModeOnly.calendarConversion && adaptedLunarModeOnly.calendarConversion.isLunar
+);
+
+// 9) adapter liuNian/liuYue mapping
+runHeader('Adapter: bazi page mapping includes liuNian/liuYue data');
+check(
+  adapted && Array.isArray(adapted.flowYears) && adapted.flowYears.length === 81,
+  'adapter should expose 81 flowYears (0-80岁)',
+  81,
+  adapted && adapted.flowYears && adapted.flowYears.length
+);
+check(
+  adapted && adapted.flowYears[0].value === '庚辰',
+  '0岁流年干支应为庚辰（2000年）',
+  '庚辰',
+  adapted && adapted.flowYears[0] && adapted.flowYears[0].value
+);
+check(
+  adapted && adapted.flowYears[24].value === '甲辰',
+  '24岁流年干支应为甲辰（2024年）',
+  '甲辰',
+  adapted && adapted.flowYears[24] && adapted.flowYears[24].value
+);
+check(
+  adapted && adapted.flowYears[24].months && adapted.flowYears[24].months.length === 12,
+  '每个流年应包含12个流月',
+  12,
+  adapted && adapted.flowYears[24].months && adapted.flowYears[24].months.length
+);
+check(
+  adapted && adapted.flowYears[24].months[0].value === '丙寅',
+  '2024年（甲年）正月寅月干支应为丙寅',
+  '丙寅',
+  adapted && adapted.flowYears[24].months[0] && adapted.flowYears[24].months[0].value
+);
+check(
+  adapted && Array.isArray(adapted.flowMonths) && adapted.flowMonths.length === 1,
+  'adapter should expose current flowMonth',
+  1,
+  adapted && adapted.flowMonths && adapted.flowMonths.length
+);
+// 农历输入下流年流月正确性
+check(
+  adaptedLunarModeOnly && Array.isArray(adaptedLunarModeOnly.flowYears) && adaptedLunarModeOnly.flowYears.length === 81,
+  '农历输入下应同样返回81个流年',
+  81,
+  adaptedLunarModeOnly && adaptedLunarModeOnly.flowYears && adaptedLunarModeOnly.flowYears.length
+);
+check(
+  adaptedLunarModeOnly && adaptedLunarModeOnly.flowYears[0].value === '癸卯',
+  '农历2023年出生0岁流年干支应为癸卯',
+  '癸卯',
+  adaptedLunarModeOnly && adaptedLunarModeOnly.flowYears[0] && adaptedLunarModeOnly.flowYears[0].value
+);
+
 console.log(`\nUnit Test Summary: ${passed} passed, ${failed} failed`);
 if (failures.length > 0) {
   console.log('--- Failures ---');

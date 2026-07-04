@@ -226,6 +226,41 @@ function buildLuckCyclesFromDaYun(coreResult, form = {}) {
   };
 }
 
+function buildFlowYearsFromLiuNian(liuNianList = []) {
+  return liuNianList.map((ln) => {
+    const months = (ln.months || []).map((m) => ({
+      label: '流月',
+      monthTitle: m.name,
+      termName: m.jieName,
+      termTime: `${m.startDate} 00:00:00`,
+      dateShort: m.startDate.slice(5),
+      value: m.ganZhi,
+      tenGod: m.tenGod,
+      naYin: m.naYin,
+      startDate: m.startDate,
+      endDate: m.endDate,
+      influenceSummary: '以月干支看短周期应事',
+      interactionSummary: '以日主喜忌为先'
+    }));
+
+    return {
+      year: ln.year,
+      value: ln.ganZhi,
+      yearRange: `${ln.year}`,
+      ageRange: `${ln.age}岁`,
+      tenGod: ln.tenGod,
+      naYin: ln.naYin,
+      startDate: ln.startDate,
+      endDate: ln.endDate,
+      lichunDate: ln.lichunDate,
+      influenceSummary: '运势以当运干支与命局互动为参照',
+      interactionSummary: '以十神生克制化观察发展变化',
+      triggerPoints: [],
+      months
+    };
+  });
+}
+
 function normalizeElementCount(rawCount = {}) {
   return {
     金: Number(rawCount.金 || 0),
@@ -362,31 +397,26 @@ function buildLegacyBaziResult(coreResult, form = {}) {
     petal: `${ZODIAC_BY_BRANCH[yearPillar.branch]}`
   };
 
-  const flowYears = [
-    {
-      year: new Date(coreResult.adjustedDateTime).getUTCFullYear(),
-      value: yearText,
-      yearRange: `${new Date(coreResult.adjustedDateTime).getUTCFullYear()}-${new Date(coreResult.adjustedDateTime).getUTCFullYear() + 9}`,
-      ageRange: '0-9',
-      tenGod: coreResult.tenGods.year,
-      influenceSummary: '运势以当运干支与命局互动为参照',
-      interactionSummary: '以十神生克制化观察发展变化',
-      triggerPoints: []
+  const flowYears = buildFlowYearsFromLiuNian(coreResult.liuNian || []);
+  // 找到出生时间所在的流月作为默认当前流月
+  const birthDateStr = new Date(coreResult.adjustedDateTime).toISOString().split('T')[0];
+  let currentFlowMonth = flowYears[0]?.months?.[0] || {
+    label: '流月',
+    monthTitle: `${terms.previous.name}月`,
+    termTime: terms.previous.date.toISOString().slice(0, 19).replace('T', ' '),
+    dateShort: terms.previous.date.toISOString().slice(5, 10),
+    value: monthText,
+    tenGod: coreResult.tenGods.month,
+    influenceSummary: '以月干支看短周期应事',
+    interactionSummary: '以日主喜忌为先'
+  };
+  for (const m of (flowYears[0]?.months || [])) {
+    if (birthDateStr >= m.startDate && birthDateStr <= m.endDate) {
+      currentFlowMonth = m;
+      break;
     }
-  ];
-
-  const flowMonths = [
-    {
-      label: '流月',
-      monthTitle: `${terms.previous.name}月`,
-      termTime: terms.previous.date.toISOString().slice(0, 19).replace('T', ' '),
-      dateShort: terms.previous.date.toISOString().slice(5, 10),
-      value: monthText,
-      tenGod: coreResult.tenGods.month,
-      influenceSummary: '以月干支看短周期应事',
-      interactionSummary: '以日主喜忌为先'
-    }
-  ];
+  }
+  const flowMonths = [currentFlowMonth];
 
   const destinyLabel = getDestinyLabel(form.gender);
   const luck = buildLuckCyclesFromDaYun(coreResult, form);
@@ -457,7 +487,7 @@ function buildLegacyBaziResult(coreResult, form = {}) {
     destinyLabel,
     gender: form.gender || '男',
     title: `${form.name || '命例'}${destinyLabel}`,
-    betaLabel: '排盘引擎 v0.1.1',
+    betaLabel: '排盘引擎 v0.3.0',
     solarTime: `${form.birthDate || ''} ${form.birthTime || ''}`,
     adjustedSolarTime: coreResult.adjustedDateTime,
     birthPlace: form.birthPlace || '',
@@ -494,7 +524,7 @@ function buildLegacyBaziResult(coreResult, form = {}) {
       summary: `${yearText} ${monthText} ${dayText} ${hourText}`
     },
     engineInfo: [
-      '当前为 v0.1.1 稳定版，真太阳时由核心计算模块输出',
+      '当前为 v0.3.0 稳定版，真太阳时由核心计算模块输出',
       `${ZODIAC_BY_BRANCH[yearPillar.branch]}年`
     ]
   };
@@ -502,6 +532,14 @@ function buildLegacyBaziResult(coreResult, form = {}) {
 
 function buildReadingFromForm(form, options = {}) {
   const merged = { ...form, ...options };
+  const normalizedInput = normalizeBaziInput(merged);
+  const normalizedForm = normalizedInput.form;
+  const derivedIsLunar = Boolean(
+    merged.isLunar
+    || merged.calendarType === 'lunar'
+    || merged.calendarMode === 'lunar'
+    || (normalizedForm.calendarConversion && normalizedForm.calendarConversion.calendarType === 'lunar')
+  );
   const mergedInput = {
     ...merged,
     useTrueSolarTime: merged.useTrueSolarTime !== undefined
@@ -523,8 +561,6 @@ function buildReadingFromForm(form, options = {}) {
       ? RULES.defaultLatitude
       : merged.latitude
   };
-  const normalizedInput = normalizeBaziInput(mergedInput);
-  const normalizedForm = normalizedInput.form;
   const calculationForm = {
     ...mergedInput,
     ...normalizedForm,
@@ -544,6 +580,7 @@ function buildReadingFromForm(form, options = {}) {
       mergedInput.useTrueSolarTime
       ?? RULES.defaultTrueSolarTime
     ),
+    isLunar: derivedIsLunar,
     useEarlyLateZi: Boolean(
       mergedInput.useEarlyLateZi
       || RULES.defaultEarlyLateZi
