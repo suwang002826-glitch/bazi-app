@@ -25,3 +25,4 @@
 | 天赦日 | `wenzhen-tiansheri-rule-001.jpg` | 当前不在 v0.5.0 第一批 10 个神煞内 |
 | 禄神 | `wenzhen-lushen-rule-001.jpg` - `wenzhen-lushen-rule-004.jpg`, `LUSHEN_TEXT_MATERIAL.md` | 当前不在 v0.5.0 第一批 10 个神煞内 |
 | 学堂 | `wenzhen-xuetang-rule-001.jpg` - `wenzhen-xuetang-rule-003.jpg` | 当前不在 v0.5.0 第一批 10 个神煞内 |
+| 空亡 | `KONGWANG_TEXT_MATERIAL.md` | 已作为核心排盘字段实现，本次只归档解释材料，不纳入 v0.5.0 神煞采集 |
