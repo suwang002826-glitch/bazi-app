@@ -133,6 +133,88 @@
       </view>
     </view>
 
+    <!-- 大运流年 Tab -->
+    <view wx:elif="{{activeResultTabIndex === 2}}">
+      <!-- 当前位置提示 -->
+      <view class="luck-current-tip">
+        <view class="luck-current-label">当前查看</view>
+        <view class="luck-current-text">
+          {{professionalDetail.luckCycles[selectedLuckIndex].label}} · {{professionalDetail.selectedFlowYear.year}}年{{professionalDetail.selectedFlowYear.value}} · {{professionalDetail.selectedMonth.monthTitle}}月
+        </view>
+      </view>
+      <view class="luck-scroll-hint">左右滑动查看完整大运、流年、流月</view>
+
+      <!-- 大运横向时间轴 -->
+      <scroll-view scroll-x class="luck-scroll-x" enable-flex>
+        <view class="luck-row">
+          <view class="luck-row-label">大运</view>
+          <view class="luck-cycles-container">
+            <view 
+              wx:for="{{professionalDetail.luckCycles}}" 
+              wx:key="label"
+              class="luck-cycle-item {{item.active ? 'active' : ''}}"
+              bindtap="onLuckTap"
+              data-index="{{index}}"
+            >
+              <view class="luck-cycle-age">{{item.ageRange}}</view>
+              <view class="luck-cycle-gz">{{item.value}}</view>
+              <view class="luck-cycle-year">{{item.yearRange}}</view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 流年网格 -->
+      <view class="flow-years-container">
+        <view class="flow-years-row">
+          <view class="flow-years-label">流年</view>
+          <view class="flow-years-grid">
+            <view class="flow-year-col" wx:for="{{professionalDetail.flowYears}}" wx:key="year">
+              <view 
+                wx:for="{{item.miniPillars}}" 
+                wx:key="year"
+                wx:for-item="yearItem"
+                class="flow-year-item {{yearItem.active ? 'active' : ''}}"
+                bindtap="onFlowYearItemTap"
+                data-index="{{index}}"
+                data-offset="{{yearItem.year - item.year}}"
+              >
+                <view class="flow-year-num">{{yearItem.year}}</view>
+                <view class="flow-year-gz">{{yearItem.value}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 流月横向时间轴 -->
+      <scroll-view scroll-x class="luck-scroll-x" enable-flex>
+        <view class="luck-row">
+          <view class="luck-row-label">流月</view>
+          <view class="luck-months-container">
+            <view 
+              wx:for="{{professionalDetail.flowMonths}}" 
+              wx:key="monthTitle"
+              class="luck-month-item {{item.active ? 'active' : ''}}"
+              bindtap="onFlowMonthTap"
+              data-index="{{index}}"
+            >
+              <view class="luck-month-term">{{item.monthTitle}}</view>
+              <view class="luck-month-date">{{item.dateShort}}</view>
+              <view class="luck-month-gz">{{item.value}}</view>
+              <view class="luck-month-god">{{item.tenGod}}</view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 流月说明 -->
+      <view class="flow-month-desc" wx:if="{{professionalDetail.selectedMonth}}">
+        <view class="flow-month-title">{{professionalDetail.selectedMonth.monthTitle}}月 · {{professionalDetail.selectedMonth.value}} · {{professionalDetail.selectedMonth.tenGod}}</view>
+        <view class="flow-month-text">{{professionalDetail.selectedMonth.influenceSummary}}</view>
+      </view>
+    </view>
+
     <view wx:else>
       <view class="focus-card quick-focus-card">
         <view class="focus-line">

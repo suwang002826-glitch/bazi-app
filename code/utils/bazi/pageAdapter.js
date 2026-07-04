@@ -226,7 +226,7 @@ function buildLuckCyclesFromDaYun(coreResult, form = {}) {
   };
 }
 
-function buildFlowYearsFromLiuNian(liuNianList = []) {
+function buildFlatFlowYears(liuNianList = []) {
   return liuNianList.map((ln) => {
     const months = (ln.months || []).map((m) => ({
       label: '流月',
@@ -244,6 +244,7 @@ function buildFlowYearsFromLiuNian(liuNianList = []) {
     }));
 
     return {
+      age: ln.age,
       year: ln.year,
       value: ln.ganZhi,
       yearRange: `${ln.year}`,
@@ -257,6 +258,92 @@ function buildFlowYearsFromLiuNian(liuNianList = []) {
       interactionSummary: '以十神生克制化观察发展变化',
       triggerPoints: [],
       months
+    };
+  });
+}
+
+function buildGroupedFlowYears(flatFlowYears, luckCycles = []) {
+  // 把流年按大运分组，每个大运10年
+  const grouped = [];
+  
+  // 如果有大运数据，按大运年份范围分组
+  if (luckCycles && luckCycles.length > 0) {
+    luckCycles.forEach((cycle) => {
+      const startYear = cycle.startYear;
+      const endYear = cycle.endYear;
+      const yearsInCycle = flatFlowYears.filter((ln) => ln.year >= startYear && ln.year <= endYear);
+      if (yearsInCycle.length > 0) {
+        const firstYear = yearsInCycle[0];
+        grouped.push({
+          year: firstYear.year,
+          value: firstYear.value,
+          yearRange: `${startYear}-${endYear}`,
+          ageRange: `${cycle.startAge}-${cycle.endAge}岁`,
+          tenGod: firstYear.tenGod,
+          naYin: firstYear.naYin,
+          startDate: firstYear.startDate,
+          endDate: yearsInCycle[yearsInCycle.length - 1].endDate,
+          influenceSummary: '运势以当运干支与命局互动为参照',
+          interactionSummary: '以十神生克制化观察发展变化',
+          triggerPoints: [],
+          months: firstYear.months || [],
+          allYears: yearsInCycle
+        });
+      }
+    });
+  } else {
+    // 没有大运数据时，简单按10年分组
+    for (let i = 0; i < flatFlowYears.length; i += 10) {
+      const group = flatFlowYears.slice(i, i + 10);
+      if (group.length > 0) {
+        const firstYear = group[0];
+        grouped.push({
+          year: firstYear.year,
+          value: firstYear.value,
+          yearRange: `${firstYear.year}-${group[group.length - 1].year}`,
+          ageRange: `${firstYear.age}-${group[group.length - 1].age}岁`,
+          tenGod: firstYear.tenGod,
+          naYin: firstYear.naYin,
+          startDate: firstYear.startDate,
+          endDate: group[group.length - 1].endDate,
+          influenceSummary: '运势以当运干支与命局互动为参照',
+          interactionSummary: '以十神生克制化观察发展变化',
+          triggerPoints: [],
+          months: firstYear.months || [],
+          allYears: group
+        });
+      }
+    }
+  }
+
+  // 为每个分组生成miniPillars需要的完整10年数据
+  return grouped.map((group) => {
+    const miniPillars = [];
+    for (let offset = 0; offset < 10; offset++) {
+      const targetYear = group.year + offset;
+      const yearData = group.allYears.find((y) => y.year === targetYear);
+      if (yearData) {
+        miniPillars.push({
+          year: yearData.year,
+          value: yearData.value,
+          tenGod: yearData.tenGod,
+          months: yearData.months || []
+        });
+      } else {
+        // 如果数据不足，用干支偏移计算
+        const stemIndex = (STEMS.indexOf(group.value.charAt(0)) + offset) % 10;
+        const branchIndex = (BRANCHES.indexOf(group.value.charAt(1)) + offset) % 12;
+        miniPillars.push({
+          year: targetYear,
+          value: `${STEMS[stemIndex]}${BRANCHES[branchIndex]}`,
+          tenGod: '',
+          months: []
+        });
+      }
+    }
+    return {
+      ...group,
+      miniPillars
     };
   });
 }
@@ -397,10 +484,13 @@ function buildLegacyBaziResult(coreResult, form = {}) {
     petal: `${ZODIAC_BY_BRANCH[yearPillar.branch]}`
   };
 
-  const flowYears = buildFlowYearsFromLiuNian(coreResult.liuNian || []);
+  // 先构建大运数据，再用大运年份范围分组流年
+  const luck = buildLuckCyclesFromDaYun(coreResult, form);
+  const flatFlowYears = buildFlatFlowYears(coreResult.liuNian || []);
+  const groupedFlowYears = buildGroupedFlowYears(flatFlowYears, luck.cycles);
   // 找到出生时间所在的流月作为默认当前流月
   const birthDateStr = new Date(coreResult.adjustedDateTime).toISOString().split('T')[0];
-  let currentFlowMonth = flowYears[0]?.months?.[0] || {
+  let currentFlowMonth = flatFlowYears[0]?.months?.[0] || {
     label: '流月',
     monthTitle: `${terms.previous.name}月`,
     termTime: terms.previous.date.toISOString().slice(0, 19).replace('T', ' '),
@@ -410,7 +500,7 @@ function buildLegacyBaziResult(coreResult, form = {}) {
     influenceSummary: '以月干支看短周期应事',
     interactionSummary: '以日主喜忌为先'
   };
-  for (const m of (flowYears[0]?.months || [])) {
+  for (const m of (flatFlowYears[0]?.months || [])) {
     if (birthDateStr >= m.startDate && birthDateStr <= m.endDate) {
       currentFlowMonth = m;
       break;
@@ -419,7 +509,6 @@ function buildLegacyBaziResult(coreResult, form = {}) {
   const flowMonths = [currentFlowMonth];
 
   const destinyLabel = getDestinyLabel(form.gender);
-  const luck = buildLuckCyclesFromDaYun(coreResult, form);
   const trueSolarApplied = Boolean(coreResult.trueSolarTime && coreResult.trueSolarTime.applied);
 
   const professional = {
@@ -504,7 +593,9 @@ function buildLegacyBaziResult(coreResult, form = {}) {
     pillars,
     distribution,
     luck,
-    flowYears,
+    flowYears: flatFlowYears,
+    flatFlowYears,
+    groupedFlowYears,
     flowMonths,
     professional,
     detailProfile,

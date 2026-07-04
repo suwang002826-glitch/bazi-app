@@ -1,7 +1,7 @@
 const app = getApp();
 const { createBaziPlate, createProfessionalDetail } = require('../../utils/baziPlate');
 
-const RESULT_TABS = ['本命', '解盘', '关注点'];
+const RESULT_TABS = ['本命', '解盘', '大运流年', '关注点'];
 const HIDDEN_STEM_LEVELS = ['本气', '中气', '余气'];
 
 function parseCellText(cell) {
@@ -196,7 +196,12 @@ Page({
     const result = normalizeResult(reading.result);
     const baziPlate = reading.baziPlate || createBaziPlate(result);
     const songPlate = buildSongPlate(result, baziPlate);
-    const professionalDetail = createProfessionalDetail(result, {
+    // 使用按大运分组的流年数据创建专业排盘
+    const resultForProfessional = {
+      ...result,
+      flowYears: result.groupedFlowYears || result.flowYears
+    };
+    const professionalDetail = createProfessionalDetail(resultForProfessional, {
       luckIndex: 0,
       yearIndex: 0,
       monthIndex: 0,
@@ -247,7 +252,12 @@ Page({
       ...patch
     };
 
-    const professionalDetail = createProfessionalDetail(this.data.result, {
+    // 使用按大运分组的流年数据
+    const resultForProfessional = {
+      ...this.data.result,
+      flowYears: this.data.result.groupedFlowYears || this.data.result.flowYears
+    };
+    const professionalDetail = createProfessionalDetail(resultForProfessional, {
       luckIndex: options.luckIndex,
       yearIndex: options.yearIndex,
       monthIndex: options.monthIndex,
