@@ -231,6 +231,13 @@ function buildAdvice(date, duty, god) {
   return hints[Math.abs(date.getDate()) % hints.length];
 }
 
+const {
+  HISTORY_SORT_OPTIONS,
+  HISTORY_TIME_FILTERS,
+  filterBaziHistoryRecords,
+  findOptionLabel
+} = require('../../utils/bazi/historyView');
+
 Page({
   data: {
     nowText: '',
@@ -240,11 +247,64 @@ Page({
     selected: {},
     weekLabels: WEEKDAYS,
     calendarCells: [],
-    analysis: {}
+    analysis: {},
+    baziHistory: [],
+    filteredBaziHistory: [],
+    historyKeyword: '',
+    historyTimeFilters: HISTORY_TIME_FILTERS,
+    historyTimeFilter: 'all',
+    historyTimeFilterLabel: findOptionLabel(HISTORY_TIME_FILTERS, 'all', '全部'),
+    historySortOptions: HISTORY_SORT_OPTIONS.map((item) => item.label),
+    historySortIndex: 0,
+    historySortMode: HISTORY_SORT_OPTIONS[0].key,
+    historySortLabel: HISTORY_SORT_OPTIONS[0].label
   },
 
   onLoad() {
     this.refreshCalendar(new Date());
+  },
+
+  onShow() {
+    this.loadBaziHistory();
+  },
+
+  loadBaziHistory() {
+    const app = getApp();
+    const history = app.listBaziHistory ? app.listBaziHistory() : [];
+    this.setData({ baziHistory: history }, () => this.applyBaziHistoryFilters());
+  },
+
+  applyBaziHistoryFilters() {
+    const filtered = filterBaziHistoryRecords(this.data.baziHistory, {
+      keyword: this.data.historyKeyword,
+      timeFilter: this.data.historyTimeFilter,
+      sortMode: this.data.historySortMode
+    });
+    this.setData({ filteredBaziHistory: filtered });
+  },
+
+  onHistoryKeywordInput(event) {
+    this.setData({
+      historyKeyword: event.detail.value || ''
+    }, () => this.applyBaziHistoryFilters());
+  },
+
+  onHistoryTimeFilterTap(event) {
+    const key = event.currentTarget.dataset.key || 'all';
+    this.setData({
+      historyTimeFilter: key,
+      historyTimeFilterLabel: findOptionLabel(HISTORY_TIME_FILTERS, key, '全部')
+    }, () => this.applyBaziHistoryFilters());
+  },
+
+  onHistorySortChange(event) {
+    const index = Number(event.detail.value || 0);
+    const option = HISTORY_SORT_OPTIONS[index] || HISTORY_SORT_OPTIONS[0];
+    this.setData({
+      historySortIndex: index,
+      historySortMode: option.key,
+      historySortLabel: option.label
+    }, () => this.applyBaziHistoryFilters());
   },
 
   refreshCalendar(selectedDate, viewDate = selectedDate) {
@@ -306,5 +366,33 @@ Page({
 
   goBazi() {
     wx.switchTab({ url: '/pages/bazi/bazi' });
+  },
+
+  openHistoryCase(event) {
+    const id = event.currentTarget.dataset.id;
+    const record = this.data.baziHistory.find((item) => String(item.id) === String(id));
+    if (!record || !record.payload) {
+      wx.showToast({ title: '命例快照缺失', icon: 'none' });
+      return;
+    }
+    const app = getApp();
+    app.globalData.currentBaziReading = record.payload;
+    wx.setStorageSync('currentBaziReading', record.payload);
+    wx.navigateTo({ url: `/pages/bazi-result/bazi-result?historyId=${encodeURIComponent(id)}` });
+  },
+
+  deleteHistoryCase(event) {
+    const id = event.currentTarget.dataset.id;
+    wx.showModal({
+      title: '删除命例',
+      content: '删除后无法恢复，确认删除这条历史命例吗？',
+      success: (res) => {
+        if (!res.confirm) return;
+        const app = getApp();
+        const next = app.deleteBaziHistory ? app.deleteBaziHistory(id) : [];
+        this.setData({ baziHistory: next }, () => this.applyBaziHistoryFilters());
+        wx.showToast({ title: '已删除', icon: 'success' });
+      }
+    });
   }
 });

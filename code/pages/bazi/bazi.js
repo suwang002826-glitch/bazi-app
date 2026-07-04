@@ -1,13 +1,19 @@
 const { buildReadingFromForm } = require('../../utils/bazi/pageAdapter');
+const { buildBaziInputSnapshot } = require('../../utils/bazi/historyStore');
 const preciseSolarTerms = require('../../data-packs/solar-terms/solarTerms-precise-1900-2100.json');
 const { createBaziPlate } = require('../../utils/baziPlate');
 const cityLocations = require('../../data-packs/city-locations.json');
 const lunarConversions = require('../../data-packs/lunar/lunar-conversions-1901-2100');
+const {
+  getCityPickerNames,
+  resolveCityPickerSelection
+} = require('../../utils/bazi/citySelector');
 
 const app = getApp();
 
 const DEFAULT_DISCLAIMER = '排盘结果仅供参考，不作为投资、医疗、法律等高风险决策依据。';
 const DEFAULT_REGION = ['北京市', '北京市', '东城区'];
+const CITY_PICKER_NAMES = getCityPickerNames();
 const DEFAULT_LUNAR_SELECTION = {
   lunarYear: 2000,
   lunarMonth: 1,
@@ -225,6 +231,9 @@ Page({
   data: {
     genderOptions: ['男', '女'],
     calendarModes: ['公历', '农历'],
+    cityPickerNames: CITY_PICKER_NAMES,
+    cityPickerValue: 0,
+    selectedCityPickerText: CITY_PICKER_NAMES[0] || '请选择城市',
     activeCalendarMode: '公历',
     lunarCoverageText: LUNAR_COVERAGE_TEXT,
     lunarPickerRange: DEFAULT_LUNAR_PICKER.range,
@@ -340,6 +349,34 @@ Page({
     this.setData({
       'form.longitude': resolved.longitude,
       'form.latitude': resolved.latitude
+    });
+  },
+
+  onCityPickerChange(event) {
+    const cityIndex = Number(event.detail.value);
+    const selected = resolveCityPickerSelection(cityIndex);
+    if (!selected) {
+      wx.showToast({ title: '未找到城市坐标', icon: 'none' });
+      return;
+    }
+
+    const region = selected.region && selected.region.length ? selected.region : [selected.province, selected.city, selected.district].filter(Boolean);
+    this.setData({
+      cityPickerValue: cityIndex,
+      selectedCityPickerText: selected.label || selected.name,
+      'form.region': region,
+      'form.regionText': this.composeRegionText(region),
+      'form.birthPlace': this.composeBirthPlace(region),
+      'form.longitude': selected.longitude,
+      'form.latitude': selected.latitude,
+      'form.locationSource': `${selected.name} · 快捷城市`,
+      'form.locationMatched': true
+    });
+
+    wx.showToast({
+      title: `已选择${selected.name}`,
+      icon: 'none',
+      duration: 1200
     });
   },
 
@@ -483,7 +520,8 @@ Page({
       const baziPlate = createBaziPlate(result);
       const reading = {
         result,
-        baziPlate
+        baziPlate,
+        input: buildBaziInputSnapshot(form, result)
       };
 
       const shareToken = app.saveBaziShareSnapshot(reading);

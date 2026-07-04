@@ -1,6 +1,6 @@
 {
   "name": "repo",
-  "version": "0.3.1",
+  "version": "0.4.3",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -13,7 +13,8 @@
     "test:edge": "node scripts/verify-edge.js",
     "test:liunian": "node scripts/test-liunian.js",
     "test:dayun": "node scripts/test-dayun.js",
-    "test:basic": "node scripts/test-basic-interpretation.js"
+    "test:basic": "node scripts/test-basic-interpretation.js",
+    "sample:shensha": "node scripts/print-shensha-sample-template.js"
   },
   "repository": {
     "type": "git",

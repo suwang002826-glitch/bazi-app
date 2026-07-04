@@ -1,3 +1,12 @@
+const {
+  BAZI_HISTORY_STORAGE_KEY,
+  createBaziHistoryRecord,
+  deleteBaziHistoryRecord,
+  getBaziHistoryRecord,
+  listBaziHistoryRecords,
+  saveBaziHistoryRecord
+} = require('./utils/bazi/historyStore');
+
 App({
   globalData: {
     appName: '算命阁',
@@ -15,6 +24,10 @@ App({
     const caseArchive = wx.getStorageSync('caseArchive');
     if (!Array.isArray(caseArchive)) {
       wx.setStorageSync('caseArchive', []);
+    }
+    const baziCaseHistory = wx.getStorageSync(BAZI_HISTORY_STORAGE_KEY);
+    if (!Array.isArray(baziCaseHistory)) {
+      wx.setStorageSync(BAZI_HISTORY_STORAGE_KEY, []);
     }
   },
 
@@ -119,6 +132,29 @@ App({
     ].slice(0, 50);
     wx.setStorageSync('caseArchive', next);
     return next;
+  },
+
+  saveBaziHistory(reading, input, name) {
+    const record = createBaziHistoryRecord({
+      reading,
+      input,
+      name,
+      engineVersion: this.globalData.engineVersion
+    });
+    saveBaziHistoryRecord(wx, record);
+    return record;
+  },
+
+  listBaziHistory() {
+    return listBaziHistoryRecords(wx);
+  },
+
+  getBaziHistory(id) {
+    return getBaziHistoryRecord(wx, id);
+  },
+
+  deleteBaziHistory(id) {
+    return deleteBaziHistoryRecord(wx, id);
   },
 
   formatDateTime(date) {

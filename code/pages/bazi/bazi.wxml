@@ -90,6 +90,17 @@
       <text class="row-symbol">›</text>
     </view>
 
+    <view class="entry-row picker-row city-quick-row">
+      <view>
+        <text class="entry-label">快捷城市</text>
+        <text class="entry-hint">用于真太阳时经纬度</text>
+      </view>
+      <picker mode="selector" range="{{cityPickerNames}}" value="{{cityPickerValue}}" bindchange="onCityPickerChange">
+        <view class="picker-value city-picker-value">{{selectedCityPickerText}}</view>
+      </picker>
+      <text class="row-symbol">›</text>
+    </view>
+
     <view class="entry-row">
       <view>
         <text class="entry-label">农历输入</text>
@@ -135,4 +146,3 @@
     <view class="start-helper">请尽量使用准确出生时间与出生地，经度会影响真太阳时修正。</view>
   </view>
 </view>
-
