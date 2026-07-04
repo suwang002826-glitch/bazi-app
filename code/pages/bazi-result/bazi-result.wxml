@@ -211,6 +211,44 @@
     </view>
 
     <view wx:elif="{{activeResultTabIndex === 2}}">
+      <view class="basic-interpretation-card" wx:if="{{basicInterpretation}}">
+        <view class="interpretation-title">基础解读</view>
+
+        <view class="element-stats">
+          <view class="element-item" wx:for="{{basicInterpretation.elementStats}}" wx:key="name">
+            <view class="element-name" style="color: {{item.color}}">{{item.name}}</view>
+            <view class="element-bar">
+              <view class="element-bar-fill" style="width: {{item.percent}}%; background: {{item.color}}"></view>
+            </view>
+            <view class="element-count">{{item.count}}个 ({{item.percent}}%)</view>
+          </view>
+        </view>
+
+        <view class="interpretation-row">
+          <view class="interpretation-label">旺衰</view>
+          <view class="interpretation-value">{{basicInterpretation.strength.status}}</view>
+        </view>
+        <view class="interpretation-basis">
+          <text wx:for="{{basicInterpretation.strength.basis}}" wx:key="*this">· {{item}} </text>
+        </view>
+
+        <view class="interpretation-row">
+          <view class="interpretation-label">格局</view>
+          <view class="interpretation-value">{{basicInterpretation.pattern.name}}</view>
+        </view>
+        <view class="interpretation-basis">
+          <text wx:for="{{basicInterpretation.pattern.basis}}" wx:key="*this">· {{item}} </text>
+        </view>
+
+        <view class="interpretation-row">
+          <view class="interpretation-label">喜忌</view>
+          <view class="interpretation-value">喜用 <text class="useful-god">{{basicInterpretation.usefulGod.usefulText}}</text>，忌 <text class="avoid-god">{{basicInterpretation.usefulGod.avoidText}}</text></view>
+        </view>
+        <view class="interpretation-basis">· {{basicInterpretation.usefulGod.basis}}</view>
+
+        <view class="interpretation-note">* 内容为传统文化学习参考，不构成任何决策建议</view>
+      </view>
+
       <view class="flow-timeline-card">
         <view class="flow-timeline-head">
           <view class="flow-timeline-title">大运流年</view>

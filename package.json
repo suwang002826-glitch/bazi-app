@@ -7,12 +7,13 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node scripts/unit-test.js && node scripts/verify.js && node scripts/verify-edge.js && node scripts/test-liunian.js",
+    "test": "node scripts/unit-test.js && node scripts/verify.js && node scripts/verify-edge.js && node scripts/test-liunian.js && node scripts/test-dayun.js && node scripts/test-basic-interpretation.js",
     "test:unit": "node scripts/unit-test.js",
     "test:verify": "node scripts/verify.js",
     "test:edge": "node scripts/verify-edge.js",
     "test:liunian": "node scripts/test-liunian.js",
     "test:dayun": "node scripts/test-dayun.js",
+    "test:basic": "node scripts/test-basic-interpretation.js",
     "sample:shensha": "node scripts/print-shensha-sample-template.js"
   },
   "repository": {

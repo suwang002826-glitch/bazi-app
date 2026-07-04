@@ -1,5 +1,6 @@
 const app = getApp();
 const { createBaziPlate, createProfessionalDetail } = require('../../utils/baziPlate');
+const { getBasicInterpretation } = require('../../utils/bazi/basicInterpretation');
 const {
   buildBaziInputSnapshot,
   getDefaultBaziHistoryTitle
@@ -392,6 +393,7 @@ Page({
     });
 
     const shareToken = reading.shareToken || this.ensureShareToken(reading);
+    const basicInterpretation = getBasicInterpretation(result);
 
     this.setData({
       shareToken,
@@ -399,6 +401,7 @@ Page({
       baziPlate,
       songPlate,
       professionalDetail,
+      basicInterpretation,
       readingInput,
       selectedLuckIndex: professionalDetail.selectedLuckIndex || 0,
       selectedYearIndex: professionalDetail.selectedYearIndex || 0,
