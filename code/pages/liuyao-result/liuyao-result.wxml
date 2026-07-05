@@ -52,13 +52,13 @@
       </view>
       <view class="hexagram-lines">
         <view class="hexagram-line" wx:for="{{result.displayLines}}" wx:key="position">
-          <view wx:if="{{item.fuShen}}" class="fu-shen-row">↑ 伏神：{{item.fuShen.naText}}</view>
           <view class="hex-line-side">
             <text class="hex-spirit">{{item.base.spirit}}</text>
             <text class="hex-kin">{{item.base.naText}}</text>
             <view class="hex-mark {{item.base.value === 1 ? 'yang' : 'yin'}}"></view>
             <text wx:if="{{item.base.role}}" class="hex-role">{{item.base.role}}</text>
             <text wx:if="{{item.movingMark}}" class="hex-moving">{{item.movingMark}}</text>
+            <text wx:if="{{item.fuShen}}" class="fu-shen-row">↑ 伏神：{{item.fuShen.naText}}</text>
           </view>
           <view class="hex-change">{{item.changeText}}</view>
           <view class="hex-line-side changed-side">
