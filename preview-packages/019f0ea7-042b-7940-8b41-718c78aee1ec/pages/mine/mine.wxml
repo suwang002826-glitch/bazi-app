@@ -1,0 +1,43 @@
+<view class="page mine-page">
+  <view class="section profile-card">
+    <view class="profile-row">
+      <view class="avatar">命</view>
+      <view class="profile-main">
+        <view class="section-kicker">本机档案</view>
+        <view class="nickname">{{profile.nickname}}</view>
+        <view class="muted">{{profile.level}}</view>
+      </view>
+    </view>
+    <view class="profile-meta">
+      <view>
+        <text>历史</text>
+        <text>{{history.length}}</text>
+      </view>
+      <view>
+        <text>复盘</text>
+        <text>{{cases.length}}</text>
+      </view>
+      <view>
+        <text>版本</text>
+        <text>内测</text>
+      </view>
+    </view>
+    <view class="muted profile-note">{{profile.note}}</view>
+  </view>
+
+  <view class="section archive-entry tappable-row" hover-class="tap-active" bindtap="goCases">
+    <view class="archive-copy">
+      <view class="section-kicker">术数复盘</view>
+      <view class="section-title">复盘记录</view>
+      <view class="muted">保存八字排盘、六爻起卦与奇门起局记录，用于复盘准确度、整理反馈和后续校验。</view>
+    </view>
+    <view class="entry-arrow">›</view>
+  </view>
+
+  <view class="section">
+    <view class="section-kicker">边界声明</view>
+    <view class="section-title">免责声明</view>
+    <view class="muted">{{disclaimer}}</view>
+    <view class="muted extra">本测试版采用本地规则引擎，不提供确定性命运裁断。八字、六爻与奇门结果用于排盘复核、传统文化学习和复盘反馈。</view>
+  </view>
+</view>

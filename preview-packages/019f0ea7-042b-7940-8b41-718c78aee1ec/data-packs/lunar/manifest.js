@@ -1,0 +1,44 @@
+module.exports = {
+  "calendarDataVersion": "hko-lunar-data-pack@2026.07.02-runtime-preview.1",
+  "status": "hko-runtime-preview",
+  "packs": [
+    {
+      "dataPackId": "hko-lunar-conversions-2023",
+      "path": "hko-lunar-conversions-2023.js",
+      "years": [
+        2022,
+        2023
+      ],
+      "completeLunarCalendar": false,
+      "completeGregorianCalendar": true,
+      "runtimeEnabled": true,
+      "provider": "Hong Kong Observatory",
+      "sourceUrl": "https://data.weather.gov.hk/weatherAPI/hko_data/calendar/nongli_calendar_2023.csv"
+    },
+    {
+      "dataPackId": "lunar-conversions-2023",
+      "path": "lunar-conversions-2023.js",
+      "years": [
+        2023
+      ],
+      "completeLunarCalendar": false,
+      "runtimeEnabled": false
+    },
+    {
+      "dataPackId": "lunar-data-pack-2025-candidate",
+      "path": "lunar-conversions-2025-candidate.js",
+      "years": [
+        2024,
+        2025
+      ],
+      "completeLunarCalendar": false,
+      "runtimeEnabled": true,
+      "runtimeApprovalStatus": "blocked"
+    }
+  ],
+  "warnings": [
+    "2023 Gregorian-year lunar conversion now uses Hong Kong Observatory open-data runtime preview.",
+    "2025 PMO candidate records are not approved for stable runtime promises.",
+    "Only verified records can be used; dates outside listed packs must fail closed."
+  ]
+};

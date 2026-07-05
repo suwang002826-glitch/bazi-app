@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/bazi/bazi",
+    "pages/bazi-result/bazi-result",
+    "pages/liuyao/liuyao",
+    "pages/liuyao-result/liuyao-result",
+    "pages/qimen/qimen",
+    "pages/qimen-result/qimen-result",
+    "pages/mine/mine",
+    "pages/cases/cases"
+  ],
+  "window": {
+    "navigationBarTitleText": "玄门命理",
+    "navigationBarBackgroundColor": "#07080e",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#07080e"
+  },
+  "usingComponents": {
+    "x-pattern": "/components/x-pattern/x-pattern"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "tabBar": {
+    "color": "#817b92",
+    "selectedColor": "#d9bf71",
+    "backgroundColor": "#07080e",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/bazi/bazi",
+        "text": "八字"
+      },
+      {
+        "pagePath": "pages/liuyao/liuyao",
+        "text": "六爻"
+      },
+      {
+        "pagePath": "pages/qimen/qimen",
+        "text": "奇门"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

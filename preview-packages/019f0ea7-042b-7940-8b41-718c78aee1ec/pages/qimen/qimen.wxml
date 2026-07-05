@@ -1,0 +1,62 @@
+<view class="page qimen-page">
+  <x-pattern />
+
+  <view class="tool-title-hero">
+    <view class="tool-title">奇门</view>
+    <view class="tool-subtitle">时空起局 · 九宫研判</view>
+    <view class="tool-stamp">起局</view>
+  </view>
+
+  <view class="section input-panel">
+    <view class="section-kicker">一事一局</view>
+    <view class="section-title">问事与起局</view>
+    <view class="qimen-form-list">
+      <view class="qimen-setting-row qimen-question-row">
+        <text class="qimen-setting-label">事项内容</text>
+        <textarea placeholder="请输入事项（选填）" value="{{form.question}}" bindinput="onQuestionInput" />
+      </view>
+      <view class="qimen-setting-row">
+        <text class="qimen-setting-label">排盘时间</text>
+        <view class="qimen-time-value" bindtap="useCurrentTime">
+          <text>{{form.date}} {{form.time}}</text>
+          <text class="time-refresh">↻</text>
+        </view>
+      </view>
+      <view
+        class="qimen-setting-row qimen-option-row"
+        wx:for="{{qimenRows}}"
+        wx:for-item="row"
+        wx:for-index="rowIndex"
+        wx:key="key"
+      >
+        <text class="qimen-setting-label">{{row.label}}</text>
+        <view class="qimen-radio-group">
+          <view
+            class="qimen-radio {{option.active ? 'active' : ''}}"
+            wx:for="{{row.options}}"
+            wx:for-item="option"
+            wx:key="value"
+            bindtap="onQimenOptionTap"
+            data-key="{{row.key}}"
+            data-value="{{option.value}}"
+          >
+            <text class="radio-dot">{{option.active ? '✓' : ''}}</text>
+            <text>{{option.value}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="ritual-panel">
+      <view class="ritual-title">起局前</view>
+      <view class="ritual-row">
+        <text class="ritual-dot"></text>
+        <text>一事一局，先把问题写具体，不混问多个方向。</text>
+      </view>
+      <view class="ritual-row">
+        <text class="ritual-dot"></text>
+        <text>奇门重时空，测试版会保留起局时间方便后续复盘。</text>
+      </view>
+    </view>
+    <button class="primary" bindtap="generateChart">生成奇门局</button>
+  </view>
+</view>

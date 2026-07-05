@@ -1,0 +1,89 @@
+<view class="page home-page">
+  <view class="home-shell">
+    <view class="calendar-top">
+      <view class="brand-mark">
+        <view class="brand-logo-shell">
+          <image class="brand-logo" src="/assets/home/logo.png" mode="aspectFit" />
+        </view>
+        <view>
+          <view class="brand-title">玄门命理</view>
+          <view class="brand-subtitle">玄门命理 · 日课参考</view>
+        </view>
+      </view>
+      <view class="date-selector">{{nowText}}</view>
+    </view>
+
+    <view class="month-card">
+      <view class="month-head">
+        <view class="nav-arrow" bindtap="onPrevMonth" hover-class="tap-active">‹</view>
+        <view class="month-center">
+          <view class="month-title">{{monthTitle}}</view>
+          <view class="month-sub">{{selected.ganzhi}}</view>
+        </view>
+        <view class="nav-arrow" bindtap="onNextMonth" hover-class="tap-active">›</view>
+      </view>
+
+      <view class="weekday-row">
+        <view wx:for="{{weekLabels}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <view class="calendar-grid">
+        <view
+          class="day-cell {{item.muted ? 'muted-day' : ''}} {{item.selected ? 'selected-day' : ''}} {{item.today ? 'today-day' : ''}}"
+          wx:for="{{calendarCells}}"
+          wx:key="id"
+          bindtap="onSelectDate"
+          data-timestamp="{{item.timestamp}}"
+          hover-class="day-active"
+        >
+          <view class="solar-day">{{item.day}}</view>
+          <view class="lunar-day {{item.festival ? 'festival' : ''}}">{{item.lunar}}</view>
+          <view class="day-ganzhi">{{item.ganzhi}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="analysis-card">
+      <view class="analysis-head">
+        <view>
+          <view class="analysis-title">智能分析</view>
+          <view class="analysis-date">{{analysis.dateLine}}</view>
+        </view>
+        <view class="analysis-pill">日课</view>
+      </view>
+
+      <view class="analysis-lunar">{{analysis.lunarLine}}</view>
+
+      <view class="insight-grid">
+        <view class="insight-card {{item.tone}}-insight" wx:for="{{analysis.sections}}" wx:key="key">
+          <view class="insight-top">
+            <view class="insight-title">{{item.title}}</view>
+            <view class="insight-tag">{{item.tag}}</view>
+          </view>
+          <view class="insight-primary">{{item.primary}}</view>
+          <view class="insight-secondary">{{item.secondary}}</view>
+          <view class="insight-note">{{item.note}}</view>
+        </view>
+      </view>
+
+      <view class="analysis-meta compact-meta">
+        <view>
+          <text>建除</text>
+          <text>{{analysis.duty}}</text>
+        </view>
+        <view>
+          <text>值神</text>
+          <text>{{analysis.god}}</text>
+        </view>
+        <view>
+          <text>冲煞</text>
+          <text>{{analysis.clash}}</text>
+        </view>
+        <view>
+          <text>时辰</text>
+          <text>{{analysis.hourText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

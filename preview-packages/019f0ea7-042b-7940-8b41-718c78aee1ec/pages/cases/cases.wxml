@@ -1,0 +1,94 @@
+<view class="page cases-page">
+  <view class="case-library-head">
+    <view class="library-title">复盘记录</view>
+  </view>
+
+  <view class="case-search">
+    <text class="search-icon">⌕</text>
+    <input placeholder="搜索姓名、问题、卦名或时间" value="{{query}}" bindinput="onSearchInput" />
+    <view class="filter-entry" bindtap="openFilterSheet">筛选</view>
+  </view>
+
+  <view class="case-category-row">
+    <text
+      class="{{activeCategory === item ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="*this"
+      bindtap="onCategoryTap"
+      data-category="{{item}}"
+    >{{item}}</text>
+  </view>
+
+  <block wx:if="{{sections.length}}">
+    <block wx:for="{{sections}}" wx:for-item="section" wx:key="letter">
+      <view id="letter-{{section.letter}}" class="letter-section {{section.showHeader ? '' : 'plain-section'}}">
+        <view wx:if="{{section.showHeader}}" class="letter-header">{{section.letter}}</view>
+        <view
+          class="case-swipe-row {{openedDeleteId === item.id ? 'show-delete' : ''}}"
+          wx:for="{{section.items}}"
+          wx:key="id"
+        >
+          <view class="case-delete-panel" catchtap="deleteCase" data-id="{{item.id}}">删除</view>
+          <view
+            class="case-list-row"
+            bindtap="openCase"
+            bindtouchstart="onCaseTouchStart"
+            bindtouchmove="onCaseTouchMove"
+            bindtouchend="onCaseTouchEnd"
+            data-id="{{item.id}}"
+            hover-class="tap-active"
+          >
+            <view class="case-left">
+              <view class="case-name-line">
+                <text class="case-display-name">{{item.displayName}}</text>
+                <text class="case-gender">{{item.typeLabel}}</text>
+              </view>
+              <view class="case-date">{{item.detailLine}}</view>
+              <view class="case-archive-time">{{item.subLine}}</view>
+            </view>
+
+            <view wx:if="{{item.typeKey === 'bazi'}}" class="case-pillars">
+              <view class="pillar-char-row" wx:for="{{item.pillarRows}}" wx:for-item="row" wx:key="*this">
+                <text
+                  class="pillar-char {{char.className}}"
+                  wx:for="{{row}}"
+                  wx:for-item="char"
+                  wx:key="index"
+                >{{char.char}}</text>
+              </view>
+            </view>
+            <view wx:else class="replay-case-summary">
+              <view class="replay-case-title">{{item.recordSummary}}</view>
+              <view class="replay-case-tags">
+                <text wx:for="{{item.recordTags}}" wx:key="*this">{{item}}</text>
+              </view>
+            </view>
+
+            <view wx:if="{{item.typeKey === 'bazi'}}" class="zodiac-seal {{item.zodiacSeal.className}}">
+              <image class="zodiac-image" src="{{item.zodiacSeal.icon}}" mode="aspectFit" />
+            </view>
+            <view wx:else class="case-symbol {{item.typeKey}}-symbol">{{item.symbolText}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <view wx:if="{{activeCategory === '八字' && sections.length}}" class="alphabet-index">
+    <text
+      class="{{item.available ? 'available' : 'disabled'}} {{activeLetter === item.letter ? 'active' : ''}}"
+      wx:for="{{alphabetEntries}}"
+      wx:key="letter"
+      bindtap="onAlphabetTap"
+      data-letter="{{item.letter}}"
+      data-available="{{item.available}}"
+    >{{item.letter}}</text>
+  </view>
+
+  <view wx:else class="archive-empty">
+    <view class="empty-mark">录</view>
+    <view class="empty-title">暂无复盘记录</view>
+    <view class="empty-copy">{{emptyText}}</view>
+    <button class="primary empty-action" bindtap="goBazi">去排盘</button>
+  </view>
+</view>

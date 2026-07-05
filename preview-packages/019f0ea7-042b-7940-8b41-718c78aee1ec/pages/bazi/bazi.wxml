@@ -1,0 +1,141 @@
+<view class="page bazi-page">
+  <view class="bazi-hero">
+    <view class="hero-cloud hero-cloud-left"></view>
+    <view class="hero-cloud hero-cloud-right"></view>
+    <view class="hero-title">八字排盘</view>
+    <view class="hero-subtitle">道家命理 · 专业排盘</view>
+    <view class="hero-stamp">玄问</view>
+  </view>
+
+  <view class="entry-card">
+    <view wx:if="{{baziApiWarning}}" class="api-warning">{{baziApiWarning}}</view>
+    <view class="entry-card-head">
+      <view>
+        <view class="form-kicker">出生档案</view>
+        <view class="form-title">生成八字命盘</view>
+      </view>
+      <view class="form-badge">真太阳时校正</view>
+    </view>
+
+    <view class="instrument-panel">
+      <view class="entry-row name-row">
+        <view>
+          <text class="entry-label">姓名</text>
+          <text class="entry-hint">用于命例归档</text>
+        </view>
+        <input class="entry-input" placeholder="请输入姓名" value="{{form.name}}" bindinput="onNameInput" />
+      </view>
+
+      <view class="entry-row segmented-row">
+        <view class="field-stack">
+          <text class="entry-label">性别</text>
+          <view class="segmented-control">
+            <view
+              class="segment {{form.gender === item ? 'active' : ''}}"
+              wx:for="{{genderOptions}}"
+              wx:key="*this"
+              bindtap="onGenderTap"
+              data-gender="{{item}}"
+            >{{item}}</view>
+          </view>
+        </view>
+
+        <view class="field-stack">
+          <text class="entry-label">历法</text>
+          <view class="segmented-control calendar-control">
+            <view
+              class="segment {{activeCalendarMode === item ? 'active' : ''}}"
+              wx:for="{{calendarModes}}"
+              wx:key="*this"
+              bindtap="onCalendarModeTap"
+              data-mode="{{item}}"
+            >{{item}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{activeCalendarMode !== '农历'}}" class="entry-row picker-row">
+        <view>
+          <text class="entry-label">出生时间</text>
+          <text class="entry-hint">必填，影响时柱</text>
+        </view>
+        <view class="picker-value dual-picker">
+          <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
+            <view>{{form.birthDate}}</view>
+          </picker>
+          <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
+            <view>{{form.birthTime}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view wx:else class="lunar-beta-panel">
+        <view class="lunar-beta-head">
+          <view>
+            <view class="lunar-beta-title">农历排盘</view>
+            <view class="lunar-beta-text">滑动选择农历年月日。</view>
+          </view>
+        </view>
+        <picker mode="multiSelector" range="{{lunarPickerRange}}" value="{{lunarPickerValue}}" bindchange="onLunarDateChange">
+          <view class="lunar-picker-field">
+            <view class="lunar-picker-value">{{lunarDateText}}</view>
+            <view class="row-symbol">›</view>
+          </view>
+        </picker>
+        <view class="lunar-beta-footer">
+          <view class="option-switch">
+            <text class="lunar-leap-label">闰月</text>
+            <switch class="lunar-leap-switch" checked="{{form.isLeapMonth}}" bindchange="onLeapMonthSwitch" color="#e8c98a" />
+          </view>
+        </view>
+        <view wx:if="{{lunarBetaError}}" class="lunar-beta-error">{{lunarBetaError}}</view>
+      </view>
+
+      <view wx:if="{{activeCalendarMode === '农历'}}" class="entry-row picker-row">
+        <view>
+          <text class="entry-label">出生时辰</text>
+          <text class="entry-hint">必填，影响时柱</text>
+        </view>
+        <view class="picker-value dual-picker">
+          <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
+            <view>{{form.birthTime}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="entry-row picker-row">
+        <view>
+          <text class="entry-label">出生地点</text>
+          <text class="entry-hint">用于真太阳时</text>
+        </view>
+        <picker mode="region" value="{{form.region}}" bindchange="onRegionChange">
+          <view class="picker-value">{{form.regionText}}</view>
+        </picker>
+        <text class="row-symbol">›</text>
+      </view>
+
+    </view>
+
+    <view class="solar-row">
+      <view>
+        <view wx:if="{{activeCalendarMode === '农历'}}">农历生日：{{lunarDateText}} {{form.birthTime}}</view>
+        <view wx:else>北京时间：{{form.birthDate}} {{form.birthTime}}</view>
+        <view>真太阳时：{{form.useTrueSolarTime ? '开启' : '关闭'}}</view>
+        <view>地址经纬：北纬39.9288 东经{{form.longitude}}</view>
+      </view>
+      <view class="switch-column">
+        <view class="option-switch">
+          <text>真太阳时</text>
+          <switch checked="{{form.useTrueSolarTime}}" bindchange="onTrueSolarSwitch" color="#e8c98a" />
+        </view>
+        <view class="option-switch">
+          <text>保存</text>
+          <switch checked="{{saveCase}}" bindchange="onSaveSwitch" color="#e8c98a" />
+        </view>
+      </view>
+    </view>
+
+    <button class="start-button" loading="{{isGenerating}}" disabled="{{isGenerating}}" bindtap="generateReading">立即排盘</button>
+    <view class="start-helper">请尽量使用准确出生时间与出生地，后续命例复盘会以此为准。</view>
+  </view>
+</view>

@@ -1,0 +1,116 @@
+<view class="page liuyao-page">
+  <x-pattern />
+
+  <view class="tool-title-hero">
+    <view class="tool-title">六爻</view>
+    <view class="tool-subtitle">一事一问 · 纳甲起卦</view>
+    <view class="tool-stamp">起卦</view>
+  </view>
+
+  <view class="section cast-panel">
+    <view class="section-kicker">一事一问</view>
+    <view class="section-title">问事与起卦</view>
+    <view class="field">
+      <text class="label">所问事项</text>
+      <textarea placeholder="例如：这件事下一步适合如何推进？" value="{{question}}" bindinput="onQuestionInput" />
+    </view>
+    <view class="ritual-panel">
+      <view class="ritual-title">起卦前</view>
+      <view class="ritual-row" wx:for="{{ritualItems}}" wx:key="*this">
+        <text class="ritual-dot"></text>
+        <text>{{item}}</text>
+      </view>
+    </view>
+    <view class="mode-tabs">
+      <view
+        class="mode-tab {{modeIndex === index ? 'active' : ''}}"
+        wx:for="{{modeOptions}}"
+        wx:key="*this"
+        bindtap="onModeChange"
+        data-index="{{index}}"
+      >{{item}}</view>
+    </view>
+    <view class="field">
+      <text class="label">问题分类</text>
+      <picker mode="selector" range="{{categoryOptions}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+        <view>{{categoryOptions[categoryIndex]}}</view>
+      </picker>
+    </view>
+
+    <view wx:if="{{modeIndex === 0}}" class="cast-mode-panel">
+      <view class="manual-progress">
+        <text>已选 {{manualSelectedCount}} / 6 爻</text>
+        <text>逐爻选择，六爻齐备后成卦</text>
+      </view>
+      <view class="manual-select-list">
+        <view
+          class="manual-select-row"
+          wx:for="{{manualRows}}"
+          wx:for-item="row"
+          wx:for-index="rowIndex"
+          wx:key="label"
+        >
+          <text class="manual-select-label">{{row.label}}</text>
+          <view class="manual-select-control">
+            <view
+              class="manual-select-value {{row.selected ? 'selected' : ''}} {{manualOpenIndex === rowIndex ? 'open' : ''}}"
+              bindtap="toggleManualDropdown"
+              data-index="{{rowIndex}}"
+            >
+              <view class="manual-selected-main">
+                <text>{{row.display}}</text>
+                <text wx:if="{{row.selected}}" class="manual-selected-detail">{{row.symbol}}（{{row.coin}}）</text>
+              </view>
+              <text class="manual-select-arrow">›</text>
+            </view>
+            <view wx:if="{{manualOpenIndex === rowIndex}}" class="manual-dropdown">
+              <view
+                class="manual-option {{row.selected ? '' : 'active'}}"
+                bindtap="clearManualYao"
+                data-index="{{rowIndex}}"
+              >
+                <text>请选择</text>
+                <text wx:if="{{!row.selected}}" class="manual-check">✓</text>
+              </view>
+              <view
+                class="manual-option {{row.value === option.value ? 'active' : ''}}"
+                wx:for="{{manualYaoOptions}}"
+                wx:for-item="option"
+                wx:key="value"
+                bindtap="selectManualYao"
+                data-row-index="{{rowIndex}}"
+                data-value="{{option.value}}"
+              >
+                <view class="manual-option-main">
+                  <text class="manual-option-name">{{option.name}}</text>
+                  <text class="manual-option-symbol">{{option.symbol}}</text>
+                  <text class="manual-option-coin">（{{option.coin}}）</text>
+                </view>
+                <text wx:if="{{row.value === option.value}}" class="manual-check">✓</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <button class="primary cast-primary" bindtap="castManual">生成卦象</button>
+    </view>
+    <view wx:elif="{{modeIndex === 1}}" class="cast-mode-panel">
+      <view class="mode-note">
+        <text>当前时间</text>
+        <text>{{currentTimeLabel}}</text>
+      </view>
+      <button class="primary cast-primary" bindtap="castByCurrentTime">按当前时间起卦</button>
+    </view>
+    <view wx:else class="cast-mode-panel">
+      <view class="field number-field">
+        <text class="label">起卦数字</text>
+        <input type="number" placeholder="请输入一组数字" value="{{numberSeed}}" bindinput="onNumberSeedInput" />
+      </view>
+      <button class="primary cast-primary" bindtap="castByNumber">按数字起卦</button>
+    </view>
+    <view class="cast-actions">
+      <button class="secondary reset-btn" bindtap="resetCast">重新起卦</button>
+    </view>
+  </view>
+
+</view>
